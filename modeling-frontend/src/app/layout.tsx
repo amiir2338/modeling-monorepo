@@ -1,4 +1,4 @@
-﻿import './repeat-guard';
+import './repeat-guard';
 import './globals.css'
 import './styles/ui.css'
 import type { Metadata, Viewport } from 'next';
