@@ -1,4 +1,5 @@
-﻿import './globals.css'
+﻿import './repeat-guard';
+import './globals.css'
 import '../styles/ui.css'
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
@@ -57,3 +58,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+

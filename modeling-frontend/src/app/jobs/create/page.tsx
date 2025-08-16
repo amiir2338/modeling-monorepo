@@ -1,3 +1,4 @@
+﻿import '../../repeat-guard';
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
@@ -56,7 +57,7 @@ function isJob(value: unknown): value is Job {
   return isObject(value) && ('_id' in value || 'status' in value || 'draftExpiresAt' in value);
 }
 
-/** بدون any: هر ساختار رایج پاسخ را به Job تبدیل می‌کند */
+/** Ø¨Ø¯ÙˆÙ† any: Ù‡Ø± Ø³Ø§Ø®ØªØ§Ø± Ø±Ø§ÛŒØ¬ Ù¾Ø§Ø³Ø® Ø±Ø§ Ø¨Ù‡ Job ØªØ¨Ø¯ÛŒÙ„ Ù…ÛŒâ€ŒÚ©Ù†Ø¯ */
 function normalizeJobFromResponse(resp: unknown): Job | null {
   if (isJob(resp)) return resp;
 
@@ -84,7 +85,7 @@ export default function CreateJobPage() {
     if (me?.role === 'client' && me.id && !clientId) setClientId(me.id);
   }, [me, clientId]);
 
-  // فرم
+  // ÙØ±Ù…
   const [form, setForm] = useState<JobFormValue>({
     title: '',
     description: '',
@@ -94,7 +95,7 @@ export default function CreateJobPage() {
     termsAccepted: false,
   });
 
-  // وضعیت‌ها
+  // ÙˆØ¶Ø¹ÛŒØªâ€ŒÙ‡Ø§
   const [job, setJob] = useState<Job | null>(null);
   const [status, setStatus] = useState<JobStatus>('draft');
   const [savingDraft, setSavingDraft] = useState(false);
@@ -113,8 +114,8 @@ export default function CreateJobPage() {
   }
 
   /**
-   * ارسال برای بررسی با fallback مسیرها
-   * برمی‌گرداند: { data, usedPath }
+   * Ø§Ø±Ø³Ø§Ù„ Ø¨Ø±Ø§ÛŒ Ø¨Ø±Ø±Ø³ÛŒ Ø¨Ø§ fallback Ù…Ø³ÛŒØ±Ù‡Ø§
+   * Ø¨Ø±Ù…ÛŒâ€ŒÚ¯Ø±Ø¯Ø§Ù†Ø¯: { data, usedPath }
    */
   async function apiSubmit(id: string, payload: Record<string, unknown>) {
     const paths = [
@@ -132,27 +133,27 @@ export default function CreateJobPage() {
         const ax = e as AxiosError;
         tried.push(p);
         if (ax.response?.status === 404) {
-          // مسیر بعدی را امتحان کن
+          // Ù…Ø³ÛŒØ± Ø¨Ø¹Ø¯ÛŒ Ø±Ø§ Ø§Ù…ØªØ­Ø§Ù† Ú©Ù†
           continue;
         }
-        // خطاهای غیر 404 را همونجا پاس بده بیرون
+        // Ø®Ø·Ø§Ù‡Ø§ÛŒ ØºÛŒØ± 404 Ø±Ø§ Ù‡Ù…ÙˆÙ†Ø¬Ø§ Ù¾Ø§Ø³ Ø¨Ø¯Ù‡ Ø¨ÛŒØ±ÙˆÙ†
         throw e;
       }
     }
-    // اگر به اینجا رسید یعنی همه مسیرها 404 شدند
+    // Ø§Ú¯Ø± Ø¨Ù‡ Ø§ÛŒÙ†Ø¬Ø§ Ø±Ø³ÛŒØ¯ ÛŒØ¹Ù†ÛŒ Ù‡Ù…Ù‡ Ù…Ø³ÛŒØ±Ù‡Ø§ 404 Ø´Ø¯Ù†Ø¯
     console.error('Submit endpoint not found. Tried:', tried);
-    throw new Error('آدرس ارسال برای بررسی یافت نشد (404). مسیرهای تست‌شده را در کنسول ببینید.');
+    throw new Error('Ø¢Ø¯Ø±Ø³ Ø§Ø±Ø³Ø§Ù„ Ø¨Ø±Ø§ÛŒ Ø¨Ø±Ø±Ø³ÛŒ ÛŒØ§ÙØª Ù†Ø´Ø¯ (404). Ù…Ø³ÛŒØ±Ù‡Ø§ÛŒ ØªØ³Øªâ€ŒØ´Ø¯Ù‡ Ø±Ø§ Ø¯Ø± Ú©Ù†Ø³ÙˆÙ„ Ø¨Ø¨ÛŒÙ†ÛŒØ¯.');
   }
 
   const onChange = (patch: Partial<JobFormValue>) => {
     setForm((f) => ({ ...f, ...patch }));
   };
 
-  // ذخیره پیش‌نویس (بدون تمدید انقضا سمت سرور)
+  // Ø°Ø®ÛŒØ±Ù‡ Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ (Ø¨Ø¯ÙˆÙ† ØªÙ…Ø¯ÛŒØ¯ Ø§Ù†Ù‚Ø¶Ø§ Ø³Ù…Øª Ø³Ø±ÙˆØ±)
   const handleSaveDraft = async () => {
-    if (!me) { setErr('ابتدا وارد شوید.'); return; }
-    if (!clientId.trim()) { setErr('clientId الزامی است.'); return; }
-    if (!(form.title.trim() && form.description.trim())) { setErr('برای پیش‌نویس، موضوع و توضیح کافی است.'); return; }
+    if (!me) { setErr('Ø§Ø¨ØªØ¯Ø§ ÙˆØ§Ø±Ø¯ Ø´ÙˆÛŒØ¯.'); return; }
+    if (!clientId.trim()) { setErr('clientId Ø§Ù„Ø²Ø§Ù…ÛŒ Ø§Ø³Øª.'); return; }
+    if (!(form.title.trim() && form.description.trim())) { setErr('Ø¨Ø±Ø§ÛŒ Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ØŒ Ù…ÙˆØ¶ÙˆØ¹ Ùˆ ØªÙˆØ¶ÛŒØ­ Ú©Ø§ÙÛŒ Ø§Ø³Øª.'); return; }
 
     setErr(null);
     setMsg(null);
@@ -176,15 +177,15 @@ export default function CreateJobPage() {
       setSavingDraft(true);
 
       if (!job?._id) {
-        // ساخت درافت جدید
+        // Ø³Ø§Ø®Øª Ø¯Ø±Ø§ÙØª Ø¬Ø¯ÛŒØ¯
         const data = await apiCreateDraft(payload);
         const saved = normalizeJobFromResponse(data);
-        if (!saved) throw new Error('پاسخ سرور نامعتبر است');
+        if (!saved) throw new Error('Ù¾Ø§Ø³Ø® Ø³Ø±ÙˆØ± Ù†Ø§Ù…Ø¹ØªØ¨Ø± Ø§Ø³Øª');
         setJob(saved);
         setStatus(saved.status ?? 'draft');
-        setMsg('پیش‌نویس ذخیره شد ✅');
+        setMsg('Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ Ø°Ø®ÛŒØ±Ù‡ Ø´Ø¯ âœ…');
       } else {
-        // آپدیت درافت موجود
+        // Ø¢Ù¾Ø¯ÛŒØª Ø¯Ø±Ø§ÙØª Ù…ÙˆØ¬ÙˆØ¯
         const data = await apiUpdateDraft(job._id, payload);
         const saved = normalizeJobFromResponse(data);
         if (saved) {
@@ -194,24 +195,24 @@ export default function CreateJobPage() {
           }));
           setStatus(saved.status ?? 'draft');
         }
-        setMsg('پیش‌نویس به‌روزرسانی شد ✅');
+        setMsg('Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ Ø¨Ù‡â€ŒØ±ÙˆØ²Ø±Ø³Ø§Ù†ÛŒ Ø´Ø¯ âœ…');
       }
     } catch (e) {
       const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'خطا در ذخیره پیش‌نویس');
+      setErr(ax.response?.data?.message ?? ax.message ?? 'Ø®Ø·Ø§ Ø¯Ø± Ø°Ø®ÛŒØ±Ù‡ Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³');
     } finally {
       setSavingDraft(false);
     }
   };
 
-  // ارسال برای بررسی
+  // Ø§Ø±Ø³Ø§Ù„ Ø¨Ø±Ø§ÛŒ Ø¨Ø±Ø±Ø³ÛŒ
   const handleSubmitForReview = async () => {
-    if (!me) { setErr('ابتدا وارد شوید.'); return; }
-    if (!job?._id) { setErr('ابتدا پیش‌نویس را ذخیره کنید.'); return; }
+    if (!me) { setErr('Ø§Ø¨ØªØ¯Ø§ ÙˆØ§Ø±Ø¯ Ø´ÙˆÛŒØ¯.'); return; }
+    if (!job?._id) { setErr('Ø§Ø¨ØªØ¯Ø§ Ù¾ÛŒØ´â€ŒÙ†ÙˆÛŒØ³ Ø±Ø§ Ø°Ø®ÛŒØ±Ù‡ Ú©Ù†ÛŒØ¯.'); return; }
 
-    // ولیدیشن کلاینت
+    // ÙˆÙ„ÛŒØ¯ÛŒØ´Ù† Ú©Ù„Ø§ÛŒÙ†Øª
     if (!(form.title.trim() && form.description.trim() && form.city.trim() && form.date && form.budgetString.trim() && form.termsAccepted)) {
-      setErr('برای ارسال، همه فیلدها را کامل و قوانین را تایید کنید.');
+      setErr('Ø¨Ø±Ø§ÛŒ Ø§Ø±Ø³Ø§Ù„ØŒ Ù‡Ù…Ù‡ ÙÛŒÙ„Ø¯Ù‡Ø§ Ø±Ø§ Ú©Ø§Ù…Ù„ Ùˆ Ù‚ÙˆØ§Ù†ÛŒÙ† Ø±Ø§ ØªØ§ÛŒÛŒØ¯ Ú©Ù†ÛŒØ¯.');
       return;
     }
 
@@ -221,10 +222,10 @@ export default function CreateJobPage() {
     try {
       setSubmitting(true);
       const { data, usedPath } = await apiSubmit(job._id, { termsAccepted: true });
-      console.log('Submit used path:', usedPath); // برای دیباگ مسیر درست
+      console.log('Submit used path:', usedPath); // Ø¨Ø±Ø§ÛŒ Ø¯ÛŒØ¨Ø§Ú¯ Ù…Ø³ÛŒØ± Ø¯Ø±Ø³Øª
 
       const updated = normalizeJobFromResponse(data);
-      if (!updated) throw new Error('پاسخ سرور نامعتبر است');
+      if (!updated) throw new Error('Ù¾Ø§Ø³Ø® Ø³Ø±ÙˆØ± Ù†Ø§Ù…Ø¹ØªØ¨Ø± Ø§Ø³Øª');
 
       setJob((prev) => ({
         ...((prev ?? {}) as Job),
@@ -232,10 +233,10 @@ export default function CreateJobPage() {
         draftExpiresAt: null,
       }));
       setStatus(updated.status ?? 'pending_review');
-      setMsg('برای بررسی ارسال شد ✅');
+      setMsg('Ø¨Ø±Ø§ÛŒ Ø¨Ø±Ø±Ø³ÛŒ Ø§Ø±Ø³Ø§Ù„ Ø´Ø¯ âœ…');
     } catch (e) {
       const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'خطا در ارسال برای بررسی');
+      setErr(ax.response?.data?.message ?? ax.message ?? 'Ø®Ø·Ø§ Ø¯Ø± Ø§Ø±Ø³Ø§Ù„ Ø¨Ø±Ø§ÛŒ Ø¨Ø±Ø±Ø³ÛŒ');
     } finally {
       setSubmitting(false);
     }
@@ -243,11 +244,11 @@ export default function CreateJobPage() {
 
   return (
     <main className="p-4 max-w-2xl mx-auto space-y-4">
-      <h1 className="text-xl font-bold">ثبت آگهی مدلینگ ✨</h1>
+      <h1 className="text-xl font-bold">Ø«Ø¨Øª Ø¢Ú¯Ù‡ÛŒ Ù…Ø¯Ù„ÛŒÙ†Ú¯ âœ¨</h1>
 
-      {/* clientId (مطابق بک‌اند شما) */}
+      {/* clientId (Ù…Ø·Ø§Ø¨Ù‚ Ø¨Ú©â€ŒØ§Ù†Ø¯ Ø´Ù…Ø§) */}
       <div className="space-y-1">
-        <label className="text-sm">clientId (الزامی)</label>
+        <label className="text-sm">clientId (Ø§Ù„Ø²Ø§Ù…ÛŒ)</label>
         <input
           className="w-full border rounded-lg p-2"
           placeholder="clientId"
@@ -272,3 +273,4 @@ export default function CreateJobPage() {
     </main>
   );
 }
+
