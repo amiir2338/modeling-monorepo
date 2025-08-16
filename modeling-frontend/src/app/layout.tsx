@@ -1,15 +1,15 @@
-import './repeat-guard';
+﻿import './repeat-guard';
 import './globals.css'
 import './styles/ui.css'
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
-import ThemeToggle from '../components/ThemeToggle'; // Ø§Ú¯Ø± Ù‚Ø¨Ù„Ø§Ù‹ Ø³Ø§Ø®ØªÛŒÙ…
+import ThemeToggle from '../components/ThemeToggle'; // Ã˜Â§ÃšÂ¯Ã˜Â± Ã™â€šÃ˜Â¨Ã™â€žÃ˜Â§Ã™â€¹ Ã˜Â³Ã˜Â§Ã˜Â®Ã˜ÂªÃ›Å’Ã™â€¦
 import BrandSwitch from '../components/BrandSwitch';
 
 export const metadata: Metadata = {
-  title: 'Modeling â€” Ø¢Ù…ÙˆØ²Ø´ Ùˆ ÙØ±ØµØªâ€ŒÙ‡Ø§ÛŒ Ù…Ø¯Ù„ÛŒÙ†Ú¯',
-  description: 'Ù¾Ù„ØªÙØ±Ù… Ø¢Ù…ÙˆØ²Ø´ Ø±Ø§ÛŒÚ¯Ø§Ù† Ù…Ø¯Ù„ÛŒÙ†Ú¯ + Ø«Ø¨Øª Ùˆ Ù…Ø¯ÛŒØ±ÛŒØª Ø¢Ú¯Ù‡ÛŒâ€ŒÙ‡Ø§ÛŒ Ù‡Ù…Ú©Ø§Ø±ÛŒ',
+  title: 'Modeling Ã¢â‚¬â€ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã™Ë† Ã™ÂÃ˜Â±Ã˜ÂµÃ˜ÂªÃ¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯',
+  description: 'Ã™Â¾Ã™â€žÃ˜ÂªÃ™ÂÃ˜Â±Ã™â€¦ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã˜Â±Ã˜Â§Ã›Å’ÃšÂ¯Ã˜Â§Ã™â€  Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯ + Ã˜Â«Ã˜Â¨Ã˜Âª Ã™Ë† Ã™â€¦Ã˜Â¯Ã›Å’Ã˜Â±Ã›Å’Ã˜Âª Ã˜Â¢ÃšÂ¯Ã™â€¡Ã›Å’Ã¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¡Ã™â€¦ÃšÂ©Ã˜Â§Ã˜Â±Ã›Å’',
   icons: { icon: '/favicon.ico' },
   themeColor: '#ffffff',
 };
@@ -27,8 +27,11 @@ const vazir = Vazirmatn({
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl" className={vazir.className}>
+      <head>
+        <meta charSet="utf-8" />
+      </head>
       <body className="bg-app">
-        {/* Ù‡Ø¯Ø± Ø¨Ø±Ù†Ø¯ÛŒ */}
+        {/* Ã™â€¡Ã˜Â¯Ã˜Â± Ã˜Â¨Ã˜Â±Ã™â€ Ã˜Â¯Ã›Å’ */}
         <header className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:border-slate-700/50">
           <div className="container-std h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -40,22 +43,23 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="flex items-center gap-2">
               <BrandSwitch />
-              {/* Ø§Ú¯Ø± ThemeToggle Ø¯Ø§Ø±ÛŒ */}
+              {/* Ã˜Â§ÃšÂ¯Ã˜Â± ThemeToggle Ã˜Â¯Ã˜Â§Ã˜Â±Ã›Å’ */}
               <ThemeToggle />
             </div>
           </div>
         </header>
 
-        {/* Ø¨Ú©â€ŒÚ¯Ø±Ø§Ù†Ø¯ Ù„Ø·ÛŒÙ ØµÙØ­Ù‡ */}
+        {/* Ã˜Â¨ÃšÂ©Ã¢â‚¬Å’ÃšÂ¯Ã˜Â±Ã˜Â§Ã™â€ Ã˜Â¯ Ã™â€žÃ˜Â·Ã›Å’Ã™Â Ã˜ÂµÃ™ÂÃ˜Â­Ã™â€¡ */}
         <div className="bg-hero">
           <main className="container-std py-8">{children}</main>
         </div>
 
         <footer className="border-t border-slate-200/60 dark:border-slate-700/50 py-8 text-center text-sm text-slate-500">
-          Â© {new Date().getFullYear()} Modeling â€” Ø¢Ù…ÙˆØ²Ø´ Ùˆ ÙØ±ØµØªâ€ŒÙ‡Ø§ÛŒ Ù…Ø¯Ù„ÛŒÙ†Ú¯
+          Ã‚Â© {new Date().getFullYear()} Modeling Ã¢â‚¬â€ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã™Ë† Ã™ÂÃ˜Â±Ã˜ÂµÃ˜ÂªÃ¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯
         </footer>
       </body>
     </html>
   );
 }
+
 
