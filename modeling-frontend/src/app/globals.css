@@ -4,41 +4,50 @@
 
 /* ---------- پایه ---------- */
 :root {
-  /* رنگ پس‌زمینه بسیار ملایم */
+  /* پس‌زمینه خیلی ملایم */
   --bg: 247 248 252;
-  --radius-xl: 12px;
-  --radius-2xl: 16px;
 
-  /* رنگ‌ها */
+  /* رنگ‌های برند (می‌تونی تغییر بدی) */
+  --brand-1: #7c3aed; /* Purple 600 */
+  --brand-2: #06b6d4; /* Cyan 500 */
+  --brand-3: #f43f5e; /* Rose 500 */
+  --ink: #0f172a;     /* Slate 900 */
+  --muted: #334155;   /* Slate 700 */
+
+  /* خاکستری‌ها */
   --slate-50:  #f8fafc;
   --slate-100: #f1f5f9;
   --slate-200: #e2e8f0;
   --slate-300: #cbd5e1;
   --slate-700: #334155;
 
-  --indigo-200: #c7d2fe;
-  --emerald-600: #059669;
-  --emerald-700: #047857;
-  --rose-600:    #e11d48;
-  --rose-700:    #be123c;
+  /* سایز شعاع‌ها */
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+}
+
+html[data-theme="dark"] {
+  --bg: 17 19 24;
+  --ink: #e2e8f0;
+  --muted: #94a3b8;
+
+  --slate-50:  #0b1220;
+  --slate-100: #0f172a;
+  --slate-200: #1e293b;
+  --slate-300: #334155;
+  --slate-700: #cbd5e1;
 }
 
 html, body { height: 100%; }
 body {
+  color: var(--muted);
+  background-color: rgb(var(--bg));
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: var(--slate-700);
-  background-color: rgb(var(--bg));
 }
-
-/* پس‌زمینهٔ عمومی اپ */
-.bg-app { background-color: rgb(var(--bg)); }
 
 /* انتخاب متن */
-::selection {
-  background: var(--indigo-200);
-  color: #000;
-}
+::selection { background: #c7d2fe; color: #000; }
 
 /* اسکرول‌بار ظریف */
 * { scrollbar-width: thin; scrollbar-color: var(--slate-300) transparent; }
@@ -46,153 +55,123 @@ body {
 *::-webkit-scrollbar-thumb { background-color: var(--slate-300); border-radius: 9999px; }
 *::-webkit-scrollbar-track { background: transparent; }
 
-/* ---------- کامپوننت‌های کمکی (بدون @apply/@utility) ---------- */
+/* ---------- پس‌زمینه‌ها ---------- */
+.bg-app { background-color: rgb(var(--bg)); }
+.bg-hero {
+  /* گرادینت ملایم */
+  background:
+    radial-gradient(60rem 30rem at 80% -10%, rgba(124,58,237,0.12), transparent),
+    radial-gradient(50rem 25rem at 10% -10%, rgba(6,182,212,0.14), transparent);
+}
 
-/* کارت‌ها */
+/* ---------- کارت‌ها ---------- */
 .card {
-  border: 1px solid rgba(226, 232, 240, 0.6); /* slate-200/60 */
+  border: 1px solid rgba(226, 232, 240, 0.6);
   background: #fff;
   border-radius: var(--radius-2xl);
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); /* بسیار لطیف */
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
-.card-hover {
-  transition: transform .2s ease, box-shadow .2s ease;
+html[data-theme="dark"] .card {
+  background: rgba(2,6,23,0.6); /* near transparent */
+  border-color: rgba(148,163,184,0.2);
+  backdrop-filter: blur(10px);
 }
+.card-hover { transition: transform .2s ease, box-shadow .2s ease, border-color .2s ease; }
 .card-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 8px 28px rgba(15, 23, 42, 0.10);
+  border-color: rgba(124,58,237,0.35);
 }
 
-/* دکمه‌ها */
-.btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  gap: .5rem;
-  padding: .5rem 1rem;
-  font-size: .875rem; /* text-sm */
-  font-weight: 500;
-  border-radius: var(--radius-xl);
-  transition: background-color .2s ease, color .2s ease, transform .05s ease, border-color .2s ease;
-  cursor: pointer;
-  user-select: none;
-  text-decoration: none;
+/* کارت شیشه‌ای */
+.glass {
+  background: rgba(255,255,255,0.55);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(226,232,240,0.6);
+  border-radius: var(--radius-2xl);
 }
-.btn:active { transform: scale(0.99); }
+html[data-theme="dark"] .glass {
+  background: rgba(2,6,23,0.55);
+  border-color: rgba(148,163,184,0.25);
+}
+
+/* ---------- دکمه‌ها ---------- */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .5rem; padding: .6rem 1rem; font-size: .9rem; font-weight: 600;
+  border-radius: 9999px; border: 1px solid transparent;
+  transition: transform .05s ease, box-shadow .2s ease, background-color .2s ease, color .2s ease;
+  cursor: pointer; text-decoration: none; user-select: none;
+}
+.btn:active { transform: scale(0.98); }
 
 .btn-primary {
-  background: #000;
-  color: #fff;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  color: #fff; box-shadow: 0 10px 22px rgba(124,58,237,0.24);
 }
-.btn-primary:hover { background: #111827; } /* slate-800 */
+.btn-primary:hover { box-shadow: 0 14px 30px rgba(124,58,237,0.32); }
 
-.btn-outline {
-  background: #fff;
-  color: var(--slate-700);
-  border: 1px solid var(--slate-300);
+.btn-soft {
+  background: #fff; color: var(--muted); border-color: var(--slate-300);
 }
-.btn-outline:hover { background: var(--slate-50); }
+.btn-soft:hover { background: var(--slate-50); }
 
 .btn-ghost {
-  background: transparent;
-  color: var(--slate-700);
+  background: transparent; color: var(--muted);
 }
-.btn-ghost:hover { background: var(--slate-100); }
+.btn-ghost:hover { background: rgba(148,163,184,0.12); }
 
-.btn-danger {
-  background: var(--rose-600);
-  color: #fff;
+.btn-danger { background: linear-gradient(135deg, #ef4444, var(--brand-3)); color: #fff; }
+.btn-success { background: linear-gradient(135deg, #10b981, #22d3ee); color: #fff; }
+
+/* ---------- تیتر/گرادینت متن ---------- */
+.h1 { font-size: clamp(1.6rem, 2.5vw, 2.2rem); font-weight: 800; color: var(--ink); }
+.h2 { font-size: 1.25rem; font-weight: 700; color: var(--ink); }
+.h3 { font-size: 1.1rem; font-weight: 600; color: var(--ink); }
+
+.brand-gradient-text {
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
 }
-.btn-danger:hover { background: var(--rose-700); }
 
-.btn-success {
-  background: var(--emerald-600);
-  color: #fff;
-}
-.btn-success:hover { background: var(--emerald-700); }
-
-/* بج‌ها */
+/* ---------- چیپ/بَج ---------- */
 .badge {
-  display: inline-flex;
-  align-items: center;
-  gap: .25rem;
-  padding: .125rem .5rem;
-  font-size: .75rem;   /* text-xs */
-  border-radius: 9999px;
-  border: 1px solid var(--slate-200);
-  background: var(--slate-50);
-  color: var(--slate-700);
+  display: inline-flex; align-items: center; gap: .35rem;
+  padding: .2rem .55rem; font-size: .75rem; border-radius: 9999px;
+  border: 1px solid var(--slate-200); background: var(--slate-50); color: var(--muted);
 }
-.badge-slate { border-color: var(--slate-200); background: var(--slate-50); color: var(--slate-700); }
-.badge-green { border-color: #a7f3d0; background: #ecfdf5; color: #065f46; }
-.badge-amber { border-color: #fde68a; background: #fffbeb; color: #92400e; }
-.badge-red   { border-color: #fecdd3; background: #fff1f2; color: #9f1239; }
-.badge-blue  { border-color: #bae6fd; background: #eff6ff; color: #075985; }
+.badge-ghost { border-color: rgba(148,163,184,0.35); background: transparent; }
 
-/* فرم‌ها */
-.input,
-.textarea,
-.select {
-  width: 100%;
-  border: 1px solid var(--slate-300);
-  background: #fff;
-  padding: .5rem .75rem;
-  font-size: .875rem;
-  border-radius: var(--radius-xl);
-  outline: none;
-  transition: box-shadow .15s ease, border-color .15s ease;
+/* ---------- فرم‌ها ---------- */
+.input, .select, .textarea {
+  width: 100%; border: 1px solid var(--slate-300); background: #fff;
+  padding: .6rem .8rem; font-size: .9rem; border-radius: var(--radius-xl);
+  outline: none; transition: box-shadow .15s ease, border-color .15s ease;
 }
-.input:focus,
-.textarea:focus,
-.select:focus {
-  box-shadow: 0 0 0 3px rgba(199, 210, 254, .6); /* indigo-200 ring */
-  border-color: #c7d2fe;
+.input:focus, .select:focus, .textarea:focus {
+  box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+  border-color: rgba(124,58,237,.55);
+}
+html[data-theme="dark"] .input, html[data-theme="dark"] .select, html[data-theme="dark"] .textarea {
+  background: rgba(2,6,23,0.6); border-color: rgba(148,163,184,0.25); color: var(--ink);
 }
 
-.switch { width: 1rem; height: 1rem; accent-color: #4f46e5; /* indigo-600 */ }
-.label { font-size: .875rem; color: var(--slate-700); margin-bottom: .25rem; display: inline-block; }
-.helper { font-size: .75rem; color: #64748b; } /* slate-500 */
-.error  { font-size: .75rem; color: #e11d48; } /* rose-600 */
+.switch { width: 1rem; height: 1rem; accent-color: #7c3aed; }
+.label { font-size: .88rem; color: var(--muted); margin-bottom: .35rem; display: inline-block; }
+.helper { font-size: .75rem; color: #64748b; }
+.error  { font-size: .75rem; color: #e11d48; }
 
 /* Skeleton */
 .skeleton {
   border-radius: var(--radius-xl);
   background: rgba(226, 232, 240, .7);
-  animation: pulse 1.5s ease-in-out infinite;
+  animation: pulse 1.6s ease-in-out infinite;
 }
-@keyframes pulse {
-  0%, 100% { opacity: .6; }
-  50%      { opacity: 1; }
-}
+@keyframes pulse { 0%,100%{opacity:.6} 50%{opacity:1} }
 
-/* Utilities کوچک */
-.container-std { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; } /* 6xl + px-4 */
-.hr { width: 100%; height: 1px; background: var(--slate-200); }
+/* کانتینر استاندارد */
+.container-std { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; }
 
 /* لینک‌ها */
-a.link { color: #4f46e5; text-underline-offset: 4px; }
-a.link:hover { color: #4338ca; text-decoration: underline; }
-
-/* تیترها */
-.h1 { font-size: 1.5rem; font-weight: 700; }
-.h2 { font-size: 1.25rem; font-weight: 600; }
-.h3 { font-size: 1.125rem; font-weight: 600; }
-
-/* جدول‌ها */
-.table { width: 100%; border: 1px solid var(--slate-200); border-radius: var(--radius-xl); overflow: hidden; border-collapse: separate; border-spacing: 0; }
-.table thead th {
-  background: var(--slate-50);
-  color: var(--slate-700);
-  font-size: .75rem;
-  font-weight: 600;
-  letter-spacing: .06em;
-  text-transform: uppercase;
-  padding: .75rem;
-  border-bottom: 1px solid var(--slate-200);
-}
-.table tbody td {
-  padding: .75rem;
-  font-size: .875rem;
-  border-bottom: 1px solid #f1f5f9; /* slate-100 */
-}
-.table tbody tr:hover { background: rgba(241,245,249, .6); } /* slate-100/60 */
+a.link { color: var(--brand-1); text-underline-offset: 4px; }
+a.link:hover { color: var(--brand-2); text-decoration: underline; }
