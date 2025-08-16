@@ -1,3 +1,4 @@
+import './styles/ui.css';
 import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
