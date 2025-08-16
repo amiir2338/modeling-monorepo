@@ -2,7 +2,8 @@ import './globals.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
-import ThemeToggle from '../components/ThemeToggle';
+import ThemeToggle from '../components/ThemeToggle'; // اگر قبلاً ساختیم
+import BrandSwitch from '../components/BrandSwitch';
 
 export const metadata: Metadata = {
   title: 'Modeling — آموزش و فرصت‌های مدلینگ',
@@ -29,11 +30,15 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <header className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:border-slate-700/50">
           <div className="container-std h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-8 h-8 rounded-xl"
-                   style={{ background: 'linear-gradient(135deg, var(--brand-1), var(--brand-2))' }} />
+              <div
+                className="w-8 h-8 rounded-xl"
+                style={{ background: 'linear-gradient(135deg, var(--brand-1), var(--brand-2))' }}
+              />
               <div className="font-extrabold text-lg brand-gradient-text">Modeling</div>
             </div>
             <div className="flex items-center gap-2">
+              <BrandSwitch />
+              {/* اگر ThemeToggle داری */}
               <ThemeToggle />
             </div>
           </div>
