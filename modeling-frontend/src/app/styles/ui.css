@@ -1,0 +1,47 @@
+﻿/* ===== Shared UI Kit ===== */
+
+/* Card */
+.card {
+  border: 1px solid rgba(226,232,240,.6);
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 1px 2px rgba(15,23,42,.04);
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(15,23,42,.10);
+  border-color: rgba(124,58,237,.35);
+}
+
+/* Button */
+.btn {
+  display: inline-flex; align-items: center; justify-content: center;
+  gap: .5rem; padding: .6rem 1rem;
+  font-size: .92rem; font-weight: 700;
+  border-radius: 9999px; border: 1px solid transparent;
+  transition: transform .06s, box-shadow .2s, background-color .2s;
+  cursor: pointer; user-select: none;
+}
+.btn:active { transform: scale(.98); }
+
+.btn-primary { background: linear-gradient(135deg,#7c3aed,#06b6d4); color:#fff; }
+.btn-primary:hover { box-shadow: 0 14px 30px rgba(124,58,237,.32); }
+
+.btn-soft { background:#fff; color:#334155; border:1px solid #cbd5e1; }
+.btn-soft:hover { background:#f8fafc; }
+
+/* Input */
+.input, .select, .textarea {
+  width: 100%;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: .65rem .85rem;
+  font-size: .92rem;
+  outline: none;
+  transition: box-shadow .15s, border-color .15s;
+}
+.input:focus, .select:focus, .textarea:focus {
+  box-shadow: 0 0 0 3px rgba(124,58,237,.18);
+  border-color: rgba(124,58,237,.55);
+}
