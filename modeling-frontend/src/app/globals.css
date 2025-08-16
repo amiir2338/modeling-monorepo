@@ -1,26 +1,198 @@
-@import "tailwindcss";
+/* Tailwind v4 base + utilities */
+@import "tailwindcss/preflight";
+@import "tailwindcss/utilities";
 
+/* ---------- پایه ---------- */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* رنگ پس‌زمینه بسیار ملایم */
+  --bg: 247 248 252;
+  --radius-xl: 12px;
+  --radius-2xl: 16px;
+
+  /* رنگ‌ها */
+  --slate-50:  #f8fafc;
+  --slate-100: #f1f5f9;
+  --slate-200: #e2e8f0;
+  --slate-300: #cbd5e1;
+  --slate-700: #334155;
+
+  --indigo-200: #c7d2fe;
+  --emerald-600: #059669;
+  --emerald-700: #047857;
+  --rose-600:    #e11d48;
+  --rose-700:    #be123c;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
+html, body { height: 100%; }
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  color: var(--slate-700);
+  background-color: rgb(var(--bg));
 }
+
+/* پس‌زمینهٔ عمومی اپ */
+.bg-app { background-color: rgb(var(--bg)); }
+
+/* انتخاب متن */
+::selection {
+  background: var(--indigo-200);
+  color: #000;
+}
+
+/* اسکرول‌بار ظریف */
+* { scrollbar-width: thin; scrollbar-color: var(--slate-300) transparent; }
+*::-webkit-scrollbar { width: 8px; height: 8px; }
+*::-webkit-scrollbar-thumb { background-color: var(--slate-300); border-radius: 9999px; }
+*::-webkit-scrollbar-track { background: transparent; }
+
+/* ---------- کامپوننت‌های کمکی (بدون @apply/@utility) ---------- */
+
+/* کارت‌ها */
+.card {
+  border: 1px solid rgba(226, 232, 240, 0.6); /* slate-200/60 */
+  background: #fff;
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04); /* بسیار لطیف */
+}
+.card-hover {
+  transition: transform .2s ease, box-shadow .2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+}
+
+/* دکمه‌ها */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: .5rem;
+  padding: .5rem 1rem;
+  font-size: .875rem; /* text-sm */
+  font-weight: 500;
+  border-radius: var(--radius-xl);
+  transition: background-color .2s ease, color .2s ease, transform .05s ease, border-color .2s ease;
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;
+}
+.btn:active { transform: scale(0.99); }
+
+.btn-primary {
+  background: #000;
+  color: #fff;
+}
+.btn-primary:hover { background: #111827; } /* slate-800 */
+
+.btn-outline {
+  background: #fff;
+  color: var(--slate-700);
+  border: 1px solid var(--slate-300);
+}
+.btn-outline:hover { background: var(--slate-50); }
+
+.btn-ghost {
+  background: transparent;
+  color: var(--slate-700);
+}
+.btn-ghost:hover { background: var(--slate-100); }
+
+.btn-danger {
+  background: var(--rose-600);
+  color: #fff;
+}
+.btn-danger:hover { background: var(--rose-700); }
+
+.btn-success {
+  background: var(--emerald-600);
+  color: #fff;
+}
+.btn-success:hover { background: var(--emerald-700); }
+
+/* بج‌ها */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+  padding: .125rem .5rem;
+  font-size: .75rem;   /* text-xs */
+  border-radius: 9999px;
+  border: 1px solid var(--slate-200);
+  background: var(--slate-50);
+  color: var(--slate-700);
+}
+.badge-slate { border-color: var(--slate-200); background: var(--slate-50); color: var(--slate-700); }
+.badge-green { border-color: #a7f3d0; background: #ecfdf5; color: #065f46; }
+.badge-amber { border-color: #fde68a; background: #fffbeb; color: #92400e; }
+.badge-red   { border-color: #fecdd3; background: #fff1f2; color: #9f1239; }
+.badge-blue  { border-color: #bae6fd; background: #eff6ff; color: #075985; }
+
+/* فرم‌ها */
+.input,
+.textarea,
+.select {
+  width: 100%;
+  border: 1px solid var(--slate-300);
+  background: #fff;
+  padding: .5rem .75rem;
+  font-size: .875rem;
+  border-radius: var(--radius-xl);
+  outline: none;
+  transition: box-shadow .15s ease, border-color .15s ease;
+}
+.input:focus,
+.textarea:focus,
+.select:focus {
+  box-shadow: 0 0 0 3px rgba(199, 210, 254, .6); /* indigo-200 ring */
+  border-color: #c7d2fe;
+}
+
+.switch { width: 1rem; height: 1rem; accent-color: #4f46e5; /* indigo-600 */ }
+.label { font-size: .875rem; color: var(--slate-700); margin-bottom: .25rem; display: inline-block; }
+.helper { font-size: .75rem; color: #64748b; } /* slate-500 */
+.error  { font-size: .75rem; color: #e11d48; } /* rose-600 */
+
+/* Skeleton */
+.skeleton {
+  border-radius: var(--radius-xl);
+  background: rgba(226, 232, 240, .7);
+  animation: pulse 1.5s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: .6; }
+  50%      { opacity: 1; }
+}
+
+/* Utilities کوچک */
+.container-std { max-width: 72rem; margin-inline: auto; padding-inline: 1rem; } /* 6xl + px-4 */
+.hr { width: 100%; height: 1px; background: var(--slate-200); }
+
+/* لینک‌ها */
+a.link { color: #4f46e5; text-underline-offset: 4px; }
+a.link:hover { color: #4338ca; text-decoration: underline; }
+
+/* تیترها */
+.h1 { font-size: 1.5rem; font-weight: 700; }
+.h2 { font-size: 1.25rem; font-weight: 600; }
+.h3 { font-size: 1.125rem; font-weight: 600; }
+
+/* جدول‌ها */
+.table { width: 100%; border: 1px solid var(--slate-200); border-radius: var(--radius-xl); overflow: hidden; border-collapse: separate; border-spacing: 0; }
+.table thead th {
+  background: var(--slate-50);
+  color: var(--slate-700);
+  font-size: .75rem;
+  font-weight: 600;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  padding: .75rem;
+  border-bottom: 1px solid var(--slate-200);
+}
+.table tbody td {
+  padding: .75rem;
+  font-size: .875rem;
+  border-bottom: 1px solid #f1f5f9; /* slate-100 */
+}
+.table tbody tr:hover { background: rgba(241,245,249, .6); } /* slate-100/60 */
