@@ -1,0 +1,19 @@
+# عمومی
+*.log
+.DS_Store
+Thumbs.db
+
+# همه‌ی زیرپوشه‌ها (فرانت/بک‌اند)
+**/node_modules/
+**/.next/
+**/dist/
+**/build/
+**/coverage/
+**/.turbo/
+**/.vercel/
+
+# envها
+**/.env
+**/.env.*
+**/.env.local
+**/.env.*.local
