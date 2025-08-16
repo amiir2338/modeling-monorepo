@@ -1,5 +1,5 @@
 import './globals.css'
-import './styles/ui.css'
+import '../styles/ui.css'
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
