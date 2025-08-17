@@ -5,11 +5,9 @@ import { useRouter } from 'next/navigation';
 
 /**
  * ELI5:
- * - کارت وسط صفحه با radius=25px.
- * - ورودی‌ها قد 52px و placeholder داخل خود فیلد.
- * - چک‌باکس و متن در یک خط و مرتب.
- * - فاصله‌ی اضافه قبل از دکمه‌ها و بین دکمه‌ها.
- * - بدون any و بدون متغیر/پراپ بلااستفاده.
+ * - کارت با radius=25px.
+ * - فاصله‌ها: عنوان→فرم = 3px، بین همه فیلدها = 4px، قبل از دکمه‌ها = 4px، بین دکمه‌ها = 4px.
+ * - ایمیل و موبایل LTR هستند اما متن راهنمایشان (placeholder) و متن داخل فیلد راست‌چین می‌شود.
  */
 
 type RegisterForm = {
@@ -108,7 +106,7 @@ export default function RegisterPage() {
         aria-hidden
         className="absolute inset-x-0 top-0 h-[40vh] pointer-events-none"
         style={{
-          background: `radial-gradient(1200px 350px at 50% -50px, ${mix(BRAND.accent, '#ffffff', 0.2)}, transparent 70%)`,
+          background: 'radial-gradient(1200px 350px at 50% -50px, #e8defb, transparent 70%)',
         }}
       />
 
@@ -135,14 +133,20 @@ export default function RegisterPage() {
           ثبت نام
         </h1>
 
-        <form className="mt-6 grid grid-cols-1 sm:grid-cols-2 gap-4" onSubmit={onSubmit}>
-          {/* ورودی‌ها—placeholder داخل فیلد، قد 52px */}
+        {/* فاصله عنوان تا فرم = 3px */}
+        <form
+          className="grid grid-cols-1 sm:grid-cols-2"
+          style={{ marginTop: 3, columnGap: 4, rowGap: 4 }} // gap-x/y = 4px
+          onSubmit={onSubmit}
+        >
+          {/* ورودی‌ها—قد 52px، placeholder داخل فیلد */}
           <FieldInput
             placeholder="نام و نام خانوادگی"
             value={form.fullName}
             onChange={(v) => update('fullName', v)}
             error={errors.fullName}
           />
+
           <FieldInput
             placeholder="ایمیل"
             type="email"
@@ -150,7 +154,9 @@ export default function RegisterPage() {
             onChange={(v) => update('email', v)}
             error={errors.email}
             ltr
+            alignRight // ⟵ متن/placeholder راست‌چین ولی فیلد LTR
           />
+
           <FieldInput
             placeholder="شماره موبایل"
             type="tel"
@@ -158,8 +164,10 @@ export default function RegisterPage() {
             onChange={(v) => update('phone', v)}
             error={errors.phone}
             ltr
+            alignRight // ⟵ متن/placeholder راست‌چین
             inputMode="numeric"
           />
+
           <FieldInput
             placeholder="رمز عبور (حداقل ۶ کاراکتر)"
             type="password"
@@ -167,6 +175,7 @@ export default function RegisterPage() {
             onChange={(v) => update('password', v)}
             error={errors.password}
           />
+
           <FieldInput
             placeholder="تکرار رمز عبور"
             type="password"
@@ -175,7 +184,7 @@ export default function RegisterPage() {
             error={errors.confirm}
           />
 
-          {/* چک‌باکس—در یک خط و مرتب */}
+          {/* چک‌باکس—فاصله‌ها مطابق 4px شبکه */}
           <div className="sm:col-span-2">
             <label
               className="flex items-center gap-2 text-sm"
@@ -200,10 +209,10 @@ export default function RegisterPage() {
             </label>
           </div>
 
-          {/* پیام سرور */}
+          {/* پیام سرور (اگر بود) — با فاصله 4px نسبت به آیتم‌های اطراف */}
           {serverMsg && (
             <div
-              className="sm:col-span-2 text-sm rounded-xl p-3 mt-1"
+              className="sm:col-span-2 text-sm rounded-xl p-3"
               style={{
                 color: serverMsg.includes('موفق') ? '#047857' : '#b91c1c',
                 background: serverMsg.includes('موفق') ? '#ecfdf5' : '#fef2f2',
@@ -214,11 +223,11 @@ export default function RegisterPage() {
             </div>
           )}
 
-          {/* فاصله قبل از دکمه‌ها */}
-          <div className="sm:col-span-2 h-4" />
+          {/* فاصله قبل از دکمه‌ها = 4px */}
+          <div className="sm:col-span-2" style={{ marginTop: 4 }} />
 
-          {/* دکمه‌ها—با فاصلهٔ بیشتر از هم */}
-          <div className="sm:col-span-2 flex flex-col items-center gap-4">
+          {/* دکمه‌ها—فاصله بین‌شان = 4px */}
+          <div className="sm:col-span-2 flex flex-col items-center" style={{ gap: 4 }}>
             <button
               type="submit"
               disabled={busy}
@@ -275,12 +284,14 @@ function FieldInput(props: {
   error?: string;
   type?: React.HTMLInputTypeAttribute;
   inputMode?: React.HTMLAttributes<HTMLInputElement>['inputMode'];
-  /** اگر true باشد، ورودی LTR می‌شود؛ در غیر این‌صورت RTL است. */
+  /** اگر true باشد، ورودی LTR می‌شود (برای ایمیل/شماره). */
   ltr?: boolean;
+  /** اگر true باشد، متن/placeholder راست‌چین می‌شود حتی وقتی فیلد LTR است. */
+  alignRight?: boolean;
 }) {
   const {
     placeholder, value, onChange, error,
-    type = 'text', inputMode, ltr,
+    type = 'text', inputMode, ltr, alignRight,
   } = props;
 
   const style: React.CSSProperties = {
@@ -292,7 +303,8 @@ function FieldInput(props: {
     transition: 'box-shadow .15s, border-color .15s',
     boxShadow: error ? '0 0 0 3px rgba(244,63,94,.15)' : 'none',
     direction: ltr ? 'ltr' : 'rtl',
-    textAlign: ltr ? 'left' : 'right',
+    // اگر alignRight فعال باشد، متن و placeholder راست‌چین می‌شود
+    textAlign: alignRight ? 'right' : (ltr ? 'left' : 'right'),
   };
 
   return (
