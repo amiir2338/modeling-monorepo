@@ -29,7 +29,7 @@ export default function SplashPage() {
     return () => clearTimeout(t);
   }, []);
 
-  const goToSignup = () => router.push('/auth/register'); // TODO: مسیر واقعی ثبت‌نام
+  const goToSignup = () => router.push('/register'); // TODO: مسیر واقعی ثبت‌نام
   const continueAsGuest = () => {
     try { localStorage.setItem('guest', '1'); } catch {}
     router.push('/jobs'); // TODO: مسیر لندینگ مهمان
