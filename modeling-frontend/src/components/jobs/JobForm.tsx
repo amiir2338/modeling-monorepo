@@ -2,7 +2,7 @@
 
 import React, { useMemo } from 'react';
 
-/* ELI5: این تایپ‌ها فقط به ادیتور و TS کمک می‌کنند بداند فرم چه فیلدهایی دارد */
+/* ELI5: تایپ‌ها فقط به ادیتور/TS کمک می‌کنند بداند فرم چه فیلدهایی دارد */
 export type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
 export type JobFormValue = {
   title: string;
@@ -31,7 +31,7 @@ type Props = {
   onUpdateAndResend?: () => void;
 };
 
-/* ELI5: بج وضعیت با رنگ‌های متفاوت؛ مثل برچسب‌های کارت مرجع */
+/* ✅ پولیش بج وضعیت (کپسولی، فونت بولد، نقطه 6px) */
 function StatusBadge({ status }: { status: JobStatus }) {
   const cls =
     status === 'approved'
@@ -49,9 +49,11 @@ function StatusBadge({ status }: { status: JobStatus }) {
     : 'پیش‌نویس';
 
   return (
-    <span className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${cls}`}>
-      {/* ELI5: این نقطه‌ی کوچک فقط چراغ وضعیت است */}
-      <span className="w-2 h-2 rounded-full bg-current/50" />
+    <span
+      className={`inline-flex items-center gap-1.5 rounded-full border px-3 h-6 text-[12px] font-bold leading-none ${cls}`}
+    >
+      {/* ELI5: چراغ وضعیت 6×6 که با رنگ متن ست می‌شود */}
+      <span className="w-1.5 h-1.5 rounded-full bg-current/60" />
       {label}
     </span>
   );
@@ -76,10 +78,13 @@ export default function JobForm(props: Props) {
   const isCreate = mode === 'create';
   const busy = savingDraft || submitting;
 
+  /* ✅ تیتر و زیرتیتر بهتر */
   const titleText = isCreate ? 'ثبت آگهی مدلینگ' : 'ویرایش آگهی مدلینگ';
-  const subtitleText = isCreate ? 'فرم: ایجاد' : 'فرم: ویرایش';
+  const subtitleText = isCreate
+    ? 'فرم ایجاد آگهی — اطلاعات کامل‌تر = بررسی سریع‌تر'
+    : 'فرم ویرایش آگهی — پس از اصلاح، دوباره برای بررسی ارسال می‌شود';
 
-  /* ELI5: اگر سرور زمان انقضای درافت را بدهد، این را به تاریخ خوانا تبدیل می‌کنیم */
+  /* ELI5: اگر سرور زمان انقضای درافت را بدهد، آن را خوانا می‌کنیم */
   const draftCountdown = useMemo(() => {
     if (!draftExpiresAt) return null;
     const dt = new Date(draftExpiresAt);
@@ -91,36 +96,36 @@ export default function JobForm(props: Props) {
   }, [draftExpiresAt]);
 
   return (
-    // ELI5: کل فرم داخل یک «کارت» با گوشه‌های گرد، سایه‌ی لطیف و مرز ملایم
+    // کل فرم داخل کارت (استایل کارت در job-card.css لود می‌شود از layout)
     <section className="job-card">
-      {/* هدر کارت با پس‌زمینه‌ی شیشه‌ای و تیتر گرادیانی بر اساس رنگ برند */}
-      <div className="job-card__header">
-        <div className="job-card__header-title">
-          <h1 className="job-card__title">
-            {titleText} ✨
-          </h1>
+      {/* ✅ هدر کارت وسط‌چین: تیتر وسط، زیرتیتر واضح، و بج زیر آن */}
+      <div className="job-card__header job-card__header--center">
+        <div className="job-card__header-title job-card__header-title--center">
+          <h1 className="job-card__title">{titleText} ✨</h1>
           <p className="job-card__subtitle">{subtitleText}</p>
         </div>
-        <StatusBadge status={status} />
+
+        {/* بج وضعیت زیر تیتر و وسط */}
+        <div className="job-card__badges">
+          <StatusBadge status={status} />
+        </div>
       </div>
 
       {draftCountdown && (
-        <div className="job-card__meta">
+        <div className="job-card__meta job-card__meta--center">
           ⏳ انقضای پیش‌نویس: <span className="font-semibold">{draftCountdown}</span>
         </div>
       )}
 
-      {/* خط جداکنندهٔ خیلی روشن مثل کارت مرجع */}
       <hr className="job-card__divider" />
 
-      {/* بدنه‌ی کارت: فیلدها با spacing منظم 12/16px */}
+      {/* بدنه کارت با فاصله‌گذاری منظم */}
       <div className="job-card__body">
         {/* عنوان */}
         <div className="job-field">
           <label className="job-label">
             موضوع <span className="text-rose-500">*</span>
           </label>
-          {/* ELI5: از کلاس‌های input خودت + پدینگ و فوکوس نرم استفاده شده */}
           <input
             className="input job-input"
             placeholder="مثلاً: نیازمند مدل خانم برای کمپین پاییزی"
@@ -194,22 +199,15 @@ export default function JobForm(props: Props) {
 
         {/* پیام موفق/خطا */}
         {(error || message) && (
-          <div
-            className={`job-alert ${error ? 'job-alert--error' : 'job-alert--ok'}`}
-          >
+          <div className={`job-alert ${error ? 'job-alert--error' : 'job-alert--ok'}`}>
             {error ?? message}
           </div>
         )}
 
-        {/* دکمه‌ها: یکی نرم (پیش‌نویس) و یکی CTA «گوشتالو» مطابق برند */}
+        {/* اکشن‌ها */}
         <div className="job-actions">
           {isCreate && typeof onSaveDraft === 'function' && (
-            <button
-              type="button"
-              disabled={busy}
-              onClick={onSaveDraft}
-              className="btn btn-soft"
-            >
+            <button type="button" disabled={busy} onClick={onSaveDraft} className="btn btn-soft">
               ذخیره پیش‌نویس
             </button>
           )}
@@ -220,7 +218,6 @@ export default function JobForm(props: Props) {
               disabled={busy}
               onClick={onSubmitForReview}
               className="btn btn-cta"
-              // ELI5: CTA طبق برند رنگ می‌گیرد؛ حس «قابل‌کلیک و دوستانه»
               title={isCreate ? 'ارسال برای بررسی' : 'ارسال/به‌روزرسانی برای بررسی'}
             >
               {isCreate ? 'ارسال برای بررسی' : 'به‌روزرسانی و ارسال'}
