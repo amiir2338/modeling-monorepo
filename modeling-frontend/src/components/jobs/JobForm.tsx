@@ -2,7 +2,6 @@
 
 import React, { useMemo } from 'react';
 
-/* ELI5: تایپ‌ها فقط به ادیتور/TS کمک می‌کنند بداند فرم چه فیلدهایی دارد */
 export type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
 export type JobFormValue = {
   title: string;
@@ -31,16 +30,18 @@ type Props = {
   onUpdateAndResend?: () => void;
 };
 
-/* ✅ پولیش بج وضعیت (کپسولی، فونت بولد، نقطه 6px) */
+/* ELI5: بج وضعیت — این نسخه فقط با کلاس‌های Tailwind کار می‌کند و به هیچ CSS خارجی وابسته نیست */
 function StatusBadge({ status }: { status: JobStatus }) {
-  const cls =
+  const base =
+    'inline-flex items-center gap-1.5 h-8 px-3.5 rounded-full border text-[13px] font-extrabold leading-none shadow-sm';
+  const palette =
     status === 'approved'
-      ? 'bg-emerald-100 text-emerald-700 border-emerald-200'
+      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
       : status === 'rejected'
-      ? 'bg-rose-100 text-rose-700 border-rose-200'
+      ? 'bg-rose-50 text-rose-700 border-rose-200'
       : status === 'pending_review'
-      ? 'bg-amber-100 text-amber-700 border-amber-200'
-      : 'bg-slate-100 text-slate-700 border-slate-200';
+      ? 'bg-amber-50 text-amber-700 border-amber-200'
+      : 'bg-slate-50 text-slate-700 border-slate-200';
 
   const label =
     status === 'approved' ? 'تایید شده'
@@ -49,10 +50,7 @@ function StatusBadge({ status }: { status: JobStatus }) {
     : 'پیش‌نویس';
 
   return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full border px-3 h-6 text-[12px] font-bold leading-none ${cls}`}
-    >
-      {/* ELI5: چراغ وضعیت 6×6 که با رنگ متن ست می‌شود */}
+    <span className={`${base} ${palette}`}>
       <span className="w-1.5 h-1.5 rounded-full bg-current/60" />
       {label}
     </span>
@@ -78,13 +76,10 @@ export default function JobForm(props: Props) {
   const isCreate = mode === 'create';
   const busy = savingDraft || submitting;
 
-  /* ✅ تیتر و زیرتیتر بهتر */
-  const titleText = isCreate ? 'ثبت آگهی مدلینگ' : 'ویرایش آگهی مدلینگ';
-  const subtitleText = isCreate
-    ? 'فرم ایجاد آگهی — اطلاعات کامل‌تر = بررسی سریع‌تر'
-    : 'فرم ویرایش آگهی — پس از اصلاح، دوباره برای بررسی ارسال می‌شود';
+  /* عنوان‌ها: «ثبت فراخوان» / «ویرایش فراخوان» */
+  const titleText = isCreate ? 'ثبت فراخوان' : 'ویرایش فراخوان';
 
-  /* ELI5: اگر سرور زمان انقضای درافت را بدهد، آن را خوانا می‌کنیم */
+  /* شمارش معکوس انقضای پیش‌نویس (اختیاری) */
   const draftCountdown = useMemo(() => {
     if (!draftExpiresAt) return null;
     const dt = new Date(draftExpiresAt);
@@ -96,87 +91,99 @@ export default function JobForm(props: Props) {
   }, [draftExpiresAt]);
 
   return (
-    // کل فرم داخل کارت (استایل کارت در job-card.css لود می‌شود از layout)
-    <section className="job-card">
-      {/* ✅ هدر کارت وسط‌چین: تیتر وسط، زیرتیتر واضح، و بج زیر آن */}
-      <div className="job-card__header job-card__header--center">
-        <div className="job-card__header-title job-card__header-title--center">
-          <h1 className="job-card__title">{titleText} ✨</h1>
-          <p className="job-card__subtitle">{subtitleText}</p>
-        </div>
+    // کارت: اگر job-card.css لود نشده هم، این کلاس‌ها ظاهر تمیز می‌دهند
+    <section className="rounded-2xl border border-slate-200 bg-white shadow-[0_8px_28px_rgba(15,23,42,.06)] overflow-hidden">
+      {/* هدر وسط‌چین */}
+      <div className="flex flex-col items-center justify-center gap-2 p-4 sm:p-5"
+        style={{
+          backgroundImage:
+            'linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 10%, #ffffff), color-mix(in srgb, var(--brand-2) 10%, #ffffff))',
+          // ELI5: اگر متغیرهای برند تعریف نشده باشند، مرورگر از #fff می‌سازد (ملایم می‌ماند)
+        }}
+      >
+        {/* تیتر گرادیانی */}
+        <h1
+          className="text-center font-extrabold bg-clip-text text-transparent"
+          style={{
+            backgroundImage: 'linear-gradient(135deg, var(--brand-1), var(--brand-2))',
+            fontSize: '1.6rem',
+            lineHeight: 1.4,
+          }}
+        >
+          {titleText} ✨
+        </h1>
 
-        {/* بج وضعیت زیر تیتر و وسط */}
-        <div className="job-card__badges">
-          <StatusBadge status={status} />
-        </div>
+        {/* بج وضعیت زیر عنوان */}
+        <StatusBadge status={status} />
       </div>
 
+      {/* متادیتا (انقضای پیش‌نویس) وسط‌چین */}
       {draftCountdown && (
-        <div className="job-card__meta job-card__meta--center">
-          ⏳ انقضای پیش‌نویس: <span className="font-semibold">{draftCountdown}</span>
-        </div>
+        <div className="text-center text-[13px] text-slate-600 pb-2">⏳ انقضای پیش‌نویس: <b>{draftCountdown}</b></div>
       )}
 
-      <hr className="job-card__divider" />
+      {/* جداکننده روشن */}
+      <hr className="h-px border-0"
+        style={{ background: 'linear-gradient(90deg, transparent, #e5e7eb, transparent)' }} />
 
-      {/* بدنه کارت با فاصله‌گذاری منظم */}
-      <div className="job-card__body">
+      {/* بدنه کارت */}
+      <div className="p-5 sm:p-6">
         {/* عنوان */}
-        <div className="job-field">
-          <label className="job-label">
+        <div className="flex flex-col gap-1.5 mb-4">
+          <label className="text-sm text-slate-800">
             موضوع <span className="text-rose-500">*</span>
           </label>
           <input
-            className="input job-input"
-            placeholder="مثلاً: نیازمند مدل خانم برای کمپین پاییزی"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-indigo-200"
+            placeholder="مثلاً: نیازمند مدل برای کمپین پاییزی"
             value={value.title}
             onChange={(e) => onChange({ title: e.target.value })}
           />
         </div>
 
         {/* توضیح */}
-        <div className="job-field">
-          <label className="job-label">
+        <div className="flex flex-col gap-1.5 mb-4">
+          <label className="text-sm text-slate-800">
             توضیح <span className="text-rose-500">*</span>
           </label>
           <textarea
             rows={5}
-            className="textarea job-input"
+            className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-indigo-200"
             placeholder="جزئیات پروژه، نیازمندی‌ها، زمان و ..."
             value={value.description}
             onChange={(e) => onChange({ description: e.target.value })}
           />
-          <p className="job-hint">توضیح شفاف‌تر → پذیرش سریع‌تر ✅</p>
+          <p className="text-xs text-slate-500">توضیح شفاف‌تر → پذیرش سریع‌تر ✅</p>
         </div>
 
         {/* مبلغ/شهر/تاریخ */}
-        <div className="job-grid">
-          <div className="job-field">
-            <label className="job-label">مبلغ (آفیش)</label>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-4">
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm text-slate-800">مبلغ (آفیش)</label>
             <input
               inputMode="numeric"
-              className="input job-input"
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-indigo-200"
               placeholder="مثلاً 3,000,000"
               value={value.budgetString}
               onChange={(e) => onChange({ budgetString: e.target.value })}
             />
           </div>
 
-          <div className="job-field">
-            <label className="job-label">لوکیشن (شهر)</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm text-slate-800">لوکیشن (شهر)</label>
             <input
-              className="input job-input"
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-indigo-200"
               placeholder="مثلاً تهران"
               value={value.city}
               onChange={(e) => onChange({ city: e.target.value })}
             />
           </div>
 
-          <div className="job-field">
-            <label className="job-label">تاریخ برگزاری/شروع</label>
+          <div className="flex flex-col gap-1.5">
+            <label className="text-sm text-slate-800">تاریخ برگزاری/شروع</label>
             <input
               type="date"
-              className="input job-input"
+              className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none transition focus:ring-2 focus:ring-indigo-200"
               value={value.date}
               onChange={(e) => onChange({ date: e.target.value })}
             />
@@ -184,40 +191,53 @@ export default function JobForm(props: Props) {
         </div>
 
         {/* قوانین */}
-        <div className="job-check">
+        <div className="flex items-start gap-2 rounded-xl border border-slate-200 p-3 mb-4">
           <input
             id="terms"
             type="checkbox"
-            className="job-check__box"
+            className="mt-1 w-4 h-4 accent-indigo-600"
             checked={value.termsAccepted}
             onChange={(e) => onChange({ termsAccepted: e.target.checked })}
           />
-          <label htmlFor="terms" className="job-check__label">
+          <label htmlFor="terms" className="text-sm">
             <span className="font-medium">شرایط و قوانین</span> را می‌پذیرم و مطالعه کردم.
           </label>
         </div>
 
         {/* پیام موفق/خطا */}
         {(error || message) && (
-          <div className={`job-alert ${error ? 'job-alert--error' : 'job-alert--ok'}`}>
+          <div className={`rounded-xl border p-3 text-sm ${error ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'} mb-4`}>
             {error ?? message}
           </div>
         )}
 
         {/* اکشن‌ها */}
-        <div className="job-actions">
+        <div className="flex flex-wrap items-center gap-3">
+          {/* دکمه Outline برند برای «ذخیره پیش‌نویس» */}
           {isCreate && typeof onSaveDraft === 'function' && (
-            <button type="button" disabled={busy} onClick={onSaveDraft} className="btn btn-soft">
+            <button
+              type="button"
+              disabled={busy}
+              onClick={onSaveDraft}
+              className="inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold bg-white transition hover:bg-slate-50 disabled:opacity-50"
+              style={{
+                // ELI5: رنگ و بردر را مستقیم از متغیر برند می‌گیریم تا با سوییچر هماهنگ شود
+                color: 'var(--brand-1)',
+                borderColor: 'var(--brand-1)',
+              }}
+            >
               ذخیره پیش‌نویس
             </button>
           )}
 
+          {/* CTA گرادیانی اصلی */}
           {typeof onSubmitForReview === 'function' && (
             <button
               type="button"
               disabled={busy}
               onClick={onSubmitForReview}
-              className="btn btn-cta"
+              className="inline-flex items-center justify-center rounded-full px-5 py-2.5 text-sm font-extrabold text-white shadow-lg disabled:opacity-50"
+              style={{ backgroundImage: 'linear-gradient(135deg, var(--brand-1), var(--brand-2))' }}
               title={isCreate ? 'ارسال برای بررسی' : 'ارسال/به‌روزرسانی برای بررسی'}
             >
               {isCreate ? 'ارسال برای بررسی' : 'به‌روزرسانی و ارسال'}
@@ -229,13 +249,14 @@ export default function JobForm(props: Props) {
               type="button"
               disabled={busy}
               onClick={onUpdateAndResend}
-              className="btn btn-soft"
+              className="inline-flex items-center justify-center rounded-full border px-4 py-2 text-sm font-bold bg-white transition hover:bg-slate-50 disabled:opacity-50"
+              style={{ color: 'var(--brand-1)', borderColor: 'var(--brand-1)' }}
             >
               ذخیره تغییرات
             </button>
           )}
 
-          {busy && <span className="job-busy">در حال انجام…</span>}
+          {busy && <span className="text-xs text-slate-500">در حال انجام…</span>}
         </div>
       </div>
     </section>
