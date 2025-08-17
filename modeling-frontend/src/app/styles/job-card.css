@@ -1,4 +1,4 @@
-/* ===== Job Card — center header & better badge ===== */
+/* ===== Job Card — centered header, bigger draft chip, outline button ===== */
 
 :root {
   --brand-1: var(--brand-1, #ef4444);
@@ -14,13 +14,13 @@
   overflow: hidden;
 }
 
-/* ✅ هدر کارت وسط‌چین */
+/* هدر وسط‌چین؛ زیرتیتر حذف شده، فاصله‌ها رگلاژ */
 .job-card__header {
   display: flex;
-  flex-direction: column;           /* قبلاً افقی بود */
-  align-items: center;              /* وسط‌چین افقی */
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 6px;
   padding: 16px 20px;
   background: linear-gradient(
     135deg,
@@ -30,26 +30,24 @@
   backdrop-filter: saturate(140%) blur(6px);
 }
 .job-card__header-title { display:flex; flex-direction:column; }
-.job-card__header-title--center { text-align: center; } /* ✅ متن تیتر/زیرتیتر وسط */
+.job-card__header-title--center { text-align: center; }
 
+/* عنوان گرادیانی */
 .job-card__title {
   background-image: linear-gradient(135deg, var(--brand-1), var(--brand-2));
   -webkit-background-clip: text; background-clip: text; color: transparent;
-  font-size: 1.25rem; font-weight: 800; line-height: 1.4;
+  font-size: 1.4rem; font-weight: 800; line-height: 1.4;
 }
-@media (min-width: 640px) { .job-card__title { font-size: 1.5rem; } }
+@media (min-width: 640px) { .job-card__title { font-size: 1.6rem; } }
 
-/* ✅ زیرتیتر واضح‌تر */
-.job-card__subtitle { margin-top: 2px; font-size: .9rem; color: #475569; }
+/* بج‌ها زیر عنوان و وسط */
+.job-card__badges { display:flex; align-items:center; justify-content:center; gap: 10px; margin-top: 2px; }
 
-/* بج‌ها زیر تیتر و وسط */
-.job-card__badges { display:flex; align-items:center; justify-content:center; gap: 8px; margin-top: 6px; }
-
-/* متادیتا (اختیاری) وسط‌چین */
+/* متادیتا اختیاری (مثل زمان انقضای درافت) وسط‌چین */
 .job-card__meta { padding: 0 20px 8px; font-size: .8rem; color:#475569; }
 .job-card__meta--center { text-align: center; }
 
-/* جداکننده بسیار روشن */
+/* جداکننده خیلی روشن */
 .job-card__divider {
   height: 1px; border: 0; background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
 }
@@ -74,21 +72,32 @@
   border-color: color-mix(in srgb, var(--brand-1) 55%, #cbd5e1) !important;
 }
 
+/* ✅ چیپ وضعیت بزرگ‌تر و حرفه‌ای‌تر */
+.status-chip {
+  display: inline-flex; align-items: center; gap: 6px;
+  height: 32px;            /* قد بزرگتر نسبت به قبل (24px) */
+  padding: 0 14px;         /* پدینگ بیشتر */
+  font-size: 13px; font-weight: 800; line-height: 1;
+  border-radius: 9999px; border: 1px solid;   /* رنگ بردر از کلاس رنگی می‌آید */
+  box-shadow: 0 1px 0 rgba(0,0,0,.03);        /* سایه خیلی لطیف */
+}
+
+/* قوانین (چک‌باکس) */
 .job-check { display:flex; align-items:flex-start; gap: 8px; border:1px solid rgba(226,232,240,.7); border-radius:12px; padding: 10px 12px; }
 .job-check__box { width: 16px; height: 16px; accent-color: color-mix(in srgb, var(--brand-1) 80%, var(--brand-2) 20%); margin-top: 2px; }
 .job-check__label { font-size:.9rem; }
 
+/* پیام‌ها */
 .job-alert { border-radius:12px; padding:10px 12px; font-size:.85rem; border:1px solid; }
 .job-alert--error { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
 .job-alert--ok { background:#ecfdf5; color:#047857; border-color:#a7f3d0; }
 
+/* اکشن‌ها (دکمه‌ها) */
 .job-actions { display:flex; flex-wrap:wrap; gap: 10px; align-items:center; margin-top: 6px; }
 .btn { display:inline-flex; align-items:center; justify-content:center; padding:.6rem 1rem; font-weight:700; border-radius:9999px; border:1px solid transparent; cursor:pointer; transition:.2s; user-select:none; }
 .btn:active { transform: scale(.98); }
 
-.btn-soft { background:#fff; color:#334155; border:1px solid #cbd5e1; }
-.btn-soft:hover { background:#f8fafc; }
-
+/* دکمه CTA گرادیانی (همان قبلی) */
 .btn-cta {
   height: 48px; padding: 0 22px; font-weight: 800; color:#fff;
   background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
@@ -97,4 +106,14 @@
 }
 .btn-cta:hover { filter: saturate(110%); box-shadow: 0 18px 36px rgba(15,23,42,.16); }
 
-.job-busy { font-size:.78rem; color:#64748b; }
+/* ✅ دکمهٔ Outline برند برای «ذخیره پیش‌نویس» و «ذخیره تغییرات» */
+.btn-outline-brand {
+  background:#fff;
+  color: color-mix(in srgb, var(--brand-1) 88%, var(--brand-2) 12%);
+  border: 1px solid color-mix(in srgb, var(--brand-1) 60%, #e2e8f0);
+  box-shadow: 0 1px 0 rgba(0,0,0,.02);
+}
+.btn-outline-brand:hover {
+  background: color-mix(in srgb, var(--brand-1) 6%, #ffffff);
+  box-shadow: 0 10px 22px rgba(15,23,42,.08);
+}
