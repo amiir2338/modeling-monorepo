@@ -1,26 +1,30 @@
-﻿import './repeat-guard';
-import './globals.css'
-import './styles/ui.css'
+﻿import './globals.css';
+import './styles/ui.css';
+import './styles/job-card.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
-import ThemeToggle from '../components/ThemeToggle'; // Ã˜Â§ÃšÂ¯Ã˜Â± Ã™â€šÃ˜Â¨Ã™â€žÃ˜Â§Ã™â€¹ Ã˜Â³Ã˜Â§Ã˜Â®Ã˜ÂªÃ›Å’Ã™â€¦
+import ThemeToggle from '../components/ThemeToggle'; // اگر قبلاً ساختیم
 import BrandSwitch from '../components/BrandSwitch';
 
 export const metadata: Metadata = {
-  title: 'Modeling Ã¢â‚¬â€ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã™Ë† Ã™ÂÃ˜Â±Ã˜ÂµÃ˜ÂªÃ¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯',
-  description: 'Ã™Â¾Ã™â€žÃ˜ÂªÃ™ÂÃ˜Â±Ã™â€¦ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã˜Â±Ã˜Â§Ã›Å’ÃšÂ¯Ã˜Â§Ã™â€  Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯ + Ã˜Â«Ã˜Â¨Ã˜Âª Ã™Ë† Ã™â€¦Ã˜Â¯Ã›Å’Ã˜Â±Ã›Å’Ã˜Âª Ã˜Â¢ÃšÂ¯Ã™â€¡Ã›Å’Ã¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¡Ã™â€¦ÃšÂ©Ã˜Â§Ã˜Â±Ã›Å’',
+  title: 'Modeling — آموزش و فرصت‌های مدلینگ',
+  description:
+    'پلتفرم آموزش رایگان مدلینگ + ثبت و مدیریت آگهی‌های همکاری',
   icons: { icon: '/favicon.ico' },
   themeColor: '#ffffff',
 };
 
 export const viewport: Viewport = {
-  width: 'device-width', initialScale: 1, maximumScale: 1, viewportFit: 'cover',
+  width: 'device-width',
+  initialScale: 1,
+  maximumScale: 1,
+  viewportFit: 'cover',
 };
 
 const vazir = Vazirmatn({
   subsets: ['arabic', 'latin'],
-  weight: ['300','400','500','700','800'],
+  weight: ['300', '400', '500', '700', '800'],
   display: 'swap',
 });
 
@@ -31,7 +35,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <meta charSet="utf-8" />
       </head>
       <body className="bg-app">
-        {/* Ã™â€¡Ã˜Â¯Ã˜Â± Ã˜Â¨Ã˜Â±Ã™â€ Ã˜Â¯Ã›Å’ */}
+        {/* هدر برندی */}
         <header className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:border-slate-700/50">
           <div className="container-std h-16 flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -43,23 +47,20 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
             <div className="flex items-center gap-2">
               <BrandSwitch />
-              {/* Ã˜Â§ÃšÂ¯Ã˜Â± ThemeToggle Ã˜Â¯Ã˜Â§Ã˜Â±Ã›Å’ */}
               <ThemeToggle />
             </div>
           </div>
         </header>
 
-        {/* Ã˜Â¨ÃšÂ©Ã¢â‚¬Å’ÃšÂ¯Ã˜Â±Ã˜Â§Ã™â€ Ã˜Â¯ Ã™â€žÃ˜Â·Ã›Å’Ã™Â Ã˜ÂµÃ™ÂÃ˜Â­Ã™â€¡ */}
+        {/* بک‌گراند لطیف صفحه */}
         <div className="bg-hero">
           <main className="container-std py-8">{children}</main>
         </div>
 
         <footer className="border-t border-slate-200/60 dark:border-slate-700/50 py-8 text-center text-sm text-slate-500">
-          Ã‚Â© {new Date().getFullYear()} Modeling Ã¢â‚¬â€ Ã˜Â¢Ã™â€¦Ã™Ë†Ã˜Â²Ã˜Â´ Ã™Ë† Ã™ÂÃ˜Â±Ã˜ÂµÃ˜ÂªÃ¢â‚¬Å’Ã™â€¡Ã˜Â§Ã›Å’ Ã™â€¦Ã˜Â¯Ã™â€žÃ›Å’Ã™â€ ÃšÂ¯
+          {'\u00A9'} {new Date().getFullYear()} Modeling {'\u2014'} آموزش و فرصت‌های مدلینگ
         </footer>
       </body>
     </html>
   );
 }
-
-

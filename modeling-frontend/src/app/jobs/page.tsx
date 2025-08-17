@@ -1,344 +1,353 @@
 'use client';
 
 import { useEffect, useMemo, useState } from 'react';
+import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { AxiosError } from 'axios';
 import { axiosInstance } from '../api/axios-instance';
 
-type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
+/**
+ * ELI5: این یعنی آگهی چه فیلدهایی داره؛ فقط واسه تایپ‌اسکریپت و کمک به خودمون.
+ */
 type Job = {
   _id: string;
   title: string;
   description?: string | null;
   budget?: number | null;
   city?: string | null;
-  clientId?: string;
-  status?: JobStatus;
+  clientId?: unknown;
+  status?: 'pending' | 'approved' | 'rejected';
+  rejectedReason?: string | null;
   createdAt?: string;
-  draftExpiresAt?: string | null;
+  updatedAt?: string;
 };
 
-type ListResponse = {
-  total?: number;
-  page?: number;
-  limit?: number;
-  data?: Job[];
-  jobs?: Job[]; // پاسخ /my
+/** اطلاعات کاربر لاگین‌شده */
+type Me = {
+  id: string;
+  role: 'client' | 'admin' | 'user' | string;
+  clientId?: string | null;
 };
 
-type SortBy = 'newest' | 'oldest' | 'budget_desc' | 'budget_asc';
-
-function useQueryParamInt(key: string, fallback = 1) {
-  const [value, setValue] = useState<number>(fallback);
-  useEffect(() => {
-    if (typeof window === 'undefined') return;
-    const sp = new URLSearchParams(window.location.search);
-    const raw = sp.get(key);
-    const n = raw ? Number(raw) : fallback;
-    setValue(Number.isFinite(n) && n > 0 ? n : fallback);
-  }, [key, fallback]);
-  return value;
-}
-
+/** توکن JWT را باز می‌کنیم تا id/role را بفهمیم */
 function decodeJwt(token: string | null): Record<string, unknown> | null {
   if (!token) return null;
   try {
     const [, payload] = token.split('.');
     const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-    return JSON.parse(decodeURIComponent(escape(json)));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    return JSON.parse(decodeURIComponent(escape(json))) as Record<string, unknown>;
   } catch {
     return null;
   }
 }
 
-function Badge({
-  children,
-  color = 'slate',
-}: {
-  children: React.ReactNode;
-  color?: 'green' | 'amber' | 'red' | 'slate' | 'blue';
-}) {
-  const map: Record<string, string> = {
-    green: 'bg-green-100 text-green-700 border-green-200',
-    amber: 'bg-amber-100 text-amber-700 border-amber-200',
-    red: 'bg-red-100 text-red-700 border-red-200',
-    slate: 'bg-slate-100 text-slate-700 border-slate-200',
-    blue: 'bg-blue-100 text-blue-700 border-blue-200',
-  };
+/** از توکن، id/role/clientId را درمی‌آوریم */
+function extractMeFromToken(token: string | null): Me | null {
+  const p = decodeJwt(token);
+  if (!p) return null;
+  const pid = p as Record<string, unknown>;
+
+  const id =
+    (pid.id as string) ?? (pid.userId as string) ?? (pid.user_id as string) ??
+    (pid.sub as string) ?? (pid.uid as string) ??
+    ((pid.user as Record<string, unknown>)?._id as string) ??
+    ((pid.user as Record<string, unknown>)?.id as string) ?? null;
+
+  const clientId =
+    (pid.clientId as string) ??
+    ((pid.user as { clientId?: unknown })?.clientId as string) ?? null;
+
+  let role: string | undefined;
+  if (typeof pid.role === 'string') role = pid.role as string;
+  else if (Array.isArray(pid.roles as unknown[]) && (pid.roles as unknown[]).length) role = String((pid.roles as unknown[])[0]);
+  else if (typeof (pid as { isAdmin?: boolean }).isAdmin === 'boolean') role = (pid as { isAdmin?: boolean }).isAdmin ? 'admin' : 'user';
+  else if (typeof (pid.user as { role?: unknown })?.role === 'string') role = String((pid.user as { role?: unknown }).role);
+
+  if (!id) return null;
+  return { id: String(id), role: (role ?? 'user') as Me['role'], clientId: clientId ?? null };
+}
+
+/** اگر clientId به‌صورت آبجکت بیاد، رشته‌اش می‌کنیم */
+function normalizeId(val: unknown): string | null {
+  if (!val) return null;
+  if (typeof val === 'string') return val;
+  if (typeof val === 'object') {
+    const obj = val as Record<string, unknown>;
+    const a = obj._id ?? obj.id ?? null;
+    return a ? String(a) : null;
+  }
+  return null;
+}
+
+/** بج وضعیت با رنگ مناسب */
+function StatusBadge({ status, title }: { status?: Job['status']; title?: string | null }) {
+  if (!status) return null;
+  const map = {
+    approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
+    pending: 'bg-amber-100 text-amber-800 border-amber-200',
+    rejected: 'bg-rose-100 text-rose-800 border-rose-200',
+  } as const;
+  const label = status === 'approved' ? 'تایید شده' : status === 'pending' ? 'در انتظار تایید' : 'رد شده';
   return (
     <span
-      className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs border ${map[color]}`}
+      title={title ?? undefined}
+      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${map[status]}`}
     >
-      {children}
+      {/* چراغ وضعیت */}
+      <span className="inline-block w-2 h-2 rounded-full bg-current/60" />
+      {label}
     </span>
   );
 }
 
-function statusColor(s?: JobStatus): 'green' | 'amber' | 'red' | 'slate' | 'blue' {
-  switch (s) {
-    case 'approved':
-      return 'green';
-    case 'pending_review':
-      return 'amber';
-    case 'rejected':
-      return 'red';
-    case 'draft':
-      return 'blue';
-    default:
-      return 'slate';
-  }
-}
+export default function JobDetailsPage() {
+  const router = useRouter();
+  const params = useParams<{ id: string }>();
+  const jobId = params?.id;
 
-export default function JobsPage() {
-  const page = useQueryParamInt('page', 1);
-  const limit = 10;
+  // توکن از localStorage → که بفهمیم کی لاگینه
+  const token = useMemo(
+    () => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null),
+    []
+  );
+  const me = useMemo(() => extractMeFromToken(token), [token]);
 
-  // auth
-  const token = typeof window !== 'undefined' ? localStorage.getItem('access_token') : null;
-  const me = token ? decodeJwt(token) : null;
-  const isLoggedIn = !!me;
-
-  // کنترل‌ها
-  const [showMine, setShowMine] = useState<boolean>(isLoggedIn); // اگر لاگین هست، پیش‌فرض «آگهی‌های من»
-  const [q, setQ] = useState<string>(''); // سرچ عنوان
-  const [statusFilter, setStatusFilter] = useState<'all' | JobStatus>('all'); // فقط روی «من»
-  const [sortBy, setSortBy] = useState<SortBy>('newest');
-
-  // داده‌ها
-  const [items, setItems] = useState<Job[]>([]);
-  const [total, setTotal] = useState<number>(0);
-  const [loading, setLoading] = useState<boolean>(true);
+  // وضعیت‌های صفحه
+  const [job, setJob] = useState<Job | null>(null);
+  const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+  const [moderating, setModerating] = useState(false);
+  const [rejectReason, setRejectReason] = useState('');
 
-  const totalPages = useMemo(() => Math.max(1, Math.ceil(total / limit)), [total, limit]);
+  // گرفتن جزئیات آگهی
+  useEffect(() => {
+    if (!jobId) return;
+    let cancelled = false;
 
-  // fetch
-  const fetchList = async () => {
-    setLoading(true);
+    (async () => {
+      setLoading(true);
+      setErr(null);
+      try {
+        const res = await axiosInstance.get<{ ok: boolean; data: Job }>(`/api/v1/jobs/${jobId}`);
+        if (cancelled) return;
+        setJob(res.data.data);
+      } catch (e: unknown) {
+        const ax = e as AxiosError<{ message?: string }>;
+        if (cancelled) return;
+        setErr(ax.response?.data?.message ?? ax.message ?? 'دریافت جزئیات ناموفق بود');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    })();
+
+    return () => { cancelled = true; };
+  }, [jobId]);
+
+  // کی می‌تونه مدیریت کنه؟ (ادمین یا صاحب آگهی)
+  const canManage = useMemo(() => {
+    if (!me || !job) return false;
+    if (me.role === 'admin') return true;
+    if (me.role === 'client') {
+      const jobClient = normalizeId(job.clientId);
+      const myClient = me.clientId ? String(me.clientId) : null;
+      return !!jobClient && !!myClient && jobClient === myClient;
+    }
+    return false;
+  }, [me, job]);
+
+  const isAdmin = me?.role === 'admin';
+
+  // حذف
+  async function onDelete() {
+    if (!job) return;
+    if (!confirm('آیا از حذف این فرصت مطمئن هستی؟')) return;
+    setDeleting(true);
     setErr(null);
     try {
-      const endpoint = showMine && isLoggedIn ? '/api/v1/jobs/my' : '/api/v1/jobs';
-      const res = await axiosInstance.get<ListResponse>(endpoint, {
-        params: { page, limit },
-        headers: showMine && token ? { Authorization: `Bearer ${token}` } : {},
-      });
-      const data = (res.data.jobs ?? res.data.data ?? []) as Job[];
-      setItems(Array.isArray(data) ? data : []);
-      setTotal(res.data.total ?? data.length);
+      await axiosInstance.delete(`/api/v1/jobs/${job._id}`);
+      alert('فرصت با موفقیت حذف شد ✅');
+      router.push('/jobs');
     } catch (e: unknown) {
       const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'خطا در دریافت لیست');
+      setErr(ax.response?.data?.message ?? ax.message ?? 'حذف ناموفق بود');
     } finally {
-      setLoading(false);
+      setDeleting(false);
     }
-  };
+  }
 
-  useEffect(() => {
-    void fetchList();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [page, showMine, isLoggedIn]);
-
-  // فیلتر و مرتب‌سازی (سمت کلاینت)
-  const view = useMemo(() => {
-    let data = [...items];
-
-    // فیلتر وضعیت (فقط وقتی «آگهی‌های من» فعال است)
-    if (showMine && statusFilter !== 'all') {
-      data = data.filter((j) => j.status === statusFilter);
+  // تایید
+  async function onApprove() {
+    if (!job) return;
+    setModerating(true);
+    setErr(null);
+    try {
+      await axiosInstance.patch(`/api/v1/jobs/${job._id}/approve`);
+      alert('آگهی تایید شد ✅');
+      router.refresh();
+    } catch (e: unknown) {
+      const ax = e as AxiosError<{ message?: string }>;
+      setErr(ax.response?.data?.message ?? ax.message ?? 'تایید ناموفق بود');
+    } finally {
+      setModerating(false);
     }
+  }
 
-    // سرچ عنوان
-    const needle = q.trim().toLowerCase();
-    if (needle) {
-      data = data.filter((j) => (j.title || '').toLowerCase().includes(needle));
+  // رد
+  async function onReject() {
+    if (!job) return;
+    if (!rejectReason.trim()) {
+      alert('لطفاً دلیل رد را وارد کنید.');
+      return;
     }
-
-    // مرتب‌سازی
-    data.sort((a, b) => {
-      if (sortBy === 'newest') {
-        return new Date(b.createdAt ?? 0).getTime() - new Date(a.createdAt ?? 0).getTime();
-      } else if (sortBy === 'oldest') {
-        return new Date(a.createdAt ?? 0).getTime() - new Date(b.createdAt ?? 0).getTime();
-      } else if (sortBy === 'budget_desc') {
-        return (b.budget ?? Number.NEGATIVE_INFINITY) - (a.budget ?? Number.NEGATIVE_INFINITY);
-      }
-      // budget_asc
-      return (a.budget ?? Number.POSITIVE_INFINITY) - (b.budget ?? Number.POSITIVE_INFINITY);
-    });
-
-    return data;
-  }, [items, q, statusFilter, sortBy, showMine]);
-
-  // ناوبری صفحه
-  const navigate = (p: number) => {
-    if (typeof window === 'undefined') return;
-    const sp = new URLSearchParams(window.location.search);
-    sp.set('page', String(p));
-    const url = `${window.location.pathname}?${sp.toString()}`;
-    window.history.pushState({}, '', url);
-    window.dispatchEvent(new Event('popstate'));
-  };
-
-  // Skeleton
-  const SkeletonCard = () => (
-    <div className="border rounded-xl p-3 animate-pulse">
-      <div className="h-4 w-48 bg-slate-200 rounded mb-2" />
-      <div className="h-3 w-32 bg-slate-200 rounded mb-1.5" />
-      <div className="h-3 w-64 bg-slate-200 rounded mb-1.5" />
-      <div className="h-3 w-40 bg-slate-200 rounded" />
-    </div>
-  );
+    setModerating(true);
+    setErr(null);
+    try {
+      await axiosInstance.patch(`/api/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
+      alert('آگهی رد شد ❌');
+      router.refresh();
+    } catch (e: unknown) {
+      const ax = e as AxiosError<{ message?: string }>;
+      setErr(ax.response?.data?.message ?? ax.message ?? 'رد آگهی ناموفق بود');
+    } finally {
+      setModerating(false);
+    }
+  }
 
   return (
-    <main className="p-4 max-w-4xl mx-auto space-y-4">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        <h1 className="text-xl font-bold">فرصت‌های همکاری</h1>
-        <div className="flex items-center gap-2">
-          <Link href="/jobs/create" className="px-3 py-2 rounded-lg bg-black text-white">
-            + ایجاد فرصت
-          </Link>
-        </div>
-      </div>
+    <main className="p-4 mx-auto max-w-5xl">
+      {/* نوار بالا: برگشت + اکشن‌های مدیر */}
+      <div className="mb-4 flex items-center justify-between gap-3">
+        <Link href="/jobs" className="rounded-lg border px-3 py-1 text-sm hover:bg-slate-50">
+          ← بازگشت
+        </Link>
 
-      {/* Controls */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-2">
-        {/* سوییچ mine/public */}
-        <div className="flex items-center gap-2 border rounded-lg px-3 py-2">
-          <input
-            id="mineSwitch"
-            type="checkbox"
-            className="size-4"
-            checked={showMine && isLoggedIn}
-            onChange={() => setShowMine((s) => !s)}
-            disabled={!isLoggedIn}
-          />
-          <label htmlFor="mineSwitch" className={`text-sm ${!isLoggedIn ? 'opacity-50' : ''}`}>
-            فقط آگهی‌های من
-          </label>
-        </div>
-
-        {/* سرچ */}
-        <input
-          className="border rounded-lg px-3 py-2 md:col-span-2"
-          placeholder="جستجو در عنوان…"
-          value={q}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setQ(e.target.value)}
-        />
-
-        {/* مرتب‌سازی */}
-        <select
-          className="border rounded-lg px-3 py-2"
-          value={sortBy}
-          onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-            setSortBy(e.target.value as SortBy)
-          }
-        >
-          <option value="newest">جدیدترین</option>
-          <option value="oldest">قدیمی‌ترین</option>
-          <option value="budget_desc">بودجه (زیاد → کم)</option>
-          <option value="budget_asc">بودجه (کم → زیاد)</option>
-        </select>
-
-        {/* فیلتر وضعیت (فقط وقتی mine) */}
-        {showMine && (
-          <select
-            className="border rounded-lg px-3 py-2 md:col-span-1"
-            value={statusFilter}
-            onChange={(e: React.ChangeEvent<HTMLSelectElement>) =>
-              setStatusFilter(e.target.value as 'all' | JobStatus)
-            }
-          >
-            <option value="all">همه وضعیت‌ها</option>
-            <option value="draft">پیش‌نویس</option>
-            <option value="pending_review">در حال بررسی</option>
-            <option value="approved">تأیید شده</option>
-            <option value="rejected">رد شده</option>
-          </select>
+        {canManage && (
+          <div className="flex items-center gap-2">
+            <Link
+              href={`/jobs/${job?._id}/edit`}
+              className="rounded-lg border px-3 py-1 text-sm hover:bg-slate-50"
+            >
+              ویرایش
+            </Link>
+            <button
+              onClick={onDelete}
+              disabled={deleting}
+              className="rounded-lg bg-red-600 px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
+            >
+              {deleting ? 'در حال حذف…' : 'حذف'}
+            </button>
+          </div>
         )}
       </div>
 
-      {/* States */}
       {loading && (
-        <div className="space-y-2">
-          <SkeletonCard />
-          <SkeletonCard />
-          <SkeletonCard />
-        </div>
+        <div className="rounded-xl border bg-white p-4 text-center shadow-sm">در حال بارگذاری…</div>
       )}
+      {err && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">{err}</div>}
 
-      {err && (
-        <div className="p-3 rounded-lg border border-red-200 bg-red-50 text-red-700 flex items-center justify-between">
-          <div className="text-sm">{err}</div>
-          <button onClick={() => void fetchList()} className="px-3 py-1 rounded bg-red-600 text-white text-sm">
-            تلاش مجدد
-          </button>
-        </div>
-      )}
-
-      {!loading && !err && view.length === 0 && (
-        <div className="p-4 rounded-lg border text-slate-600">
-          {showMine
-            ? 'هیچ آگهی‌ای مطابق فیلترها پیدا نشد. فیلتر را تغییر دهید یا آگهی جدید بسازید.'
-            : 'در حال حاضر آگهی عمومی تایید شده‌ای وجود ندارد.'}
-        </div>
-      )}
-
-      {/* List */}
-      <ul className="space-y-3">
-        {view.map((job: Job) => (
-          <li key={job._id} className="border rounded-xl p-3">
-            <div className="flex items-start justify-between gap-3">
-              <div className="space-y-1">
-                <Link href={`/jobs/${job._id}`} className="font-semibold hover:underline">
-                  {job.title}
-                </Link>
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {typeof job.budget === 'number' && (
-                    <Badge color="slate">بودجه: {job.budget.toLocaleString('fa-IR')}</Badge>
-                  )}
-                  {job.city && <Badge color="slate">شهر: {job.city}</Badge>}
-                  {showMine && job.status && <Badge color={statusColor(job.status)}>وضعیت: {job.status}</Badge>}
-                </div>
-
-                {job.description && <p className="text-sm text-slate-700 line-clamp-2">{job.description}</p>}
+      {!loading && !err && job && (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* ستون محتوا */}
+          <article className="lg:col-span-2 space-y-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="flex items-center justify-between gap-3">
+                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">{job.title}</h1>
+                <StatusBadge status={job.status} title={job.rejectedReason ?? undefined} />
               </div>
 
-              <Link href={`/jobs/${job._id}`} className="shrink-0 px-3 py-1 rounded border">
-                جزئیات
-              </Link>
+              <div className="mt-2 text-xs sm:text-sm text-slate-500">
+                {job.createdAt && <>ثبت: {new Date(job.createdAt).toLocaleString('fa-IR')}</>}
+                {job.updatedAt && <> · بروزرسانی: {new Date(job.updatedAt).toLocaleString('fa-IR')}</>}
+              </div>
+
+              {job.description && (
+                <p className="mt-4 leading-8 whitespace-pre-wrap text-slate-800">{job.description}</p>
+              )}
             </div>
 
-            {job.createdAt && (
-              <div className="text-xs opacity-60 mt-2">
-                ثبت: {new Date(job.createdAt).toLocaleString('fa-IR')}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              {typeof job.budget === 'number' && (
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-xs text-slate-500 mb-1">بودجه</div>
+                  <div className="text-lg font-bold text-slate-900">
+                    {job.budget.toLocaleString('fa-IR')}
+                    <span className="mr-1 text-sm font-normal text-slate-500">تومان</span>
+                  </div>
+                </div>
+              )}
+              {job.city && (
+                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+                  <div className="text-xs text-slate-500 mb-1">شهر</div>
+                  <div className="text-base font-semibold text-slate-900">{job.city}</div>
+                </div>
+              )}
+            </div>
+          </article>
+
+          {/* سایدبار CTA به سبک کارت مرجع */}
+          <aside className="space-y-4">
+            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
+              <div className="text-center">
+                <div className="text-slate-800 font-semibold">آگهی مدلینگ</div>
+                <div className="mt-1 text-xs text-slate-500">برای اقدام بعدی آماده‌ای؟</div>
+                <button
+                  className="mt-3 w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-red-700"
+                  onClick={() => alert('اینجا می‌تونی اکشن اصلی‌ت رو وصل کنی (مثلاً درخواست همکاری)')}
+                >
+                  اقدام برای همکاری
+                </button>
+              </div>
+
+              <ul className="mt-4 space-y-2 text-sm text-slate-700">
+                <li className="flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
+                  اطلاعات شفاف و منظم
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-indigo-500" />
+                  فضای گفت‌وگوی حرفه‌ای
+                </li>
+                <li className="flex items-center gap-2">
+                  <span className="inline-block w-2 h-2 rounded-full bg-purple-500" />
+                  مناسب برای تازه‌کار تا حرفه‌ای
+                </li>
+              </ul>
+            </div>
+
+            {isAdmin && job.status !== 'approved' && (
+              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
+                <div className="font-semibold text-slate-800">مدیریت تایید</div>
+                <div className="flex items-center gap-2">
+                  <button
+                    onClick={onApprove}
+                    disabled={moderating}
+                    className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
+                  >
+                    {moderating ? '...' : 'تایید'}
+                  </button>
+                  <input
+                    className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                    placeholder="دلیل رد (اختیاری اما پیشنهاد می‌شود)"
+                    value={rejectReason}
+                    onChange={(e) => setRejectReason(e.target.value)}
+                  />
+                  <button
+                    onClick={onReject}
+                    disabled={moderating}
+                    className="rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
+                  >
+                    {moderating ? '...' : 'رد'}
+                  </button>
+                </div>
+                {job.rejectedReason && (
+                  <div className="text-xs text-rose-700">آخرین دلیل رد: {job.rejectedReason}</div>
+                )}
               </div>
             )}
-          </li>
-        ))}
-      </ul>
-
-      {/* Pagination */}
-      {!loading && !err && totalPages > 1 && (
-        <div className="flex items-center justify-center gap-2 pt-2">
-          <button
-            className="px-3 py-1 rounded border disabled:opacity-50"
-            onClick={() => navigate(Math.max(1, page - 1))}
-            disabled={page <= 1}
-          >
-            قبلی
-          </button>
-          <span className="text-sm">
-            صفحه {page} از {totalPages}
-          </span>
-          <button
-            className="px-3 py-1 rounded border disabled:opacity-50"
-            onClick={() => navigate(Math.min(totalPages, page + 1))}
-            disabled={page >= totalPages}
-          >
-            بعدی
-          </button>
+          </aside>
         </div>
       )}
     </main>

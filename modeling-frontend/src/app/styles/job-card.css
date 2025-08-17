@@ -1,0 +1,101 @@
+/* ===== Job Card — clean, brand-aware, DigiKala-style ===== */
+/* ELI5: این فایل فقط ظاهر کارت فرم را زیبا می‌کند—بدون تغییر لاجیک */
+
+:root {
+  /* فقط در صورت نبود، fallback */
+  --brand-1: var(--brand-1, #ef4444);
+  --brand-2: var(--brand-2, #f59e0b);
+}
+
+/* ظرف اصلی کارت */
+.job-card {
+  border: 1px solid rgba(226,232,240,.70);
+  background: #fff;
+  border-radius: 20px;
+  box-shadow: 0 8px 28px rgba(15,23,42,.06);
+  overflow: hidden;              /* ELI5: گوشه‌ها واقعا گرد دیده شوند */
+}
+
+/* هدر کارت با حس شیشه‌ای */
+.job-card__header {
+  display: flex; align-items: flex-start; justify-content: space-between; gap: 16px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, color-mix(in srgb, var(--brand-1) 10%, #ffffff), color-mix(in srgb, var(--brand-2) 10%, #ffffff));
+  backdrop-filter: saturate(140%) blur(6px);
+}
+.job-card__header-title { display:flex; flex-direction:column; }
+.job-card__title {
+  background-image: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  -webkit-background-clip: text; background-clip: text; color: transparent;
+  font-size: 1.25rem; font-weight: 800; line-height: 1.4;
+}
+@media (min-width: 640px) { .job-card__title { font-size: 1.5rem; } }
+.job-card__subtitle { margin-top: 2px; font-size: .85rem; color: #64748b; }
+.job-card__meta { padding: 0 20px 8px; font-size: .8rem; color:#475569; }
+
+/* جداکننده‌ی خیلی روشن (نه خط‌کشی تند) */
+.job-card__divider {
+  height: 1px; border: 0;
+  background: linear-gradient(90deg, transparent, #e5e7eb, transparent);
+}
+
+/* بدنهٔ کارت */
+.job-card__body { padding: 18px 20px 22px; }
+
+/* فیلدها با ریتم فاصله‌گذاری منظم */
+.job-field { display:flex; flex-direction:column; gap: 6px; }
+.job-label { font-size: .9rem; color:#1f2937; }
+.job-hint { margin-top: 4px; font-size: .78rem; color:#64748b; }
+
+/* شبکهٔ سه‌ستونه روی اسمال به بالا */
+.job-grid { display:grid; grid-template-columns: 1fr; gap: 16px; }
+@media (min-width: 640px) { .job-grid { grid-template-columns: repeat(3, 1fr); } }
+
+/* ورودی‌ها: اطمینان از گرد بودن و فوکوس ملایم */
+.job-input {
+  border-radius: 12px !important;
+  padding: .65rem .85rem !important;
+  transition: box-shadow .15s, border-color .15s, background-color .15s !important;
+}
+.job-input:focus {
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--brand-1) 18%, transparent) !important;
+  border-color: color-mix(in srgb, var(--brand-1) 55%, #cbd5e1) !important;
+}
+
+/* قوانین (چک‌باکس) */
+.job-check {
+  display:flex; align-items:flex-start; gap: 8px;
+  border:1px solid rgba(226,232,240,.7); border-radius:12px; padding: 10px 12px;
+}
+.job-check__box {
+  width: 16px; height: 16px;
+  accent-color: color-mix(in srgb, var(--brand-1) 80%, var(--brand-2) 20%);
+  margin-top: 2px;
+}
+.job-check__label { font-size:.9rem; }
+
+/* پیام‌ها */
+.job-alert { border-radius:12px; padding:10px 12px; font-size:.85rem; border:1px solid; }
+.job-alert--error { background:#fef2f2; color:#b91c1c; border-color:#fecaca; }
+.job-alert--ok { background:#ecfdf5; color:#047857; border-color:#a7f3d0; }
+
+/* اکشن‌ها (دکمه‌ها) */
+.job-actions { display:flex; flex-wrap:wrap; gap: 10px; align-items:center; margin-top: 6px; }
+.btn { display:inline-flex; align-items:center; justify-content:center; padding:.6rem 1rem; font-weight:700; border-radius:9999px; border:1px solid transparent; cursor:pointer; transition:.2s; user-select:none; }
+.btn:active { transform: scale(.98); }
+
+/* دکمه نرم (ثانویه) */
+.btn-soft { background:#fff; color:#334155; border:1px solid #cbd5e1; }
+.btn-soft:hover { background:#f8fafc; }
+
+/* CTA «گوشتالو» مطابق برند */
+.btn-cta {
+  height: 48px; padding: 0 22px; font-weight: 800; color:#fff;
+  background: linear-gradient(135deg, var(--brand-1), var(--brand-2));
+  box-shadow: 0 14px 30px rgba(15,23,42,.12);
+  border-radius: 14px;
+}
+.btn-cta:hover { filter: saturate(110%); box-shadow: 0 18px 36px rgba(15,23,42,.16); }
+
+/* متن لودینگ کوچک */
+.job-busy { font-size:.78rem; color:#64748b; }

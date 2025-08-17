@@ -8,6 +8,7 @@ import { axiosInstance } from '../../../api/axios-instance';
 
 type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
 
+/** شکل کامل‌تر آگهی برای صفحه ادیت */
 type Job = {
   _id: string;
   title: string;
@@ -21,6 +22,7 @@ type Job = {
 
 type Me = { id: string; role: 'client' | 'admin' | 'user' | string };
 
+/** decode + extract برای فهمیدن یوزر */
 function decodeJwt(token: string | null): Record<string, unknown> | null {
   if (!token) return null;
   try {
@@ -54,7 +56,7 @@ function extractMeFromToken(token: string | null): Me | null {
   return { id: String(id), role: (role ?? 'user') as Me['role'] };
 }
 
-// ---------- type guards ----------
+/** type guards + نرمالایزر پاسخ‌های مختلف سرور */
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null;
 }
@@ -81,12 +83,13 @@ export default function EditJobPage() {
   const params = useParams<{ id: string }>();
   const jobId = params?.id ?? '';
 
+  // یوزر
   const token = useMemo(() => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null), []);
   const me = useMemo(() => extractMeFromToken(token), [token]);
 
   // فرم
   const [title, setTitle] = useState('');
-  const [budget, setBudget] = useState<string>(''); 
+  const [budget, setBudget] = useState<string>(''); // ELI5: ورودی عددی را رشته نگه می‌داریم تا راحت فرمت کنیم
   const [city, setCity] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
@@ -104,7 +107,7 @@ export default function EditJobPage() {
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
-  // دریافت آگهی
+  /** دریافت آگهی برای پر کردن فرم */
   useEffect(() => {
     if (!jobId) return;
     let cancelled = false;
@@ -116,6 +119,8 @@ export default function EditJobPage() {
         const j = normalizeJobFromResponse(res.data);
         if (!j) throw new Error('پاسخ سرور نامعتبر است');
         if (cancelled) return;
+
+        // ELI5: فرم را با اطلاعات فعلی پر می‌کنیم
         setTitle(j.title ?? '');
         setDescription(j.description ?? '');
         setBudget(typeof j.budget === 'number' ? String(j.budget) : '');
@@ -134,7 +139,7 @@ export default function EditJobPage() {
     return () => { cancelled = true; };
   }, [jobId]);
 
-  // شمارش معکوس
+  /** شمارش معکوس نمایش انقضای درفت (اگر بک‌اند چنین چیزی بده) */
   useEffect(() => {
     if (!expiryIso) return;
     const tick = () => {
@@ -152,6 +157,7 @@ export default function EditJobPage() {
     return () => clearInterval(id);
   }, [expiryIso]);
 
+  /** آیا فرم آمادهٔ ارسال است؟ (ساده و قابل‌فهم) */
   const canSubmit =
     title.trim().length > 0 &&
     description.trim().length > 0 &&
@@ -167,6 +173,7 @@ export default function EditJobPage() {
   }
 
   async function apiSubmit(id: string, payload: Record<string, unknown>) {
+    // چند مسیر رایج را امتحان می‌کنیم
     const paths = [
       `/api/v1/jobs/${encodeURIComponent(id)}/submit`,
       `/api/v1/jobs/submit/${encodeURIComponent(id)}`,
@@ -189,6 +196,7 @@ export default function EditJobPage() {
   }
 
   // ---------- Actions ----------
+  /** ذخیره پیش‌نویس با payload تمیز */
   async function saveDraft() {
     if (!me) { setErr('ابتدا وارد شوید.'); return; }
     setSaving(true); setErr(null); setMsg(null);
@@ -218,6 +226,7 @@ export default function EditJobPage() {
     }
   }
 
+  /** ارسال برای بررسی */
   async function submitForReview() {
     if (!me) { setErr('ابتدا وارد شوید.'); return; }
     if (!canSubmit) { setErr('برای ارسال، فیلدها را کامل و قوانین را تایید کنید.'); return; }
@@ -245,98 +254,133 @@ export default function EditJobPage() {
   }
 
   return (
-    <main className="p-4 max-w-2xl mx-auto space-y-4">
+    <main className="p-4 mx-auto max-w-2xl space-y-4">
+      {/* نوار بالا: برگشت + تیتر */}
       <div className="flex items-center justify-between">
-        <Link href={`/jobs/${jobId}`} className="px-3 py-1 rounded border hover:bg-gray-50">← بازگشت</Link>
+        <Link href={`/jobs/${jobId}`} className="rounded-lg border px-3 py-1 text-sm hover:bg-slate-50">
+          ← بازگشت
+        </Link>
         <h1 className="text-xl font-bold">ویرایش آگهی</h1>
       </div>
 
-      {loading && <div>در حال بارگذاری…</div>}
-      {err && <div className="text-red-600">{err}</div>}
+      {loading && <div className="rounded-xl border bg-white p-4 text-center shadow-sm">در حال بارگذاری…</div>}
+      {err && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">{err}</div>}
 
       {!loading && !err && (
         <>
-          <div className="flex items-center gap-2 text-sm">
-            <span className="px-2 py-0.5 rounded-full border">
+          {/* وضعیت و شمارش معکوس پیش‌نویس (اگر وجود داشته باشد) */}
+          <div className="flex flex-wrap items-center gap-2 text-sm">
+            <span className="rounded-full border px-3 py-1">
               وضعیت: <b className="ml-1">{status}</b>
             </span>
             {status === 'draft' && expiryIso && (
-              <span className="px-2 py-0.5 rounded-full border bg-yellow-50">
+              <span className="rounded-full border bg-amber-50 px-3 py-1">
                 ⏳ حذف درافت: <b className="ml-1">{new Date(expiryIso).toLocaleString()}</b> — باقی‌مانده: <b>{countdown}</b>
               </span>
             )}
           </div>
 
-          <form onSubmit={(e) => e.preventDefault()} className="space-y-3">
-            <input
-              className="w-full border rounded-lg p-2"
-              placeholder="عنوان *"
-              value={title}
-              onChange={(e) => setTitle(e.target.value)}
-              required
-            />
-
-            <div className="grid md:grid-cols-3 gap-4">
+          {/* فرم ساده: اینجا برای شفافیت از inputهای خام استفاده کردیم تا وابسته به JobForm نشه */}
+          <form onSubmit={(e) => e.preventDefault()} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
+            {/* موضوع */}
+            <div>
+              <label className="mb-1 block text-sm text-slate-700">
+                موضوع <span className="text-rose-500">*</span>
+              </label>
               <input
-                className="w-full border rounded-lg p-2"
-                placeholder="مبلغ (آفیش) *"
-                value={budget}
-                onChange={(e) => setBudget(e.target.value)}
-              />
-              <input
-                className="w-full border rounded-lg p-2"
-                placeholder="لوکیشن (شهر) *"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-              <input
-                className="w-full border rounded-lg p-2"
-                type="date"
-                value={date}
-                onChange={(e) => setDate(e.target.value)}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                value={title}
+                onChange={(e) => setTitle(e.target.value)}
+                placeholder="عنوان آگهی…"
               />
             </div>
 
-            <textarea
-              className="w-full border rounded-lg p-2"
-              placeholder="توضیحات *"
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              rows={5}
-            />
+            {/* توضیح */}
+            <div>
+              <label className="mb-1 block text-sm text-slate-700">
+                توضیح <span className="text-rose-500">*</span>
+              </label>
+              <textarea
+                rows={5}
+                className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                value={description}
+                onChange={(e) => setDescription(e.target.value)}
+                placeholder="جزئیات پروژه، نیازمندی‌ها، زمان و …"
+              />
+            </div>
 
-            <label className="flex items-center gap-2">
+            {/* بودجه + شهر + تاریخ */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="mb-1 block text-sm text-slate-700">مبلغ (آفیش)</label>
+                <input
+                  inputMode="numeric"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                  value={budget}
+                  onChange={(e) => setBudget(e.target.value)}
+                  placeholder="مثلاً 2500000"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm text-slate-700">شهر</label>
+                <input
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                  value={city}
+                  onChange={(e) => setCity(e.target.value)}
+                  placeholder="مثلاً تهران"
+                />
+              </div>
+              <div>
+                <label className="mb-1 block text-sm text-slate-700">تاریخ برگزاری/شروع</label>
+                <input
+                  type="date"
+                  className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
+                  value={date ?? ''}
+                  onChange={(e) => setDate(e.target.value)}
+                />
+              </div>
+            </div>
+
+            {/* قوانین */}
+            <div className="flex items-start gap-2 rounded-xl border border-slate-200 p-3">
               <input
+                id="terms"
                 type="checkbox"
+                className="mt-1 size-4 accent-indigo-600"
                 checked={termsAccepted}
                 onChange={(e) => setTermsAccepted(e.target.checked)}
               />
-              <span>
-                شرایط و قوانین را می‌پذیرم
-                <a href="/terms" target="_blank" className="text-blue-600 mx-1 underline">مطالعه قوانین</a>
-              </span>
-            </label>
+              <label htmlFor="terms" className="text-sm">
+                <span className="font-medium">شرایط و قوانین</span> را می‌پذیرم و مطالعه کردم.
+              </label>
+            </div>
 
-            <div className="flex items-center gap-3">
+            {/* پیام‌ها */}
+            {(msg || err) && (
+              <div className={`rounded-xl border p-3 text-sm ${err ? 'border-rose-200 bg-rose-50 text-rose-700' : 'border-emerald-200 bg-emerald-50 text-emerald-700'}`}>
+                {err ?? msg}
+              </div>
+            )}
+
+            {/* دکمه‌ها */}
+            <div className="flex flex-wrap items-center gap-3">
               <button
                 type="button"
                 onClick={saveDraft}
                 disabled={saving}
-                className="px-4 py-2 rounded-lg bg-gray-800 text-white disabled:bg-gray-300"
+                className="inline-flex items-center justify-center rounded-full border border-slate-300 bg-white px-4 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-50 disabled:opacity-50"
               >
-                {saving ? 'در حال ذخیره…' : 'ذخیره پیش‌نویس'}
+                {saving ? '...' : 'ذخیره پیش‌نویس'}
               </button>
 
               <button
                 type="button"
                 onClick={submitForReview}
                 disabled={!canSubmit || submitting}
-                className="px-4 py-2 rounded-lg bg-emerald-600 text-white disabled:bg-gray-300"
+                className="inline-flex items-center justify-center rounded-full bg-red-600 px-5 py-2.5 text-sm font-extrabold text-white hover:bg-red-700 disabled:opacity-50"
               >
-                {submitting ? 'در حال ارسال…' : 'ارسال برای بررسی'}
+                {submitting ? '...' : 'ارسال برای بررسی'}
               </button>
-
-              {msg && <div className="text-green-600 text-sm">{msg}</div>}
             </div>
           </form>
         </>
