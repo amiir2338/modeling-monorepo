@@ -1,355 +1,281 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import Link from 'next/link';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import type { AxiosError } from 'axios';
 import { axiosInstance } from '../api/axios-instance';
 
-/**
- * ELI5: این یعنی آگهی چه فیلدهایی داره؛ فقط واسه تایپ‌اسکریپت و کمک به خودمون.
- */
-type Job = {
+/* ---------------- Types ---------------- */
+type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
+
+export type Job = {
   _id: string;
+  clientId: string;
   title: string;
   description?: string | null;
   budget?: number | null;
   city?: string | null;
-  clientId?: unknown;
-  status?: 'pending' | 'approved' | 'rejected';
+  date?: string | null;
+  status: JobStatus;
   rejectedReason?: string | null;
   createdAt?: string;
-  updatedAt?: string;
 };
 
-/** اطلاعات کاربر لاگین‌شده */
-type Me = {
-  id: string;
-  role: 'client' | 'admin' | 'user' | string;
-  clientId?: string | null;
+type JobsListResponse = {
+  ok: boolean;
+  message?: string;
+  data: Job[];
+  total?: number;
 };
 
-/** توکن JWT را باز می‌کنیم تا id/role را بفهمیم */
-function decodeJwt(token: string | null): Record<string, unknown> | null {
-  if (!token) return null;
-  try {
-    const [, payload] = token.split('.');
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    return JSON.parse(decodeURIComponent(escape(json))) as Record<string, unknown>;
-  } catch {
-    return null;
-  }
+/* ------------- Small helpers ------------ */
+function useDebounced<T>(value: T, delay = 400) {
+  const [v, setV] = useState(value);
+  useEffect(() => {
+    const t = setTimeout(() => setV(value), delay);
+    return () => clearTimeout(t);
+  }, [value, delay]);
+  return v;
 }
 
-/** از توکن، id/role/clientId را درمی‌آوریم */
-function extractMeFromToken(token: string | null): Me | null {
-  const p = decodeJwt(token);
-  if (!p) return null;
-  const pid = p as Record<string, unknown>;
-
-  const id =
-    (pid.id as string) ?? (pid.userId as string) ?? (pid.user_id as string) ??
-    (pid.sub as string) ?? (pid.uid as string) ??
-    ((pid.user as Record<string, unknown>)?._id as string) ??
-    ((pid.user as Record<string, unknown>)?.id as string) ?? null;
-
-  const clientId =
-    (pid.clientId as string) ??
-    ((pid.user as { clientId?: unknown })?.clientId as string) ?? null;
-
-  let role: string | undefined;
-  if (typeof pid.role === 'string') role = pid.role as string;
-  else if (Array.isArray(pid.roles as unknown[]) && (pid.roles as unknown[]).length) role = String((pid.roles as unknown[])[0]);
-  else if (typeof (pid as { isAdmin?: boolean }).isAdmin === 'boolean') role = (pid as { isAdmin?: boolean }).isAdmin ? 'admin' : 'user';
-  else if (typeof (pid.user as { role?: unknown })?.role === 'string') role = String((pid.user as { role?: unknown }).role);
-
-  if (!id) return null;
-  return { id: String(id), role: (role ?? 'user') as Me['role'], clientId: clientId ?? null };
+function toInt(v: string | null, d: number) {
+  const n = Number(v);
+  return Number.isFinite(n) && n > 0 ? Math.floor(n) : d;
 }
 
-/** اگر clientId به‌صورت آبجکت بیاد، رشته‌اش می‌کنیم */
-function normalizeId(val: unknown): string | null {
-  if (!val) return null;
-  if (typeof val === 'string') return val;
-  if (typeof val === 'object') {
-    const obj = val as Record<string, unknown>;
-    const a = obj._id ?? obj.id ?? null;
-    return a ? String(a) : null;
-  }
-  return null;
-}
-
-/** بج وضعیت با رنگ مناسب */
-function StatusBadge({ status, title }: { status?: Job['status']; title?: string | null }) {
-  if (!status) return null;
-  const map = {
-    approved: 'bg-emerald-100 text-emerald-800 border-emerald-200',
-    pending: 'bg-amber-100 text-amber-800 border-amber-200',
-    rejected: 'bg-rose-100 text-rose-800 border-rose-200',
-  } as const;
-  const label = status === 'approved' ? 'تایید شده' : status === 'pending' ? 'در انتظار تایید' : 'رد شده';
-  return (
-    <span
-      title={title ?? undefined}
-      className={`inline-flex items-center gap-1 rounded-full border px-3 py-1 text-xs ${map[status]}`}
-    >
-      {/* چراغ وضعیت */}
-      <span className="inline-block w-2 h-2 rounded-full bg-current/60" />
-      {label}
-    </span>
-  );
-}
-
-export default function JobDetailsPage() {
+/* ------------- Page Component ------------ */
+export default function JobsPage() {
   const router = useRouter();
-  const params = useParams<{ id: string }>();
-  const jobId = params?.id;
+  const pathname = usePathname();
+  const sp = useSearchParams();
+  const spStr = sp.toString(); // برای قرار دادن امن در dependency
 
-  // توکن از localStorage → که بفهمیم کی لاگینه
-  const token = useMemo(
-    () => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null),
-    []
+  // URL → state
+  const [q, setQ] = useState(() => sp.get('q') ?? '');
+  const [status, setStatus] = useState<JobStatus | 'all'>(
+    (sp.get('status') as JobStatus | 'all') || 'all'
   );
-  const me = useMemo(() => extractMeFromToken(token), [token]);
+  const [page, setPage] = useState(() => toInt(sp.get('page'), 1));
+  const [limit, setLimit] = useState(() => toInt(sp.get('limit'), 10));
 
-  // وضعیت‌های صفحه
-  const [job, setJob] = useState<Job | null>(null);
+  const debouncedQ = useDebounced(q, 400);
+
+  // data
+  const [jobs, setJobs] = useState<Job[]>([]);
+  const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState<string | null>(null);
-  const [deleting, setDeleting] = useState(false);
-  const [moderating, setModerating] = useState(false);
-  const [rejectReason, setRejectReason] = useState('');
 
-  // گرفتن جزئیات آگهی
+  // sync state → URL (بدون رفرش)
+  const firstSyncDone = useRef(false);
   useEffect(() => {
-    if (!jobId) return;
-    let cancelled = false;
+    const params = new URLSearchParams();
+    if (debouncedQ.trim()) params.set('q', debouncedQ.trim());
+    if (status !== 'all') params.set('status', status);
+    if (page !== 1) params.set('page', String(page));
+    if (limit !== 10) params.set('limit', String(limit));
+    const qs = params.toString();
+    const url = qs ? `${pathname}?${qs}` : pathname;
 
+    // جلوگیری از replace اضافه در بار اول اگر URL فعلی همین است
+    const currentUrl = spStr ? `${pathname}?${spStr}` : pathname;
+    if (!firstSyncDone.current && url === currentUrl) {
+      firstSyncDone.current = true;
+      return;
+    }
+    router.replace(url, { scroll: false });
+  }, [debouncedQ, status, page, limit, pathname, router, spStr]);
+
+  // fetch
+  useEffect(() => {
+    let ignore = false;
     (async () => {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get<{ ok: boolean; data: Job }>(`/api/v1/jobs/${jobId}`);
-        if (cancelled) return;
-        setJob(res.data.data);
-      } catch (e: unknown) {
+        const params: Record<string, string | number> = { page, limit };
+        if (debouncedQ.trim()) params.q = debouncedQ.trim();
+        if (status !== 'all') params.status = status;
+
+        const { data } = await axiosInstance.get<JobsListResponse>('/v1/jobs', { params });
+        if (ignore) return;
+        if (data?.ok === false) {
+          setErr(data?.message || 'امکان دریافت آگهی‌ها نیست');
+          setJobs([]);
+          setTotal(0);
+        } else {
+          setJobs(Array.isArray(data?.data) ? data.data : []);
+          setTotal(typeof data?.total === 'number' ? data.total : Array.isArray(data?.data) ? data.data.length : 0);
+        }
+      } catch (e) {
+        if (ignore) return;
         const ax = e as AxiosError<{ message?: string }>;
-        if (cancelled) return;
-        setErr(ax.response?.data?.message ?? ax.message ?? 'دریافت جزئیات ناموفق بود');
+        setErr(ax.response?.data?.message || ax.message || 'خطا در دریافت آگهی‌ها');
+        setJobs([]);
+        setTotal(0);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (!ignore) setLoading(false);
       }
     })();
+    return () => { ignore = true; };
+  }, [debouncedQ, status, page, limit]);
 
-    return () => { cancelled = true; };
-  }, [jobId]);
+  const totalPages = Math.max(1, Math.ceil(total / limit));
 
-  // کی می‌تونه مدیریت کنه؟ (ادمین یا صاحب آگهی)
-  const canManage = useMemo(() => {
-    if (!me || !job) return false;
-    if (me.role === 'admin') return true;
-    if (me.role === 'client') {
-      const jobClient = normalizeId(job.clientId);
-      const myClient = me.clientId ? String(me.clientId) : null;
-      return !!jobClient && !!myClient && jobClient === myClient;
-    }
-    return false;
-  }, [me, job]);
+  const filtered = useMemo(() => {
+    // نمایش فوری سمت کلاینت (صرفاً UX بهتر؛ فیلتر اصلی سمت سرور است)
+    const term = debouncedQ.trim().toLowerCase();
+    return jobs.filter((j) => {
+      const byQ =
+        !term ||
+        j.title.toLowerCase().includes(term) ||
+        (j.description ?? '').toLowerCase().includes(term) ||
+        (j.city ?? '').toLowerCase().includes(term);
+      const byStatus = status === 'all' || j.status === status;
+      return byQ && byStatus;
+    });
+  }, [jobs, debouncedQ, status]);
 
-  const isAdmin = me?.role === 'admin';
-
-  // حذف
-  async function onDelete() {
-    if (!job) return;
-    if (!confirm('آیا از حذف این فرصت مطمئن هستی؟')) return;
-    setDeleting(true);
-    setErr(null);
-    try {
-      await axiosInstance.delete(`/api/v1/jobs/${job._id}`);
-      alert('فرصت با موفقیت حذف شد ✅');
-      router.push('/jobs');
-    } catch (e: unknown) {
-      const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'حذف ناموفق بود');
-    } finally {
-      setDeleting(false);
-    }
-  }
-
-  // تایید
-  async function onApprove() {
-    if (!job) return;
-    setModerating(true);
-    setErr(null);
-    try {
-      await axiosInstance.patch(`/api/v1/jobs/${job._id}/approve`);
-      alert('آگهی تایید شد ✅');
-      router.refresh();
-    } catch (e: unknown) {
-      const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'تایید ناموفق بود');
-    } finally {
-      setModerating(false);
-    }
-  }
-
-  // رد
-  async function onReject() {
-    if (!job) return;
-    if (!rejectReason.trim()) {
-      alert('لطفاً دلیل رد را وارد کنید.');
-      return;
-    }
-    setModerating(true);
-    setErr(null);
-    try {
-      await axiosInstance.patch(`/api/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
-      alert('آگهی رد شد ❌');
-      router.refresh();
-    } catch (e: unknown) {
-      const ax = e as AxiosError<{ message?: string }>;
-      setErr(ax.response?.data?.message ?? ax.message ?? 'رد آگهی ناموفق بود');
-    } finally {
-      setModerating(false);
-    }
-  }
-
+  /* ---------------- UI ---------------- */
   return (
-    <main className="p-4 mx-auto max-w-5xl">
-      {/* نوار بالا: برگشت + اکشن‌های مدیر */}
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <Link href="/jobs" className="rounded-lg border px-3 py-1 text-sm hover:bg-slate-50">
-          ← بازگشت
+    <main dir="rtl" className="container-std py-6">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
+        <h1 className="text-2xl font-extrabold">آگهی‌های همکاری</h1>
+        <Link
+          href="/jobs/create"
+          className="inline-flex items-center justify-center rounded-xl px-4 py-2 font-bold bg-black text-white hover:opacity-90"
+        >
+          ثبت آگهی جدید
         </Link>
-
-        {canManage && (
-          <div className="flex items-center gap-2">
-            <Link
-              href={`/jobs/${job?._id}/edit`}
-              className="rounded-lg border px-3 py-1 text-sm hover:bg-slate-50"
-            >
-              ویرایش
-            </Link>
-            <button
-              onClick={onDelete}
-              disabled={deleting}
-              className="rounded-lg bg-red-600 px-3 py-1 text-sm font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
-            >
-              {deleting ? 'در حال حذف…' : 'حذف'}
-            </button>
-          </div>
-        )}
       </div>
 
-      {loading && (
-        <div className="rounded-xl border bg-white p-4 text-center shadow-sm">در حال بارگذاری…</div>
-      )}
-      {err && <div className="rounded-xl border border-rose-200 bg-rose-50 p-4 text-rose-700">{err}</div>}
-
-      {!loading && !err && job && (
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* ستون محتوا */}
-          <article className="lg:col-span-2 space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="flex items-center justify-between gap-3">
-                <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900">{job.title}</h1>
-                <StatusBadge status={job.status} title={job.rejectedReason ?? undefined} />
-              </div>
-
-              <div className="mt-2 text-xs sm:text-sm text-slate-500">
-                {job.createdAt && <>ثبت: {new Date(job.createdAt).toLocaleString('fa-IR')}</>}
-                {job.updatedAt && <> · بروزرسانی: {new Date(job.updatedAt).toLocaleString('fa-IR')}</>}
-              </div>
-
-              {job.description && (
-                <p className="mt-4 leading-8 whitespace-pre-wrap text-slate-800">{job.description}</p>
-              )}
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              {typeof job.budget === 'number' && (
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="text-xs text-slate-500 mb-1">بودجه</div>
-                  <div className="text-lg font-bold text-slate-900">
-                    {job.budget.toLocaleString('fa-IR')}
-                    <span className="mr-1 text-sm font-normal text-slate-500">تومان</span>
-                  </div>
-                </div>
-              )}
-              {job.city && (
-                <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
-                  <div className="text-xs text-slate-500 mb-1">شهر</div>
-                  <div className="text-base font-semibold text-slate-900">{job.city}</div>
-                </div>
-              )}
-            </div>
-          </article>
-
-          {/* سایدبار CTA به سبک کارت مرجع */}
-          <aside className="space-y-4">
-            <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
-              <div className="text-center">
-                <div className="text-slate-800 font-semibold">آگهی مدلینگ</div>
-                <div className="mt-1 text-xs text-slate-500">برای اقدام بعدی آماده‌ای؟</div>
-                <button
-                  className="mt-3 w-full rounded-xl bg-red-600 px-4 py-2.5 text-sm font-extrabold text-white transition hover:bg-red-700"
-                  onClick={() => alert('اینجا می‌تونی اکشن اصلی‌ت رو وصل کنی (مثلاً درخواست همکاری)')}
-                >
-                  اقدام برای همکاری
-                </button>
-              </div>
-
-              <ul className="mt-4 space-y-2 text-sm text-slate-700">
-                <li className="flex items-center gap-2">
-                  <span className="inline-block w-2 h-2 rounded-full bg-emerald-500" />
-                  اطلاعات شفاف و منظم
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="inline-block w-2 h-2 rounded-full bg-indigo-500" />
-                  فضای گفت‌وگوی حرفه‌ای
-                </li>
-                <li className="flex items-center gap-2">
-                  <span className="inline-block w-2 h-2 rounded-full bg-purple-500" />
-                  مناسب برای تازه‌کار تا حرفه‌ای
-                </li>
-              </ul>
-            </div>
-
-            {isAdmin && job.status !== 'approved' && (
-              <div className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-3">
-                <div className="font-semibold text-slate-800">مدیریت تایید</div>
-                <div className="flex items-center gap-2">
-                  <button
-                    onClick={onApprove}
-                    disabled={moderating}
-                    className="rounded-full bg-emerald-600 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-700 disabled:opacity-50"
-                  >
-                    {moderating ? '...' : 'تایید'}
-                  </button>
-                  <input
-                    className="flex-1 rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-indigo-200"
-                    placeholder="دلیل رد (اختیاری اما پیشنهاد می‌شود)"
-                    value={rejectReason}
-                    onChange={(e) => setRejectReason(e.target.value)}
-                  />
-                  <button
-                    onClick={onReject}
-                    disabled={moderating}
-                    className="rounded-full bg-rose-600 px-4 py-2 text-sm font-semibold text-white hover:bg-rose-700 disabled:opacity-50"
-                  >
-                    {moderating ? '...' : 'رد'}
-                  </button>
-                </div>
-                {job.rejectedReason && (
-                  <div className="text-xs text-rose-700">آخرین دلیل رد: {job.rejectedReason}</div>
-                )}
-              </div>
-            )}
-          </aside>
+      {/* فیلترها */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 mb-6">
+        <input
+          value={q}
+          onChange={(e) => { setQ(e.target.value); setPage(1); }}
+          placeholder="جستجو در عنوان/توضیح/شهر…"
+          className="rounded-xl border border-slate-300/70 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400"
+        />
+        <select
+          value={status}
+          onChange={(e) => { setStatus(e.target.value as JobStatus | 'all'); setPage(1); }}
+          className="rounded-xl border border-slate-300/70 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400"
+        >
+          <option value="all">همه وضعیت‌ها</option>
+          <option value="draft">پیش‌نویس</option>
+          <option value="pending_review">در انتظار بررسی</option>
+          <option value="approved">تایید شده</option>
+          <option value="rejected">رد شده</option>
+        </select>
+        <select
+          value={limit}
+          onChange={(e) => { setLimit(Number(e.target.value)); setPage(1); }}
+          className="rounded-xl border border-slate-300/70 px-3 py-2 outline-none focus:ring-2 focus:ring-violet-400"
+        >
+          <option value={10}>10 مورد در صفحه</option>
+          <option value={20}>20 مورد در صفحه</option>
+          <option value={50}>50 مورد در صفحه</option>
+        </select>
+        <div className="self-center text-sm text-slate-500">
+          {loading ? '...' : `نمایش ${filtered.length} از ${total} مورد`}
         </div>
+      </div>
+
+      {/* لیست */}
+      {loading ? (
+        <ListSkeleton />
+      ) : err ? (
+        <div className="text-red-600">{err}</div>
+      ) : filtered.length === 0 ? (
+        <div className="text-center opacity-70 py-12">موردی یافت نشد.</div>
+      ) : (
+        <>
+          <ul className="space-y-3">
+            {filtered.map((job) => (
+              <li key={job._id} className="job-card p-4">
+                <div className="flex items-start justify-between gap-4">
+                  <div>
+                    <Link href={`/jobs/${job._id}`} className="text-lg font-extrabold hover:underline">
+                      {job.title}
+                    </Link>
+                    <div className="text-slate-600 text-sm mt-1 line-clamp-2">
+                      {job.description || '—'}
+                    </div>
+                    <div className="mt-2 text-xs text-slate-500 flex flex-wrap gap-3">
+                      {job.city && <span>🏙️ {job.city}</span>}
+                      {job.date && <span>📅 {job.date}</span>}
+                      {typeof job.budget === 'number' && <span>💵 بودجه: {job.budget.toLocaleString('fa-IR')}</span>}
+                    </div>
+                  </div>
+                  <StatusBadge status={job.status} />
+                </div>
+                <div className="mt-3">
+                  <Link href={`/jobs/${job._id}`} className="btn-outline-brand px-3 py-2 rounded-xl inline-block">
+                    جزئیات
+                  </Link>
+                </div>
+              </li>
+            ))}
+          </ul>
+
+          {/* pagination */}
+          <div className="flex items-center justify-center gap-2 mt-6">
+            <button
+              className="px-3 py-2 rounded-lg border border-slate-300/70 disabled:opacity-50"
+              onClick={() => setPage((p) => Math.max(1, p - 1))}
+              disabled={page <= 1}
+            >
+              قبلی
+            </button>
+            <span className="text-sm text-slate-600">
+              صفحه {page} از {totalPages}
+            </span>
+            <button
+              className="px-3 py-2 rounded-lg border border-slate-300/70 disabled:opacity-50"
+              onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+              disabled={page >= totalPages}
+            >
+              بعدی
+            </button>
+          </div>
+        </>
       )}
     </main>
+  );
+}
+
+/* ---------- Presentational bits ---------- */
+function StatusBadge({ status }: { status: JobStatus }) {
+  const m: Record<JobStatus, { text: string; color: string; bg: string; border: string }> = {
+    draft: { text: 'پیش‌نویس', color: '#334155', bg: '#f1f5f9', border: '#e2e8f0' },
+    pending_review: { text: 'در انتظار بررسی', color: '#92400e', bg: '#fef3c7', border: '#fde68a' },
+    approved: { text: 'تایید شده', color: '#065f46', bg: '#d1fae5', border: '#a7f3d0' },
+    rejected: { text: 'رد شده', color: '#991b1b', bg: '#fee2e2', border: '#fecaca' },
+  };
+  const s = m[status];
+  return (
+    <span
+      className="text-xs font-bold rounded-full px-3 py-1"
+      style={{ color: s.color, background: s.bg, border: `1px solid ${s.border}` }}
+    >
+      {s.text}
+    </span>
+  );
+}
+
+function ListSkeleton() {
+  return (
+    <ul className="space-y-3">
+      {Array.from({ length: 6 }).map((_, i) => (
+        <li key={i} className="job-card p-4 animate-pulse">
+          <div className="h-5 w-40 rounded bg-slate-200/80" />
+          <div className="h-4 w-3/4 mt-3 rounded bg-slate-200/70" />
+          <div className="h-4 w-1/2 mt-2 rounded bg-slate-200/60" />
+          <div className="h-8 w-24 mt-4 rounded bg-slate-200/80" />
+        </li>
+      ))}
+    </ul>
   );
 }

@@ -1,8 +1,8 @@
 /* ===== Job Card — centered header, bigger draft chip, outline button ===== */
 
 :root {
-  --brand-1: var(--brand-1, #ef4444);
-  --brand-2: var(--brand-2, #f59e0b);
+  --brand-1: #ef4444;
+  --brand-2: #f59e0b;
 }
 
 /* ظرف اصلی کارت */

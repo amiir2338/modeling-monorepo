@@ -4,40 +4,38 @@ import React, { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 
 /**
- * ELI5:
- * - همه‌چیز داخل یک کارت مشخص با border 2px و radius=25px است.
- * - تیتر بزرگ، بنفش و UPPERCASE مثل طرح شما.
- * - دو دکمه هم‌اندازه (ارتفاع 52px، عرض ثابت 260px در دسکتاپ / تمام‌عرض در موبایل)،
- *   هر دو با radius=25px و فاصله مناسب بین‌شان.
- * - «ثبت نام» = پر (بنفش)، «ورود مهمان» = اوت‌لاین بنفش.
- * - هیچ وابستگی به CSS خارجی ندارد و با استایل‌های سراسری هم تداخل نمی‌کند.
+ * تغییرات طبق درخواست:
+ * - padding کارت: 290px 35px
+ * - عنوان modeling star: letter-spacing: 5.5px
+ * - عنوان و متن خوش‌آمد را کمی بالاتر آوردیم (marginTop منفی روی کانتینر متن‌ها)
+ * - فاصله دکمه‌ها: 5px دقیق
  */
 export default function SplashPage() {
   const router = useRouter();
   const [show, setShow] = useState(false);
 
-  // 🎨 پالت سازمانی (از لوگو)
+  // 🎨 پالت
   const BRAND = {
-    primary: '#7D6CB2', // بنفش اصلی
-    accent:  '#A68FDB', // برای گرادیان/هاور ملایم
-    border:  '#DCD8E8', // رنگ باکس کارت
+    primary: '#7D6CB2',
+    accent: '#A68FDB',
+    border: '#DCD8E8',
     textOnBrand: '#FFFFFF',
   };
 
   useEffect(() => {
-    const t = setTimeout(() => setShow(true), 1200);
+    const t = setTimeout(() => setShow(true), 300);
     return () => clearTimeout(t);
   }, []);
 
-  const goToSignup = () => router.push('/register'); // TODO: مسیر واقعی ثبت‌نام
+  const goToSignup = () => router.push('/register'); // مسیر ثبت‌نام واقعی خودت
   const continueAsGuest = () => {
     try { localStorage.setItem('guest', '1'); } catch {}
-    router.push('/jobs'); // TODO: مسیر لندینگ مهمان
+    router.push('/jobs'); // مسیر مهمان واقعی خودت
   };
 
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center px-4">
-      {/* بک‌گراند بالای صفحه (لطیف) */}
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 flex items-center justify-center px-4 relative">
+      {/* بک‌گراند لطیف بالا */}
       <div
         aria-hidden
         className="absolute inset-x-0 top-0 h-[40vh] pointer-events-none"
@@ -46,7 +44,7 @@ export default function SplashPage() {
         }}
       />
 
-      {/* کارت مرکزی با radius=25px */}
+      {/* کارت مرکزی */}
       <section
         className={`relative w-full bg-white shadow-[0_8px_28px_rgba(15,23,42,.06)] transition-all duration-700
                     ${show ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-4'}`}
@@ -54,45 +52,49 @@ export default function SplashPage() {
           maxWidth: 560,
           borderRadius: 25,
           border: `2px solid ${BRAND.border}`,
-          padding: '48px 32px',
+          padding: '290px 35px', // ← طبق درخواست
         }}
       >
-        {/* تیتر بزرگ، بنفش و UPPERCASE */}
-        <h1
-          className="text-center select-none"
-          style={{
-            color: BRAND.primary,
-            fontWeight: 900,
-            letterSpacing: '0.5px',
-            textTransform: 'uppercase',
-            fontSize: 36,           // ≈ ماک
-            lineHeight: 1.15,
-          }}
-        >
-          Modeling Star
-        </h1>
+        {/* کانتینر متن‌ها را کمی بالا می‌آوریم */}
+        <div style={{ marginTop: -80 }}>
+          {/* عنوان اصلی */}
+          <h1
+            className="text-center select-none"
+            style={{
+              color: BRAND.primary,
+              fontWeight: 900,
+              letterSpacing: '5.5px', // ← طبق درخواست
+              textTransform: 'uppercase',
+              fontSize: 36,
+              lineHeight: 1.15,
+              marginBottom: 10,
+            }}
+          >
+            modeling star
+          </h1>
 
-        {/* متن خوشامد بولد */}
-        <p
-          className="mt-4 text-center"
-          style={{ fontWeight: 800, color: '#0F172A', fontSize: 18 }}
-        >
-          به دنیای مدلینگ خوش اومدی
-        </p>
+          {/* متن خوش‌آمد */}
+          <p
+            className="text-center"
+            style={{ fontWeight: 800, color: '#0F172A', fontSize: 18, marginBottom: 40 }}
+          >
+            به مدلینگ خوش آمدید
+          </p>
+        </div>
 
-        {/* دکمه‌ها داخل استک عمودی، فاصله‌ی منطقی */}
-        <div className="mt-8 flex flex-col items-center gap-4">
-          {/* دکمه ثبت نام — پر (بنفش) با radius=25px و ارتفاع 52px */}
+        {/* دکمه‌ها با فاصله دقیق 5px */}
+        <div className="flex flex-col items-center" style={{ gap: '5px' }}>
+          {/* ثبت نام — پر (بنفش) */}
           <button
             type="button"
             onClick={goToSignup}
             className="font-extrabold text-white active:scale-[.98] transition shadow-lg"
             style={{
-              display: 'inline-flex',         // جلوی width:100% سراسری را می‌گیرد
+              display: 'inline-flex',
               alignItems: 'center',
               justifyContent: 'center',
-              width: '100%',                  // موبایل: تمام‌عرض
-              maxWidth: 260,                  // دسکتاپ: مطابق طرح
+              width: '100%',
+              maxWidth: 260,
               height: 52,
               borderRadius: 25,
               padding: '0 24px',
@@ -100,18 +102,14 @@ export default function SplashPage() {
               color: BRAND.textOnBrand,
               boxShadow: '0 10px 24px rgba(15,23,42,.10)',
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.filter = 'saturate(1.05)';
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.filter = 'saturate(1)';
-            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'saturate(1.05)'; }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.filter = 'saturate(1)'; }}
             aria-label="ثبت نام"
           >
             ثبت نام
           </button>
 
-          {/* دکمه ورود مهمان — اوت‌لاین بنفش با radius=25px و ارتفاع 52px */}
+          {/* ورود مهمان — اوت‌لاین */}
           <button
             type="button"
             onClick={continueAsGuest}
@@ -129,12 +127,8 @@ export default function SplashPage() {
               color: BRAND.primary,
               boxShadow: '0 1px 0 rgba(0,0,0,.02)',
             }}
-            onMouseEnter={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = mix(BRAND.primary, '#ffffff', 0.06);
-            }}
-            onMouseLeave={(e) => {
-              (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ffffff';
-            }}
+            onMouseEnter={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = mix(BRAND.primary, '#ffffff', 0.06); }}
+            onMouseLeave={(e) => { (e.currentTarget as HTMLButtonElement).style.backgroundColor = '#ffffff'; }}
             aria-label="ورود مهمان"
           >
             ورود مهمان
@@ -145,8 +139,7 @@ export default function SplashPage() {
   );
 }
 
-/* ===== Helpers (بدون کتابخانه) ===== */
-/** رنگ A و B را با نسبت t (0..1) میکس می‌کند و خروجی hex می‌دهد. */
+/* ===== Helpers ===== */
 function mix(a: string, b: string, t: number): string {
   const A = hexToRgb(a), B = hexToRgb(b);
   const r = Math.round(A.r + (B.r - A.r) * t);

@@ -1,21 +1,37 @@
 // src/app/api/axios-instance.ts
+// یک کلاینت axios با مبدأ یکتا + اضافه‌کردن توکن از localStorage
+
 import axios from 'axios';
 
-// ELI5: این کلاینتِ آمادهٔ axios هست تا هر بار baseURL و توکن رو دستی نذاریم.
+const ORIGIN = (process.env.NEXT_PUBLIC_API_ORIGIN ?? 'http://localhost:4000').replace(/\/+$/, '');
+
 export const axiosInstance = axios.create({
-  // اگر ENV ست بود از اون استفاده می‌کنیم؛ وگرنه localhost
-  baseURL: process.env.NEXT_PUBLIC_API_BASE_URL ?? 'http://localhost:3000',
-  withCredentials: true,
+  baseURL: `${ORIGIN}/api`,
+  timeout: 15000,
+  validateStatus: (s) => s >= 200 && s < 300,
 });
 
-// ELI5: قبل از هر درخواست، اگر توکن داریم به هدر اضافه کن
 axiosInstance.interceptors.request.use((config) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers = config.headers ?? {};
-      config.headers.Authorization = `Bearer ${token}`;
+      (config.headers as any).Authorization = `Bearer ${token}`;
     }
   }
   return config;
 });
+
+axiosInstance.interceptors.response.use(
+  (res) => res,
+  (error) => {
+    if (error?.response) {
+      // eslint-disable-next-line no-console
+      console.error('[axios]', error.response.status, error.response.data);
+    } else {
+      // eslint-disable-next-line no-console
+      console.error('[axios]', String(error));
+    }
+    return Promise.reject(error);
+  }
+);

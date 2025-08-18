@@ -6,6 +6,16 @@ import Link from 'next/link';
 import type { AxiosError } from 'axios';
 import { axiosInstance } from '../../api/axios-instance';
 
+/**
+ * ELI5:
+ * این صفحه جزئیات یک آگهی را از /v1/jobs/:id می‌گیرد.
+ * - اگر id نبود (مثلاً فایل اشتباهی در /jobs/page.tsx قرار گرفته)،
+ *   به /jobs برمی‌گردانیم تا روی "در حال بارگذاری" گیر نکند.
+ * - وضعیت‌های pending و pending_review هر دو به "در انتظار بررسی" نگاشت می‌شوند.
+ * - اگر کاربر ادمین یا صاحب آگهی باشد، دکمه‌های مدیریت (ویرایش، حذف، تایید/رد) را می‌بیند.
+ */
+
+type JobStatusRaw = 'pending' | 'pending_review' | 'approved' | 'rejected';
 type Job = {
   _id: string;
   title: string;
@@ -13,7 +23,7 @@ type Job = {
   budget?: number | null;
   city?: string | null;
   clientId?: unknown;
-  status?: 'pending' | 'approved' | 'rejected';
+  status?: JobStatusRaw;
   rejectedReason?: string | null;
   createdAt?: string;
   updatedAt?: string;
@@ -30,6 +40,8 @@ function decodeJwt(token: string | null): Record<string, unknown> | null {
   try {
     const [, payload] = token.split('.');
     const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore - برای مرورگرهای قدیمی
     return JSON.parse(decodeURIComponent(escape(json))) as Record<string, unknown>;
   } catch {
     return null;
@@ -37,9 +49,9 @@ function decodeJwt(token: string | null): Record<string, unknown> | null {
 }
 
 function extractMeFromToken(token: string | null): Me | null {
-  const p = decodeJwt(token);
-  if (!p) return null;
+  const p = decodeJwt(token); if (!p) return null;
   const pid = p as Record<string, unknown>;
+
   const id =
     (pid.id as string) ?? (pid.userId as string) ?? (pid.user_id as string) ??
     (pid.sub as string) ?? (pid.uid as string) ??
@@ -52,9 +64,10 @@ function extractMeFromToken(token: string | null): Me | null {
 
   let role: string | undefined;
   if (typeof pid.role === 'string') role = pid.role as string;
-  else if (Array.isArray(pid.roles as unknown[]) && (pid.roles as unknown[]).length) role = String((pid.roles as unknown[])[0]);
+  else if (Array.isArray(pid.roles) && (pid.roles as unknown[]).length) role = String((pid.roles as unknown[])[0]);
   else if (typeof (pid as { isAdmin?: boolean }).isAdmin === 'boolean') role = (pid as { isAdmin?: boolean }).isAdmin ? 'admin' : 'user';
   else if (typeof (pid.user as { role?: unknown })?.role === 'string') role = String((pid.user as { role?: unknown }).role);
+
   if (!id) return null;
   return { id: String(id), role: (role ?? 'user') as Me['role'], clientId: clientId ?? null };
 }
@@ -68,6 +81,33 @@ function normalizeId(val: unknown): string | null {
     return a ? String(a) : null;
   }
   return null;
+}
+
+// نگاشت وضعیت سرور به لیبل و کلاس ظاهری
+function renderStatus(status?: JobStatusRaw, title?: string | null) {
+  if (!status) return null;
+  const normalized = status === 'pending_review' ? 'pending' : status;
+  const label =
+    normalized === 'approved' ? 'تایید شده' :
+    normalized === 'pending'  ? 'در انتظار بررسی' :
+    'رد شده';
+
+  const cls =
+    normalized === 'approved'
+      ? 'bg-emerald-100 text-emerald-800 border-emerald-200'
+      : normalized === 'pending'
+      ? 'bg-amber-100 text-amber-800 border-amber-200'
+      : 'bg-rose-100 text-rose-800 border-rose-200';
+
+  return (
+    <span
+      title={title ?? undefined}
+      className={`px-3 py-1 rounded-full text-xs inline-flex items-center gap-1 border ${cls}`}
+    >
+      <span className="inline-block w-2 h-2 rounded-full bg-current/60" />
+      {label}
+    </span>
+  );
 }
 
 export default function JobDetailsPage() {
@@ -88,6 +128,14 @@ export default function JobDetailsPage() {
   const [moderating, setModerating] = useState(false);
   const [rejectReason, setRejectReason] = useState('');
 
+  // اگر این فایل اشتباهی در /jobs/page.tsx قرار گرفته باشد و id نداریم، برگرد به /jobs
+  useEffect(() => {
+    if (!jobId) {
+      // از گیرکردن روی لودینگ جلوگیری می‌کند
+      router.replace('/jobs');
+    }
+  }, [jobId, router]);
+
   useEffect(() => {
     if (!jobId) return;
     let cancelled = false;
@@ -96,9 +144,11 @@ export default function JobDetailsPage() {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get<{ ok: boolean; data: Job }>(`/api/v1/jobs/${jobId}`);
+        const res = await axiosInstance.get<{ ok?: boolean; data?: Job; job?: Job }>(`/v1/jobs/${jobId}`);
         if (cancelled) return;
-        setJob(res.data.data);
+        // بک‌اند ممکن است {data:{...}} یا {job:{...}} یا {...} بدهد
+        const j = (res.data?.data ?? res.data?.job ?? res.data) as Job;
+        setJob(j);
       } catch (e: unknown) {
         const ax = e as AxiosError<{ message?: string }>;
         if (cancelled) return;
@@ -108,9 +158,7 @@ export default function JobDetailsPage() {
       }
     })();
 
-    return () => {
-      cancelled = true;
-    };
+    return () => { cancelled = true; };
   }, [jobId]);
 
   const canManage = useMemo(() => {
@@ -132,7 +180,7 @@ export default function JobDetailsPage() {
     setDeleting(true);
     setErr(null);
     try {
-      await axiosInstance.delete(`/api/v1/jobs/${job._id}`);
+      await axiosInstance.delete(`/v1/jobs/${job._id}`);
       alert('فرصت با موفقیت حذف شد ✅');
       router.push('/jobs');
     } catch (e: unknown) {
@@ -148,9 +196,11 @@ export default function JobDetailsPage() {
     setModerating(true);
     setErr(null);
     try {
-      await axiosInstance.patch(`/api/v1/jobs/${job._id}/approve`);
+      await axiosInstance.patch(`/v1/jobs/${job._id}/approve`);
       alert('آگهی تایید شد ✅');
-      router.refresh();
+      // گرفتن دوباره جزئیات برای بروزرسانی وضعیت
+      router.refresh?.();
+      setJob((prev) => (prev ? { ...prev, status: 'approved' } : prev));
     } catch (e: unknown) {
       const ax = e as AxiosError<{ message?: string }>;
       setErr(ax.response?.data?.message ?? ax.message ?? 'تایید ناموفق بود');
@@ -168,9 +218,10 @@ export default function JobDetailsPage() {
     setModerating(true);
     setErr(null);
     try {
-      await axiosInstance.patch(`/api/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
+      await axiosInstance.patch(`/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
       alert('آگهی رد شد ❌');
-      router.refresh();
+      router.refresh?.();
+      setJob((prev) => (prev ? { ...prev, status: 'rejected', rejectedReason: rejectReason.trim() } : prev));
     } catch (e: unknown) {
       const ax = e as AxiosError<{ message?: string }>;
       setErr(ax.response?.data?.message ?? ax.message ?? 'رد آگهی ناموفق بود');
@@ -201,31 +252,13 @@ export default function JobDetailsPage() {
       </div>
 
       {loading && <div>در حال بارگذاری…</div>}
-      {err && <div className="text-red-600">{err}</div>}
+      {err && !loading && <div className="text-red-600">{err}</div>}
 
       {!loading && !err && job && (
         <article className="space-y-3">
           <div className="flex items-center justify-between gap-3">
             <h1 className="text-2xl font-bold">{job.title}</h1>
-
-            {/* Badge وضعیت */}
-            {job.status && (
-              <span
-                className={
-                  'px-3 py-1 rounded-full text-xs ' +
-                  (job.status === 'approved'
-                    ? 'bg-green-100 text-green-800'
-                    : job.status === 'pending'
-                    ? 'bg-yellow-100 text-yellow-800'
-                    : 'bg-red-100 text-red-800')
-                }
-                title={job.rejectedReason || undefined}
-              >
-                {job.status === 'approved' ? 'تایید شده'
-                  : job.status === 'pending' ? 'در انتظار تایید'
-                  : 'رد شده'}
-              </span>
-            )}
+            {renderStatus(job.status, job.rejectedReason ?? null)}
           </div>
 
           <div className="text-sm opacity-70">

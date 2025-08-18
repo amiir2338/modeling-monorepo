@@ -1,4 +1,6 @@
 'use client';
+import { axiosInstance } from '../api/axios-instance';
+
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -71,27 +73,15 @@ export default function RegisterPage() {
 
     setBusy(true);
     try {
-      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
-      const endpoint = `${base}/auth/register`;
-
-      const res = await fetch(endpoint, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
+      const { data } = await axiosInstance.post('/v1/auth/register', {
           fullName: form.fullName.trim(),
           email: form.email.trim(),
           phone: form.phone.trim(),
           password: form.password,
-        }),
-      });
-
-      if (!res.ok) {
-        const data = await safeJson<{ message?: string }>(res);
-        throw new Error(data?.message || 'ثبت‌نام انجام نشد.');
-      }
+        });
 
       setServerMsg('ثبت‌نام با موفقیت انجام شد. در حال انتقال…');
-      setTimeout(() => router.push('/login'), 800); // مسیر ورود خودت را بگذار
+      setTimeout(() => router.push('/auth/otp'), 800); // مسیر ورود خودت را بگذار
     } catch (err: unknown) {
       setServerMsg(err instanceof Error ? err.message : 'خطای نامشخص رخ داد.');
     } finally {
