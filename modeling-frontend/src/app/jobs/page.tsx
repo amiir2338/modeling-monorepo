@@ -103,8 +103,8 @@ export default function JobsPage() {
 
         const { data } = await axiosInstance.get<JobsListResponse | JobsListResponseAlt>('/v1/jobs', { params });
         if (ignore) return;
-        if (data?.ok === false) {
-          setErr(data?.message || 'امکان دریافت آگهی‌ها نیست');
+        if ((data as any)?.ok === false) {
+          setErr((data as any)?.message || 'امکان دریافت آگهی‌ها نیست');
           setJobs([]);
           setTotal(0);
         } else {

@@ -4,6 +4,7 @@ import './styles/job-card.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
+import Link from 'next/link';
 import ThemeToggle from '../components/ThemeToggle'; // اگر قبلاً ساختیم
 import BrandSwitch from '../components/BrandSwitch';
 
@@ -62,8 +63,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="font-extrabold text-lg brand-gradient-text">Modeling</div>
             </div>
             <div className="flex items-center gap-2">
-              <a href="/jobs" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">آگهی‌ها</a>
-              <a href="/login" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">ورود</a>
+              <Link href="/jobs" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">آگهی‌ها</Link>
+              <Link href="/login" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">ورود</Link>
               <LogoutButton />
               <BrandSwitch />
               <ThemeToggle />
