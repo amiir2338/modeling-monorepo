@@ -46,9 +46,9 @@ axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
         Accept: 'application/json',
       };
     }
-  }
+  
   return config;
-});
+
 
 // اختیاری: لاگر خطا برای پاسخ‌ها
 axiosInstance.interceptors.response.use(
