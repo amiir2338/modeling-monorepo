@@ -3,7 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { AxiosError } from 'axios';
-import { axiosInstance } from '@/api/axios-instance';
+import { axiosInstance } from '.././api/axios-instance';
+
 
 // --------- Types (بدون any) -----------
 type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';

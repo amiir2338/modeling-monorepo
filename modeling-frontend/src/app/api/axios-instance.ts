@@ -48,10 +48,8 @@ axiosInstance.interceptors.response.use(
     // اینجا هیچ throw خاصی نمی‌کنیم؛ همون error به caller می‌رسه.
     // فقط برای دیباگ، یک لاگ کوتاه:
     if (error?.response) {
-      // eslint-disable-next-line no-console
       console.error('[axios]', error.response.status, error.response.data);
     } else {
-      // eslint-disable-next-line no-console
       console.error('[axios]', String(error));
     }
     return Promise.reject(error);
