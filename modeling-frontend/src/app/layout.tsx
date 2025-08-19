@@ -50,9 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body>
-      <LogoutButton />
- className="bg-app">
+      <body className="bg-app">
         {/* هدر برندی */}
         <header className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:border-slate-700/50">
           <div className="container-std h-16 flex items-center justify-between">
@@ -64,6 +62,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="font-extrabold text-lg brand-gradient-text">Modeling</div>
             </div>
             <div className="flex items-center gap-2">
+              <a href="/jobs" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">آگهی‌ها</a>
+              <a href="/login" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">ورود</a>
+              <LogoutButton />
               <BrandSwitch />
               <ThemeToggle />
             </div>

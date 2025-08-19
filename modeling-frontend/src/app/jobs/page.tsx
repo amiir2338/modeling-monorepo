@@ -29,6 +29,9 @@ type JobsListResponse = {
   total?: number;
 };
 
+type JobsListResponseAlt = { jobs?: Job[]; total?: number };
+
+
 /* ------------- Small helpers ------------ */
 function useDebounced<T>(value: T, delay = 400) {
   const [v, setV] = useState(value);
@@ -98,15 +101,20 @@ export default function JobsPage() {
         if (debouncedQ.trim()) params.q = debouncedQ.trim();
         if (status !== 'all') params.status = status;
 
-        const { data } = await axiosInstance.get<JobsListResponse>('/v1/jobs', { params });
+        const { data } = await axiosInstance.get<JobsListResponse | JobsListResponseAlt>('/v1/jobs', { params });
         if (ignore) return;
         if (data?.ok === false) {
           setErr(data?.message || 'امکان دریافت آگهی‌ها نیست');
           setJobs([]);
           setTotal(0);
         } else {
-          setJobs(Array.isArray(data?.data) ? data.data : Array.isArray((data as any)?.jobs) ? (data as any).jobs : []);
-          setTotal(typeof data?.total === 'number' ? data.total : Array.isArray((data as any)?.jobs) ? (data as any).jobs.length : (Array.isArray(data?.data) ? data.data.length : 0));
+          const payload = data as JobsListResponse | JobsListResponseAlt;
+          let list: Job[] = [];
+          if ('data' in payload && Array.isArray(payload.data)) list = payload.data;
+          else if ('jobs' in payload && Array.isArray(payload.jobs)) list = payload.jobs;
+          setJobs(list);
+          const totalVal = 'total' in payload && typeof payload.total === 'number' ? payload.total : list.length;
+          setTotal(totalVal);
         }
       } catch (e) {
         if (ignore) return;

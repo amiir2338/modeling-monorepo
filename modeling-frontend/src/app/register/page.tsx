@@ -73,15 +73,10 @@ export default function RegisterPage() {
 
     setBusy(true);
     try {
-      const { data } = await axiosInstance.post('/v1/auth/register', {
-          fullName: form.fullName.trim(),
-          email: form.email.trim(),
-          phone: form.phone.trim(),
-          password: form.password,
-        });
-
+      const res = await registerUser({ email: form.email.trim(), password: form.password, name: form.fullName.trim(), role: 'client' });
+      if (res?.token) { localStorage.setItem('token', res.token); }
       setServerMsg('ثبت‌نام با موفقیت انجام شد. در حال انتقال…');
-      setTimeout(() => router.push('/auth/otp'), 800); // مسیر ورود خودت را بگذار
+      setTimeout(() => router.push('/jobs'), 800);
     } catch (err: unknown) {
       setServerMsg(err instanceof Error ? err.message : 'خطای نامشخص رخ داد.');
     } finally {
@@ -331,8 +326,4 @@ function rgbToHex(r: number, g: number, b: number) {
   const toHex = (n: number) => n.toString(16).padStart(2, '0');
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
-async function safeJson<T>(res: Response): Promise<T | null> {
-  const text = await res.text();
-  if (!text) return null;
-  try { return JSON.parse(text) as T; } catch { return null; }
 }

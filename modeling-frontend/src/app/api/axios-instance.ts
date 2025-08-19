@@ -16,7 +16,9 @@ axiosInstance.interceptors.request.use((config) => {
     const token = localStorage.getItem('token');
     if (token) {
       config.headers = config.headers ?? {};
-      (config.headers as any).Authorization = `Bearer ${token}`;
+      const hdrs: Record<string, string> = typeof config.headers === 'object' && config.headers !== null ? (config.headers as Record<string, string>) : {};
+      hdrs.Authorization = `Bearer ${token}`;
+      config.headers = hdrs;
     }
   }
   return config;
