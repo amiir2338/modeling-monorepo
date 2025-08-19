@@ -42,7 +42,7 @@ export default function CreateJobPage() {
       setSaving(true);
       const res = await axiosInstance.post<CreateResponse>('/v1/jobs', form);
       if (res.data?.job?._id) {
-        setMsg('پیش‌نویس ذخیره شد ✅');
+        setMsg('پیشنویس ذخیره شد ✅');
       } else {
         setErr(res.data?.message || 'ذخیره انجام نشد');
       }
@@ -98,7 +98,7 @@ export default function CreateJobPage() {
           disabled={saving}
           onClick={saveDraft}
         >
-          ذخیره پیش‌نویس
+          ذخیره پیشنویس
         </button>
       </div>
 
@@ -107,4 +107,4 @@ export default function CreateJobPage() {
     </main>
   );
 }
-‍
+
