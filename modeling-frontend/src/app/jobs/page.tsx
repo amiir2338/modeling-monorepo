@@ -22,15 +22,9 @@ export type Job = {
   createdAt?: string;
 };
 
-type JobsListResponse = {
-  ok: boolean;
-  message?: string;
-  data: Job[];
-  total?: number;
-};
-
-type JobsListResponseAlt = { jobs?: Job[]; total?: number };
-
+type JobsListResponse =
+  | { ok?: boolean; message?: string; data?: Job[]; total?: number; page?: number; limit?: number }
+  | { ok?: boolean; message?: string; jobs?: Job[]; total?: number; page?: number; limit?: number };
 
 /* ------------- Small helpers ------------ */
 function useDebounced<T>(value: T, delay = 400) {
@@ -52,7 +46,7 @@ export default function JobsPage() {
   const router = useRouter();
   const pathname = usePathname();
   const sp = useSearchParams();
-  const spStr = sp.toString(); // برای قرار دادن امن در dependency
+  const spStr = sp.toString();
 
   // URL → state
   const [q, setQ] = useState(() => sp.get('q') ?? '');
@@ -81,7 +75,6 @@ export default function JobsPage() {
     const qs = params.toString();
     const url = qs ? `${pathname}?${qs}` : pathname;
 
-    // جلوگیری از replace اضافه در بار اول اگر URL فعلی همین است
     const currentUrl = spStr ? `${pathname}?${spStr}` : pathname;
     if (!firstSyncDone.current && url === currentUrl) {
       firstSyncDone.current = true;
@@ -101,21 +94,27 @@ export default function JobsPage() {
         if (debouncedQ.trim()) params.q = debouncedQ.trim();
         if (status !== 'all') params.status = status;
 
-        const { data } = await axiosInstance.get<JobsListResponse | JobsListResponseAlt>('/v1/jobs', { params });
+        const { data } = await axiosInstance.get<JobsListResponse>('/v1/jobs', { params });
         if (ignore) return;
-        if ((data as any)?.ok === false) {
-          setErr((data as any)?.message || 'امکان دریافت آگهی‌ها نیست');
+
+        // اگر سرور ok:false بده
+        if ('ok' in data && data.ok === false) {
+          setErr(data.message || 'امکان دریافت آگهی‌ها نیست');
           setJobs([]);
           setTotal(0);
-        } else {
-          const payload = data as JobsListResponse | JobsListResponseAlt;
-          let list: Job[] = [];
-          if ('data' in payload && Array.isArray(payload.data)) list = payload.data;
-          else if ('jobs' in payload && Array.isArray(payload.jobs)) list = payload.jobs;
-          setJobs(list);
-          const totalVal = 'total' in payload && typeof payload.total === 'number' ? payload.total : list.length;
-          setTotal(totalVal);
+          return;
         }
+
+        // استخراج آرایه آگهی‌ها (data یا jobs)
+        const jobsArr: Job[] =
+          ('data' in data && Array.isArray(data.data)) ? data.data as Job[] :
+          ('jobs' in data && Array.isArray(data.jobs)) ? data.jobs as Job[] :
+          [];
+
+        const totalVal = typeof data.total === 'number' ? data.total : jobsArr.length;
+
+        setJobs(jobsArr);
+        setTotal(totalVal);
       } catch (e) {
         if (ignore) return;
         const ax = e as AxiosError<{ message?: string }>;
