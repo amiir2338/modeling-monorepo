@@ -28,13 +28,31 @@ const vazir = Vazirmatn({
   display: 'swap',
 });
 
+
+function LogoutButton() {
+  const handleLogout = () => {
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('token');
+      window.location.href = '/login';
+    }
+  };
+  return (
+    <button onClick={handleLogout} className="ml-4 text-sm text-red-600 underline">
+      خروج
+    </button>
+  );
+}
+
+
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl" className={vazir.className}>
       <head>
         <meta charSet="utf-8" />
       </head>
-      <body className="bg-app">
+      <body>
+      <LogoutButton />
+ className="bg-app">
         {/* هدر برندی */}
         <header className="sticky top-0 z-40 border-b border-slate-200/60 bg-white/70 backdrop-blur supports-[backdrop-filter]:bg-white/50 dark:border-slate-700/50">
           <div className="container-std h-16 flex items-center justify-between">
