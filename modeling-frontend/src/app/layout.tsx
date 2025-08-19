@@ -4,8 +4,6 @@ import './styles/job-card.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
-import Link from 'next/link';
-import LogoutButton from '../components/LogoutButton';
 import ThemeToggle from '../components/ThemeToggle'; // اگر قبلاً ساختیم
 import BrandSwitch from '../components/BrandSwitch';
 

@@ -4,7 +4,6 @@ import { useState } from 'react';
 import type { AxiosError } from 'axios';
 import { axiosInstance } from '../../api/axios-instance';
 
-
 type JobCreatePayload = {
   title: string;
   description: string;
@@ -108,3 +107,4 @@ export default function CreateJobPage() {
     </main>
   );
 }
+‍

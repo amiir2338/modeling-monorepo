@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { AxiosError } from 'axios';
-import { axiosInstance } from '.././api/axios-instance';
-
+import { axiosInstance } from '../api/axios-instance';
 
 // --------- Types (بدون any) -----------
 type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
@@ -130,6 +129,7 @@ export default function JobsPage() {
     <main className="p-4 max-w-5xl mx-auto space-y-4">
       <header className="flex items-center justify-between">
         <h1 className="text-lg font-bold">فرصت‌های همکاری</h1>
+        <span className="text-sm text-slate-500">کل: {total}</span>
         <Link
           href="/jobs/create"
           className="px-3 py-2 rounded-xl bg-[#7D6CB2] text-white hover:opacity-90"

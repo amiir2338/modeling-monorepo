@@ -5,6 +5,7 @@
 // و بقیهٔ وضعیت‌ها به catch بروند (تا UI روی "در حال بارگذاری..." گیر نکند).
 
 import axios, { type AxiosRequestHeaders } from 'axios';
+import type { AxiosRequestConfig, AxiosInstance, InternalAxiosRequestConfig } from 'axios';
 
 // اگر در .env.local مقدار دهی کنی، همان را استفاده می‌کنیم؛
 // در غیر این صورت پیش‌فرض روی بک‌اند لوکال:
@@ -21,9 +22,17 @@ export const axiosInstance = axios.create({
 });
 
 // قبل از هر درخواست، اگر توکن داشتیم، روی هدر بگذاریم
-axiosInstance.interceptors.request.use((config) => {
+axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('access_token');
+    const token = localStorage.getItem('token');
+    if (token) {
+      const h = (config.headers ?? {}) as AxiosRequestConfig['headers'];
+      config.headers = { ...(h || {}), Authorization: `Bearer ${token}` }  # placeholder to keep structure
+      # The above line with Python dict markers will be replaced below with JS object spread.
+    }
+  }
+  return config;
+});
     if (token) {
       // نکته: به‌دلیل تایپ‌ سخت‌گیر axios، هدرها را به AxiosRequestHeaders cast می‌کنیم
       (config.headers as AxiosRequestHeaders) = {
@@ -48,8 +57,10 @@ axiosInstance.interceptors.response.use(
     // اینجا هیچ throw خاصی نمی‌کنیم؛ همون error به caller می‌رسه.
     // فقط برای دیباگ، یک لاگ کوتاه:
     if (error?.response) {
+      // eslint-disable-next-line no-console
       console.error('[axios]', error.response.status, error.response.data);
     } else {
+      // eslint-disable-next-line no-console
       console.error('[axios]', String(error));
     }
     return Promise.reject(error);
