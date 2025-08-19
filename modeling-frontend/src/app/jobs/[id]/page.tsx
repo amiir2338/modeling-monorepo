@@ -8,7 +8,7 @@ import { axiosInstance } from '../../api/axios-instance';
 
 /**
  * ELI5:
- * این صفحه جزئیات یک آگهی را از /v1/jobs/:id می‌گیرد.
+ * این صفحه جزئیات یک آگهی را از /api/v1/jobs/:id می‌گیرد.
  * - اگر id نبود (مثلاً فایل اشتباهی در /jobs/page.tsx قرار گرفته)،
  *   به /jobs برمی‌گردانیم تا روی "در حال بارگذاری" گیر نکند.
  * - وضعیت‌های pending و pending_review هر دو به "در انتظار بررسی" نگاشت می‌شوند.
@@ -144,7 +144,7 @@ export default function JobDetailsPage() {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get<{ ok?: boolean; data?: Job; job?: Job }>(`/v1/jobs/${jobId}`);
+        const res = await axiosInstance.get<{ ok?: boolean; data?: Job; job?: Job }>(`/api/v1/jobs/${jobId}`);
         if (cancelled) return;
         // بک‌اند ممکن است {data:{...}} یا {job:{...}} یا {...} بدهد
         const j = (res.data?.data ?? res.data?.job ?? res.data) as Job;
@@ -180,7 +180,7 @@ export default function JobDetailsPage() {
     setDeleting(true);
     setErr(null);
     try {
-      await axiosInstance.delete(`/v1/jobs/${job._id}`);
+      await axiosInstance.delete(`/api/v1/jobs/${job._id}`);
       alert('فرصت با موفقیت حذف شد ✅');
       router.push('/jobs');
     } catch (e: unknown) {
@@ -196,7 +196,7 @@ export default function JobDetailsPage() {
     setModerating(true);
     setErr(null);
     try {
-      await axiosInstance.patch(`/v1/jobs/${job._id}/approve`);
+      await axiosInstance.patch(`/api/v1/jobs/${job._id}/approve`);
       alert('آگهی تایید شد ✅');
       // گرفتن دوباره جزئیات برای بروزرسانی وضعیت
       router.refresh?.();
@@ -218,7 +218,7 @@ export default function JobDetailsPage() {
     setModerating(true);
     setErr(null);
     try {
-      await axiosInstance.patch(`/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
+      await axiosInstance.patch(`/api/v1/jobs/${job._id}/reject`, { reason: rejectReason.trim() });
       alert('آگهی رد شد ❌');
       router.refresh?.();
       setJob((prev) => (prev ? { ...prev, status: 'rejected', rejectedReason: rejectReason.trim() } : prev));

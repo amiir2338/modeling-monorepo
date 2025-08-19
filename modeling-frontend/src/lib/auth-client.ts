@@ -1,27 +1,34 @@
-// src/lib/auth-client.ts
-// توابع احراز هویت مبتنی بر ایمیل/پسورد (هماهنگ با بک‌اند فعلی)
+// ELI5:
+// این فایل فقط دو تابع دارد:
+// 1) requestOtp: شماره را به سرور می‌دهد تا کد ارسال شود
+// 2) verifyOtp: شماره و کد را می‌دهد تا توکن (JWT) بگیریم
 
-import { axiosInstance } from '../app/api/axios-instance';
+const BASE_URL = process.env.NEXT_PUBLIC_API_BASE || '';
 
-type LoginResponse = {
-  ok?: boolean;
-  token: string;
-  data?: {
-    _id: string;
-    email: string;
-    role: string;
-    name?: string | null;
-    clientId?: string | null;
-  };
-  message?: string;
-};
-
-export async function registerUser(payload: { email: string; password: string; name?: string | null; role?: 'model'|'client'|'admin' }) {
-  const { data } = await axiosInstance.post<LoginResponse>('/v1/auth/register', payload);
-  return data;
+export async function requestOtp(phone: string) {
+  const res = await fetch(`${BASE_URL}/api/v1/auth/otp/request`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`OTP request failed: ${text}`);
+  }
+  return res.json();
 }
 
-export async function loginUser(email: string, password: string) {
-  const { data } = await axiosInstance.post<LoginResponse>('/v1/auth/login', { email, password });
-  return data;
+export async function verifyOtp(phone: string, code: string): Promise<string> {
+  const res = await fetch(`${BASE_URL}/api/v1/auth/otp/verify`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ phone, code }),
+  });
+  if (!res.ok) {
+    const text = await res.text();
+    throw new Error(`OTP verify failed: ${text}`);
+  }
+  const data = await res.json();
+  // انتظار داریم سرور { ok:true, token:'...' } برگرداند
+  return data.token as string;
 }

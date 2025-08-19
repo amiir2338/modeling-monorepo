@@ -1,6 +1,4 @@
 'use client';
-import { registerUser } from '../../lib/auth-client';
-
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -73,10 +71,27 @@ export default function RegisterPage() {
 
     setBusy(true);
     try {
-      const res = await registerUser({ email: form.email.trim(), password: form.password, name: form.fullName.trim(), role: 'client' });
-      if (res?.token) { localStorage.setItem('token', res.token); }
+      const base = process.env.NEXT_PUBLIC_API_BASE_URL ?? '';
+      const endpoint = `${base}/auth/register`;
+
+      const res = await fetch(endpoint, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          fullName: form.fullName.trim(),
+          email: form.email.trim(),
+          phone: form.phone.trim(),
+          password: form.password,
+        }),
+      });
+
+      if (!res.ok) {
+        const data = await safeJson<{ message?: string }>(res);
+        throw new Error(data?.message || 'ثبت‌نام انجام نشد.');
+      }
+
       setServerMsg('ثبت‌نام با موفقیت انجام شد. در حال انتقال…');
-      setTimeout(() => router.push('/jobs'), 800);
+      setTimeout(() => router.push('/login'), 800); // مسیر ورود خودت را بگذار
     } catch (err: unknown) {
       setServerMsg(err instanceof Error ? err.message : 'خطای نامشخص رخ داد.');
     } finally {
@@ -326,4 +341,8 @@ function rgbToHex(r: number, g: number, b: number) {
   const toHex = (n: number) => n.toString(16).padStart(2, '0');
   return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
 }
-
+async function safeJson<T>(res: Response): Promise<T | null> {
+  const text = await res.text();
+  if (!text) return null;
+  try { return JSON.parse(text) as T; } catch { return null; }
+}

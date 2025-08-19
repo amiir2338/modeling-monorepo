@@ -57,5 +57,5 @@ npm run dev
 
 ## 🔹 `modeling-frontend/.env.example`
 ```env
-NEXT_PUBLIC_API_ORIGIN=http://localhost:4000
+NEXT_PUBLIC_API_URL=http://localhost:4000/api/v1
 

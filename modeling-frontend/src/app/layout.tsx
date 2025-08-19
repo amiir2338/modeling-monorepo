@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
 import Link from 'next/link';
+import LogoutButton from '../components/LogoutButton';
 import ThemeToggle from '../components/ThemeToggle'; // اگر قبلاً ساختیم
 import BrandSwitch from '../components/BrandSwitch';
 
@@ -29,22 +30,6 @@ const vazir = Vazirmatn({
   display: 'swap',
 });
 
-
-function LogoutButton() {
-  const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.removeItem('token');
-      window.location.href = '/login';
-    }
-  };
-  return (
-    <button onClick={handleLogout} className="ml-4 text-sm text-red-600 underline">
-      خروج
-    </button>
-  );
-}
-
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <html lang="fa" dir="rtl" className={vazir.className}>
@@ -63,9 +48,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="font-extrabold text-lg brand-gradient-text">Modeling</div>
             </div>
             <div className="flex items-center gap-2">
-              <Link href="/jobs" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">آگهی‌ها</Link>
-              <Link href="/login" className="px-3 py-2 text-sm rounded-xl border border-slate-300/70 hover:bg-slate-50 dark:hover:bg-slate-700">ورود</Link>
-              <LogoutButton />
               <BrandSwitch />
               <ThemeToggle />
             </div>

@@ -115,7 +115,7 @@ export default function EditJobPage() {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get(`/v1/jobs/${encodeURIComponent(jobId)}`);
+        const res = await axiosInstance.get(`/api/v1/jobs/${encodeURIComponent(jobId)}`);
         const j = normalizeJobFromResponse(res.data);
         if (!j) throw new Error('پاسخ سرور نامعتبر است');
         if (cancelled) return;
@@ -168,15 +168,15 @@ export default function EditJobPage() {
 
   // ---------- API helpers ----------
   async function apiUpdateDraft(id: string, payload: Record<string, unknown>) {
-    const res = await axiosInstance.patch(`/v1/jobs/${encodeURIComponent(id)}`, payload);
+    const res = await axiosInstance.patch(`/api/v1/jobs/${encodeURIComponent(id)}`, payload);
     return res.data as unknown;
   }
 
   async function apiSubmit(id: string, payload: Record<string, unknown>) {
     // چند مسیر رایج را امتحان می‌کنیم
     const paths = [
-      `/v1/jobs/${encodeURIComponent(id)}/submit`,
-      `/v1/jobs/submit/${encodeURIComponent(id)}`,
+      `/api/v1/jobs/${encodeURIComponent(id)}/submit`,
+      `/api/v1/jobs/submit/${encodeURIComponent(id)}`,
       `/api/jobs/${encodeURIComponent(id)}/submit`,
     ];
     const tried: string[] = [];

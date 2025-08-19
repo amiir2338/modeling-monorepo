@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import type { AxiosError } from 'axios';
-import { axiosInstance } from '../../api/axios-instance';
+import { axiosInstance } from '@/api/axios-instance';
 
 type JobCreatePayload = {
   title: string;
@@ -107,3 +107,4 @@ export default function CreateJobPage() {
     </main>
   );
 }
+‍
