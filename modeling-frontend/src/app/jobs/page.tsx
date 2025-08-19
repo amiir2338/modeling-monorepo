@@ -105,8 +105,8 @@ export default function JobsPage() {
           setJobs([]);
           setTotal(0);
         } else {
-          setJobs(Array.isArray(data?.data) ? data.data : []);
-          setTotal(typeof data?.total === 'number' ? data.total : Array.isArray(data?.data) ? data.data.length : 0);
+          setJobs(Array.isArray(data?.data) ? data.data : Array.isArray((data as any)?.jobs) ? (data as any).jobs : []);
+          setTotal(typeof data?.total === 'number' ? data.total : Array.isArray((data as any)?.jobs) ? (data as any).jobs.length : (Array.isArray(data?.data) ? data.data.length : 0));
         }
       } catch (e) {
         if (ignore) return;

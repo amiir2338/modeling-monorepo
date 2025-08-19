@@ -1,14 +1,27 @@
 // src/lib/auth-client.ts
-// توابع OTP با axiosInstance تا BASE یکتا باشد.
+// توابع احراز هویت مبتنی بر ایمیل/پسورد (هماهنگ با بک‌اند فعلی)
 
 import { axiosInstance } from '../app/api/axios-instance';
 
-export async function requestOtp(phone: string) {
-  const { data } = await axiosInstance.post('/v1/auth/otp/request', { phone });
+type LoginResponse = {
+  ok?: boolean;
+  token: string;
+  data?: {
+    _id: string;
+    email: string;
+    role: string;
+    name?: string | null;
+    clientId?: string | null;
+  };
+  message?: string;
+};
+
+export async function registerUser(payload: { email: string; password: string; name?: string | null; role?: 'model'|'client'|'admin' }) {
+  const { data } = await axiosInstance.post<LoginResponse>('/v1/auth/register', payload);
   return data;
 }
 
-export async function verifyOtp(phone: string, code: string): Promise<string> {
-  const { data } = await axiosInstance.post('/v1/auth/otp/verify', { phone, code });
-  return data.token as string;
+export async function loginUser(email: string, password: string) {
+  const { data } = await axiosInstance.post<LoginResponse>('/v1/auth/login', { email, password });
+  return data;
 }

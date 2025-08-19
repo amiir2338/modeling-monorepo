@@ -1,5 +1,5 @@
 'use client';
-import { axiosInstance } from '../api/axios-instance';
+import { registerUser } from '../../lib/auth-client';
 
 
 import React, { useState } from 'react';
