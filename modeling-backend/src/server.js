@@ -1,58 +1,53 @@
 // src/server.js
+import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import mongoose from 'mongoose';
+import path from 'path';
 import swaggerUi from 'swagger-ui-express';
-import swaggerSpec from './docs/swagger.js';
-import router from './routes/index.js';
-import authDebugRouter from './routes/auth.debug.route.js'; // فقط یک بار!
 
-import 'dotenv/config';
+import router from './routes/index.js';
+import swaggerSpec from './docs/swagger.js';
+import { errorHandler } from './middlewares/error.middleware.js';
 
 const app = express();
-import path from 'path';
-app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
-// ---------- Middlewares ----------
+// --- Core middlewares ---
+app.use(express.json({ limit: '2mb' }));
+app.use(express.urlencoded({ extended: true }));
+
+// CORS (allow dev front by default)
+const FRONT = process.env.FRONT_ORIGIN || process.env.FRONTEND_URL || 'http://localhost:3000';
+app.use(cors({
+  origin: (origin, cb) => cb(null, origin || FRONT),
+  credentials: true,
+}));
+
 app.use(helmet());
-app.use(
-  cors({
-    origin: '*',
-    methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-    allowedHeaders: ['Content-Type', 'Authorization'],
-  })
-);
-app.use(express.json());
 app.use(morgan('dev'));
 
-// ---------- Docs ----------
-app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, { explorer: true }));
-app.get('/api/openapi.json', (req, res) => {
-  res.setHeader('Content-Type', 'application/json; charset=utf-8');
-  res.send(JSON.stringify(swaggerSpec, null, 2));
-});
+// Static uploads
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
-// ---------- API Routes ----------
-app.use('/api', router);                 // روتر اصلی
-app.use('/api/v1/auth', authDebugRouter); // روت دیباگ: GET /api/v1/auth/me
+// Docs
+app.use('/api/docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Ping & Home
-app.get('/api/ping', (req, res) => res.json({ ok: true, msg: 'pong' }));
-app.get('/', (req, res) => {
-  res.send('Modeling backend is running ✅');
-});
+// API routes
+app.use('/api', router);
 
-// ---------- DB & Server start ----------
-const PORT = process.env.PORT || 4000;
+// Health shortcut
+app.get('/health', (req, res) => res.json({ ok: true, service: 'modeling-backend', time: new Date().toISOString() }));
 
-mongoose
-  .connect(process.env.MONGO_URL, {
-    // در مانگوس 7 این گزینه‌ها اختیاری‌اند، مشکلی ندارند
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+// Error handler
+app.use(errorHandler);
+
+// --- DB & server bootstrap ---
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://127.0.0.1:27017/modeling';
+const PORT = Number(process.env.PORT || 4000);
+
+mongoose.connect(MONGO_URI)
   .then(() => {
     console.log('✅ MongoDB connected');
     app.listen(PORT, () => {
