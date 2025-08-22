@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { loginUser } from '../lib/auth-client';
+import { loginUser } from '../../lib/auth-client';
 
 export default function LoginPage() {
   const router = useRouter();
@@ -28,8 +28,14 @@ export default function LoginPage() {
       } else {
         setMsg(res?.message || 'ورود ناموفق بود.');
       }
-    } catch (err: any) {
-      setMsg(err?.message || 'ورود ناموفق بود.');
+    } catch (err: unknown) {
+      const msg =
+        err instanceof Error
+          ? err.message
+          : (typeof err === 'object' && err && 'message' in (err as Record<string, unknown>))
+            ? String((err as { message?: unknown }).message)
+            : String(err);
+      setMsg(msg || 'ورود ناموفق بود.');
     } finally {
       setBusy(false);
     }

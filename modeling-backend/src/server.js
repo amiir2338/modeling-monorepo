@@ -12,6 +12,8 @@ import authDebugRouter from './routes/auth.debug.route.js'; // فقط یک با�
 import 'dotenv/config';
 
 const app = express();
+import path from 'path';
+app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
 // ---------- Middlewares ----------
 app.use(helmet());

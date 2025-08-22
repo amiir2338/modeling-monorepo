@@ -30,15 +30,10 @@ type JobsResponse = {
 };
 
 // ---------- Metadata / Viewport ----------
-export const viewport = {
-  themeColor: '#7D6CB2',
-};
+
 
 // (نکته: themeColor را اینجا گذاشتیم تا هشدار Next رفع شود)
-export const metadata = {
-  title: 'فرصت‌های همکاری',
-  description: 'لیست فرصت‌های مدلینگ',
-};
+
 
 // ---------- Helpers (بدون any) ----------
 const sanitizeInt = (v: unknown, fallback: number) => {

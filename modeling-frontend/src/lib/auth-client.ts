@@ -32,3 +32,39 @@ export async function verifyOtp(phone: string, code: string): Promise<string> {
   // انتظار داریم سرور { ok:true, token:'...' } برگرداند
   return data.token as string;
 }
+
+
+export async function loginUser(email: string, password: string): Promise<{ ok: boolean; token?: string; message?: string; }>{ 
+  const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ email, password }),
+  });
+  if (!res.ok) {
+    try {
+      const err = await res.json();
+      return { ok: false, message: err?.message || 'Login failed' };
+    } catch {
+      const msg = await res.text();
+      return { ok: false, message: msg || 'Login failed' };
+    }
+  }
+  const data = await res.json();
+  const token = data?.token as string | undefined;
+  if (token) {
+    try { localStorage.setItem('token', token); } catch {}
+    return { ok: true, token };
+  }
+  return { ok: false, message: 'No token returned' };
+}
+
+
+export function logout(): void {
+  try { localStorage.removeItem('token'); } catch {}
+}
+
+
+export function login(token: string): void {
+  try { localStorage.setItem('token', token); } catch {}
+}
+

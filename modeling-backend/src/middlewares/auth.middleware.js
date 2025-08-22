@@ -5,80 +5,58 @@ import User from '../models/user.model.js';
 function getTokenFromHeader(req) {
   const h = req.headers['authorization'] || req.headers['Authorization'];
   if (!h) return null;
-  const parts = h.split(' ');
-  if (parts.length !== 2) return null;
-  const [scheme, token] = parts;
-  if (!/^Bearer$/i.test(scheme)) return null;
-  return token;
+  const [scheme, token] = String(h).split(' ');
+  if (!/^Bearer$/i.test(scheme) || !token) return null;
+  return token.trim();
 }
 
-/** نیازمند توکن معتبر (برای مسیرهای محافظت‌شده) */
-export async function authRequired(req, res, next) {
-  try {
-    const token = getTokenFromHeader(req);
-    if (!token) {
-      return res.status(401).json({ ok: false, message: 'توکن ارسال نشده' });
-    }
-
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-
-    // کاربر را از DB بخوانیم تا آخرین وضعیت/نقش را داشته باشیم
-    const user = await User.findById(decoded.sub).lean();
-    if (!user || user.isActive === false) {
-      return res.status(401).json({ ok: false, message: 'دسترسی نامعتبر یا کاربر غیرفعال' });
-    }
-
-    // ضمیمه به req برای کنترلرها
-    req.user = {
-      id: user._id.toString(),
-      email: user.email,
-      role: user.role,
-      modelId: user.modelId ?? null,
-      clientId: user.clientId ? user.clientId.toString() : (decoded.clientId ?? null),
-    };
-
-    next();
-  } catch (err) {
-    return res.status(401).json({ ok: false, message: 'توکن نامعتبر یا منقضی شده' });
-  }
+function mapUser(u) {
+  if (!u) return null;
+  return {
+    _id: u._id,
+    id: u._id?.toString?.() ?? u.id,
+    role: u.role,
+    email: u.email,
+    name: u.name ?? null,
+    modelId: u.modelId ?? null,
+    clientId: u.clientId ?? null,
+  };
 }
 
-/**
- * احراز هویت اختیاری:
- * اگر توکن معتبر بود، req.user را ست می‌کند؛
- * اگر نبود/ارسال نشد، بدون خطا عبور می‌کند (برای مسیرهای عمومی + قابلیت تشخیص مالک/ادمین).
- */
-export async function optionalAuth(req, res, next) {
+/** Optional auth */
+export async function optionalAuth(req, _res, next) {
   try {
     const token = getTokenFromHeader(req);
     if (!token) return next();
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = payload?.userId || payload?.id || payload?._id || payload?.sub;
+    if (!userId) return next();
+    const u = await User.findById(userId).lean();
+    if (u) req.user = mapUser(u);
+  } catch {}
+  next();
+}
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const user = await User.findById(decoded.sub).lean();
-
-    if (user && user.isActive !== false) {
-      req.user = {
-        id: user._id.toString(),
-        email: user.email,
-        role: user.role,
-        modelId: user.modelId ?? null,
-        clientId: user.clientId ? user.clientId.toString() : (decoded.clientId ?? null),
-      };
-    }
-
-    return next();
+/** Required auth */
+export async function authRequired(req, res, next) {
+  try {
+    const token = getTokenFromHeader(req);
+    if (!token) return res.status(401).json({ ok: false, message: 'توکن لازم است' });
+    const payload = jwt.verify(token, process.env.JWT_SECRET);
+    const userId = payload?.userId || payload?.id || payload?._id || payload?.sub;
+    const u = userId ? await User.findById(userId).lean() : null;
+    if (!u) return res.status(401).json({ ok: false, message: 'کاربر معتبر نیست' });
+    req.user = mapUser(u);
+    next();
   } catch {
-    // اگر توکن بد بود، مسیر عمومی را خراب نکن
-    return next();
+    return res.status(401).json({ ok: false, message: 'توکن نامعتبر است' });
   }
 }
 
-/** محدودسازی بر اساس نقش‌ها (مثلاً فقط client یا admin) */
+/** Role guard */
 export function requireRoles(...roles) {
   return (req, res, next) => {
-    if (!req.user) {
-      return res.status(401).json({ ok: false, message: 'احراز هویت نشده' });
-    }
+    if (!req.user) return res.status(401).json({ ok: false, message: 'احراز هویت نشده' });
     if (!roles.includes(req.user.role)) {
       return res.status(403).json({ ok: false, message: 'اجازه دسترسی ندارید' });
     }

@@ -1,38 +1,27 @@
 // src/app/api/axios-instance.ts
-// Axios instance with base URL and auth header injection.
-
-import axios from 'axios';
-import type { AxiosInstance, AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
-
-const ORIGIN = (process.env.NEXT_PUBLIC_API_ORIGIN ?? 'http://localhost:4000').replace(/\/+$/, '');
-
+import axios, { AxiosHeaders } from 'axios';
+import type { AxiosInstance, InternalAxiosRequestConfig } from 'axios';
+const API_BASE = (process.env.NEXT_PUBLIC_API_BASE ?? 'http://localhost:4000/api').replace(/\/+$/, '');
 export const axiosInstance: AxiosInstance = axios.create({
-  baseURL: `${ORIGIN}/api`,
+  baseURL: API_BASE,
   timeout: 15000,
   validateStatus: (s) => s >= 200 && s < 300,
 });
-
 axiosInstance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
   if (typeof window !== 'undefined') {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem('access_token');
     if (token) {
-      const headers = (config.headers ?? {}) as AxiosRequestConfig['headers'];
-      config.headers = { ...(headers || {}), Authorization: `Bearer ${token}` };
+      if (!config.headers) config.headers = new AxiosHeaders();
+      if (config.headers instanceof AxiosHeaders) {
+        config.headers.set('Authorization', `Bearer ${token}`);
+        if (!config.headers.get('Content-Type')) config.headers.set('Content-Type', 'application/json');
+      } else {
+        (config.headers as Record<string, string>)['Authorization'] = `Bearer ${token}`;
+        if (!(config.headers as Record<string, string>)['Content-Type']) (config.headers as Record<string, string>)['Content-Type'] = 'application/json';
+      }
     }
   }
   return config;
 });
-
-axiosInstance.interceptors.response.use(
-  (res) => res,
-  (error) => {
-    if (error?.response) {
-      // eslint-disable-next-line no-console
-      console.error('[axios]', error.response.status, error.response.data);
-    } else {
-      // eslint-disable-next-line no-console
-      console.error('[axios]', String(error));
-    }
-    return Promise.reject(error);
-  }
-);
+axiosInstance.interceptors.response.use((res)=>res,(error)=>{ try{ if(error?.response){ console.error('[axios]', error.response.status, error.response.data);} else { console.error('[axios]', String(error)); } }catch{} return Promise.reject(error); });
+export default axiosInstance;

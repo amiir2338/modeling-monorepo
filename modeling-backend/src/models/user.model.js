@@ -14,6 +14,10 @@ const UserSchema = new mongoose.Schema(
     // نام نمایشی اختیاری
     name: { type: String, default: null },
 
+    // نمایش آواتار
+    avatar: { type: String, default: null },
+
+
     // ارتباط اختیاری به پروفایل مدل/کارفرما برای بعداً
     modelId: { type: mongoose.Schema.Types.ObjectId, ref: 'Model', default: null },
     clientId: { type: mongoose.Schema.Types.ObjectId, ref: 'Client', default: null },
