@@ -1,0 +1,164 @@
+{
+  "generatedAt": "2025-08-23T14:03:31.017Z",
+  "API_BASE": "http://localhost:4000/api",
+  "FRONT_BASE": "http://localhost:3000",
+  "logs": [
+    {
+      "t": "2025-08-23T14:03:21.433Z",
+      "tag": "BOOT",
+      "data": {
+        "API_BASE": "http://localhost:4000/api",
+        "FRONT_BASE": "http://localhost:3000"
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:21.437Z",
+      "tag": "emails",
+      "data": {
+        "client": "client.1755957801437.csm38v@e2e.test",
+        "model": "model.1755957801437.rw5pzf@e2e.test",
+        "admin": "admin.1755957801437.8bwq46@e2e.test"
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:24.746Z",
+      "tag": "POST /v1/auth/register",
+      "data": {
+        "status": 201,
+        "body": {
+          "ok": true,
+          "data": {
+            "_id": "68a9ca2a87ca4ec3ef2e7c4c",
+            "email": "client.1755957801437.csm38v@e2e.test",
+            "role": "client",
+            "name": "Client E2E",
+            "modelId": null,
+            "clientId": "68a9ca2b87ca4ec3ef2e7c4e",
+            "createdAt": "2025-08-23T14:03:22.362Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OGE5Y2EyYTg3Y2E0ZWMzZWYyZTdjNGMiLCJyb2xlIjoiY2xpZW50IiwiZW1haWwiOiJjbGllbnQuMTc1NTk1NzgwMTQzNy5jc20zOHZAZTJlLnRlc3QiLCJjbGllbnRJZCI6IjY4YTljYTJiODdjYTRlYzNlZjJlN2M0ZSIsImlhdCI6MTc1NTk1NzgwNCwiZXhwIjoxNzU2NTYyNjA0fQ.akf4nTnrevrzF_DU1JpI_5l8YPVqzB0TMtIcngQmhr0"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:26.450Z",
+      "tag": "POST /v1/auth/register",
+      "data": {
+        "status": 201,
+        "body": {
+          "ok": true,
+          "data": {
+            "_id": "68a9ca2d87ca4ec3ef2e7c52",
+            "email": "model.1755957801437.rw5pzf@e2e.test",
+            "role": "model",
+            "name": null,
+            "modelId": null,
+            "clientId": null,
+            "createdAt": "2025-08-23T14:03:25.635Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OGE5Y2EyZDg3Y2E0ZWMzZWYyZTdjNTIiLCJyb2xlIjoibW9kZWwiLCJlbWFpbCI6Im1vZGVsLjE3NTU5NTc4MDE0Mzcucnc1cHpmQGUyZS50ZXN0IiwiY2xpZW50SWQiOm51bGwsImlhdCI6MTc1NTk1NzgwNiwiZXhwIjoxNzU2NTYyNjA2fQ.L-NoU1z2D8wekqelmk6PbpA0JHaIJbFESXkb8swjCcw"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:27.959Z",
+      "tag": "POST /v1/auth/register",
+      "data": {
+        "status": 201,
+        "body": {
+          "ok": true,
+          "data": {
+            "_id": "68a9ca2f87ca4ec3ef2e7c55",
+            "email": "admin.1755957801437.8bwq46@e2e.test",
+            "role": "admin",
+            "name": null,
+            "modelId": null,
+            "clientId": null,
+            "createdAt": "2025-08-23T14:03:27.504Z"
+          },
+          "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2OGE5Y2EyZjg3Y2E0ZWMzZWYyZTdjNTUiLCJyb2xlIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluLjE3NTU5NTc4MDE0MzcuOGJ3cTQ2QGUyZS50ZXN0IiwiY2xpZW50SWQiOm51bGwsImlhdCI6MTc1NTk1NzgwNywiZXhwIjoxNzU2NTYyNjA3fQ.TJkjQ_r-YJu8JILsJK4IkSCH2AcQ2dInqdrsCEoRkKA"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:27.962Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:28.469Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:28.979Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:29.487Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:30.001Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:30.511Z",
+      "tag": "GET /v1/auth/me",
+      "data": {
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        }
+      }
+    },
+    {
+      "t": "2025-08-23T14:03:31.016Z",
+      "tag": "FAIL",
+      "data": {
+        "ok": false,
+        "tag": "auth-me-client",
+        "status": 401,
+        "body": {
+          "ok": false,
+          "message": "توکن نامعتبر است"
+        },
+        "raw": "{\"ok\":false,\"message\":\"توکن نامعتبر است\"}"
+      }
+    }
+  ]
+}

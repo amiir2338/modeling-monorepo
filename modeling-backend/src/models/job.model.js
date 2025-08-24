@@ -25,8 +25,5 @@ const JobSchema = new mongoose.Schema(
 //   { expireAfterSeconds: 0, partialFilterExpression: { status: 'draft' } }
 // );
 
-JobSchema.index({ city: 1 });
-JobSchema.index({ title: 'text', description: 'text', city: 'text' });
-
 const Job = mongoose.model('Job', JobSchema);
 export default Job;

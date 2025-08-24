@@ -1,70 +1,80 @@
-// ELI5:
-// این فایل فقط دو تابع دارد:
-// 1) requestOtp: شماره را به سرور می‌دهد تا کد ارسال شود
-// 2) verifyOtp: شماره و کد را می‌دهد تا توکن (JWT) بگیریم
+// src/lib/auth-client.ts
+// ✅ یکسان‌سازی لاگین/ثبت‌نام با بک‌اند (بدون OTP)
+// - همه URLها از NEXT_PUBLIC_API_BASE (مثل http://localhost:4000/api) استفاده می‌کنند
+// - توکن در localStorage با کلید 'access_token' ذخیره می‌شود
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_BASE || '';
+const API_BASE =
+  (process.env.NEXT_PUBLIC_API_BASE
+    ?? process.env.NEXT_PUBLIC_API_URL
+    ?? process.env.NEXT_PUBLIC_API_BASE_URL
+    ?? 'http://localhost:4000/api').replace(/\/+$/, '');
 
-export async function requestOtp(phone: string) {
-  const res = await fetch(`${BASE_URL}/api/v1/auth/otp/request`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`OTP request failed: ${text}`);
-  }
-  return res.json();
-}
+type LoginResult = { ok: boolean; token?: string; message?: string };
 
-export async function verifyOtp(phone: string, code: string): Promise<string> {
-  const res = await fetch(`${BASE_URL}/api/v1/auth/otp/verify`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ phone, code }),
-  });
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`OTP verify failed: ${text}`);
-  }
-  const data = await res.json();
-  // انتظار داریم سرور { ok:true, token:'...' } برگرداند
-  return data.token as string;
-}
-
-
-export async function loginUser(email: string, password: string): Promise<{ ok: boolean; token?: string; message?: string; }>{ 
-  const res = await fetch(`${BASE_URL}/api/v1/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ email, password }),
-  });
-  if (!res.ok) {
-    try {
-      const err = await res.json();
-      return { ok: false, message: err?.message || 'Login failed' };
-    } catch {
-      const msg = await res.text();
+export async function loginUser(email: string, password: string): Promise<LoginResult> {
+  try {
+    const res = await fetch(`${API_BASE}/v1/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) {
+      const msg = await safeError(res);
       return { ok: false, message: msg || 'Login failed' };
     }
+    const data = await res.json();
+    const token = data?.token as string | undefined;
+    if (token) {
+      try { localStorage.setItem('access_token', token); } catch {}
+      return { ok: true, token };
+    }
+    return { ok: false, message: 'No token returned' };
+  } catch (e: any) {
+    return { ok: false, message: e?.message || 'Network error' };
   }
-  const data = await res.json();
-  const token = data?.token as string | undefined;
-  if (token) {
-    try { localStorage.setItem('token', token); } catch {}
-    return { ok: true, token };
-  }
-  return { ok: false, message: 'No token returned' };
 }
 
+export async function registerUser(email: string, password: string, name?: string, role: 'model'|'client'|'admin'='model'): Promise<LoginResult> {
+  try {
+    const res = await fetch(`${API_BASE}/v1/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password, name, role }),
+    });
+    if (!res.ok) {
+      const msg = await safeError(res);
+      return { ok: false, message: msg || 'Register failed' };
+    }
+    const data = await res.json();
+    const token = data?.token as string | undefined;
+    if (token) {
+      try { localStorage.setItem('access_token', token); } catch {}
+      return { ok: true, token };
+    }
+    return { ok: false, message: 'No token returned' };
+  } catch (e: any) {
+    return { ok: false, message: e?.message || 'Network error' };
+  }
+}
 
 export function logout(): void {
-  try { localStorage.removeItem('token'); } catch {}
+  try { localStorage.removeItem('access_token'); } catch {}
 }
-
 
 export function login(token: string): void {
-  try { localStorage.setItem('token', token); } catch {}
+  try { localStorage.setItem('access_token', token); } catch {}
 }
 
+export function getToken(): string | null {
+  try { return localStorage.getItem('access_token'); } catch { return null; }
+}
+
+// helpers
+async function safeError(res: Response): Promise<string|undefined> {
+  try {
+    const err = await res.json();
+    return err?.message;
+  } catch {
+    try { return await res.text(); } catch { return undefined; }
+  }
+}

@@ -40,43 +40,18 @@ export const listJobs = async (req, res, next) => {
     const userId = u.id || u._id || u.userId || u.user_id || u.uid || u.clientId;
 
     const mine = String(req.query.mine || '') === '1';
-    const city = (req.query.city || '').trim();
-    const statusParam = (req.query.status || '').trim();
-    const qParam = (req.query.q || '').trim();
-    const budgetMin = Number.isFinite(Number(req.query.budgetMin)) ? Number(req.query.budgetMin) : undefined;
-    const budgetMax = Number.isFinite(Number(req.query.budgetMax)) ? Number(req.query.budgetMax) : undefined;
-
     const q = {};
 
     if (mine && userId) {
-      q.clientId = userId;
+      q.clientId = userId;              // آگهی‌های خود کاربر
     } else if (role === 'admin') {
-      if (statusParam) q.status = statusParam;
+      // ادمین: بدون فیلتر وضعیت
     } else {
-      q.status = 'approved';
+      q.status = 'approved';            // عمومی: فقط تاییدشده‌ها
     }
-
-    if (city) q.city = city;
-
-    if (budgetMin !== undefined || budgetMax !== undefined) {
-      q.budget = {};
-      if (budgetMin !== undefined) q.budget.$gte = budgetMin;
-      if (budgetMax !== undefined) q.budget.$lte = budgetMax;
-    }
-
-    if (qParam) {
-      q.$or = [
-        { title: { $regex: qParam, $options: 'i' } },
-        { description: { $regex: qParam, $options: 'i' } },
-      ];
-    }
-
-    const sortField = ['createdAt', 'budget'].includes(req.query.sort) ? req.query.sort : 'createdAt';
-    const sortOrder = (String(req.query.order).toLowerCase() === 'asc') ? 1 : -1;
-    const sort = { [sortField]: sortOrder };
 
     const [jobs, total] = await Promise.all([
-      Job.find(q).sort(sort).skip(skip).limit(limit),
+      Job.find(q).sort({ createdAt: -1 }).skip(skip).limit(limit),
       Job.countDocuments(q),
     ]);
 
@@ -85,7 +60,6 @@ export const listJobs = async (req, res, next) => {
     next(err);
   }
 };
-
 
 /* =======================
    آگهی‌های من (همه وضعیت‌ها)
