@@ -1,14 +1,19 @@
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
-  testDir: './e2e',
-  timeout: 180_000,
-  expect: { timeout: 15_000 },
+  timeout: 60_000,
   use: {
+    baseURL: process.env.FRONT_ORIGIN || 'http://localhost:3000',
     headless: true,
-    screenshot: 'only-on-failure',
-    video: 'retain-on-failure',
-    trace: 'retain-on-failure',
+    // Optionally record HAR files when PLAYWRIGHT_HAR=1
+    contextOptions: process.env.PLAYWRIGHT_HAR === '1' ? { recordHar: { path: '../artifacts/frontend/playwright.har' } } : undefined,
   },
-  reporter: [['list'], ['html', { outputFolder: 'test-report' }]],
+  webServer: [
+    {
+      command: 'npm run dev',
+      url: 'http://localhost:3000',
+      reuseExistingServer: true,
+      timeout: 120_000,
+    },
+  ],
 });
