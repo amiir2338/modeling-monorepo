@@ -1,0 +1,21 @@
+{
+  "public": [
+    "/",
+    "/auth/login",
+    "/auth/register",
+    "/jobs"
+  ],
+  "auth": [
+    "/dashboard",
+    "/jobs/new",
+    "/profile",
+    "/messages",
+    "/notifications"
+  ],
+  "admin": [
+    "/admin",
+    "/admin/users",
+    "/admin/jobs",
+    "/admin/clients"
+  ]
+}

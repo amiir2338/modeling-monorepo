@@ -1,14 +1,26 @@
-"use client";
-import { useEffect, useState } from "react";
-import axios from "../../api/axios-instance";
-export default function SeedCheckPage() {
-  const [status, setStatus] = useState<string>("Loading...");
-  useEffect(()=>{ (async()=>{
-    try{
-      const res = await axios.get("/health");
-      if (res.data?.ok) setStatus("Backend is healthy. Try admin@example.com / 123456");
-      else setStatus("Health check failed: " + JSON.stringify(res.data));
-    }catch(e:any){ setStatus("Error: " + (e.message || String(e))); }
-  })(); },[]);
-  return (<div style={{padding:"2rem"}}><h1>Seed Check</h1><p>{status}</p></div>);
+'use client';
+import React, { useEffect, useState } from 'react';
+
+interface PingOk { ok: true; msg: string }
+interface PingErr { ok: false; message?: string }
+
+export default function SeedCheck() {
+  const [res, setRes] = useState<PingOk | PingErr | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    (async () => {
+      try {
+        const r = await fetch('/api/ping');
+        const data = (await r.json()) as PingOk | PingErr;
+        if (mounted) setRes(data);
+      } catch {
+        if (mounted) setRes({ ok: false, message: 'network error' });
+      }
+    })();
+    return () => { mounted = false; };
+  }, []);
+
+  return <pre className="p-4">{JSON.stringify(res, null, 2)}</pre>;
 }
+

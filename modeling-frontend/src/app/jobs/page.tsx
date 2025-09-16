@@ -3,8 +3,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { AxiosError } from 'axios';
-import { axiosInstance } from '../api/axios-instance';
-
+import http from "@/lib/api/http";
 // --------- Types (بدون any) -----------
 type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
 
@@ -83,7 +82,7 @@ export default function JobsPage() {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get<JobsResponse>(apiUrl);
+        const res = await http.get<JobsResponse>(apiUrl);
         // اگر بک‌اند خطا برگرداند (validateStatus اجازه نمی‌دهد وارد then شویم) → به catch می‌افتد
         // پس اینجا یا 2xx یا 3xx هستیم.
         const data = res.data;
@@ -186,7 +185,7 @@ export default function JobsPage() {
 
       {/* نمایش وضعیت بارگذاری/خطا */}
       {loading && (
-        <div className="border rounded-lg p-3 text-center">...در حال بارگذاری</div>
+        <div data-testid="jobs-loading" className="border rounded-lg p-3 text-center">...در حال بارگذاری</div>
       )}
       {err && !loading && (
         <div className="border rounded-lg p-3 text-center text-red-600">{err}</div>
@@ -196,7 +195,7 @@ export default function JobsPage() {
       {!loading && !err && (
         <ul className="grid gap-3">
           {jobs.map((j) => (
-            <li key={j._id} className="rounded-2xl border p-4 shadow-sm">
+            <li key={j._id} data-testid={`job-card-${j._id}`} className="rounded-2xl border p-4 shadow-sm">
               <div className="flex items-center justify-between">
                 <h3 className="font-bold">{j.title}</h3>
                 <span className="text-xs px-2 py-1 rounded-full border">
@@ -211,6 +210,7 @@ export default function JobsPage() {
               <div className="flex gap-2 mt-3">
                 <Link
                   href={`/jobs/${j._id}`}
+                  data-testid={`job-details-${j._id}`}
                   className="px-3 py-2 rounded-lg border hover:bg-black/5"
                 >
                   جزئیات
@@ -237,3 +237,4 @@ export default function JobsPage() {
     </main>
   );
 }
+

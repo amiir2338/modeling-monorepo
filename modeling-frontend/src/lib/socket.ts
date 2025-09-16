@@ -23,3 +23,4 @@ export function disconnectSocket() {
   try { socket?.disconnect(); } catch {}
   socket = null;
 }
+

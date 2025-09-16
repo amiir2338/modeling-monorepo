@@ -1,6 +1,7 @@
-﻿import './globals.css';
+import './globals.css';
 import './styles/ui.css';
 import './styles/job-card.css';
+import './styles/windows12.css';
 import type { Metadata, Viewport } from 'next';
 import { Vazirmatn } from 'next/font/google';
 import React from 'react';
@@ -53,7 +54,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </header>
 
         {/* بک‌گراند لطیف صفحه */}
-        <div className="bg-hero">
+        <div className="w12-bg">
+          <svg className="w12-noise" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="none" aria-hidden="true">
+            <filter id="n">
+              <feTurbulence type="fractalNoise" baseFrequency="0.8" numOctaves="2" stitchTiles="stitch" />
+              <feColorMatrix type="saturate" values="0" />
+            </filter>
+            <rect width="100%" height="100%" filter="url(#n)" fill="white" opacity="0.02" />
+          </svg>
           <main className="container-std py-8">{children}</main>
         </div>
 
@@ -64,3 +72,4 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+

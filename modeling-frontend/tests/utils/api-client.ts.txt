@@ -1,0 +1,37 @@
+import fetch from 'node-fetch';
+
+/* 🟢 ELI5: این BASE فقط «ریشهٔ بک‌اند» هست (بدون /api) */
+const RAW_BASE = (process.env.API_BASE?.trim() || 'http://localhost:4000').replace(/\/+$/g, '');
+
+/* 🟢 ELI5: به این تابع همیشه path به شکل /api/v1/... بده یا فقط /v1/... */
+function url(path: string) {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  if (p.startsWith('/api')) return RAW_BASE + p;
+  return RAW_BASE + '/api' + p;
+}
+
+export async function post(path: string, body: unknown, token?: string) {
+  const r = await fetch(url(path), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
+    body: JSON.stringify(body ?? {}),
+  });
+  const raw = await r.text();
+  let json: any = {};
+  try { json = JSON.parse(raw); } catch {}
+  return { status: r.status, body: json, raw };
+}
+
+export async function get(path: string, token?: string) {
+  const r = await fetch(url(path), {
+    method: 'GET',
+    headers: { ...(token ? { Authorization: `Bearer ${token}` } : {}) },
+  });
+  const raw = await r.text();
+  let json: any = {};
+  try { json = JSON.parse(raw); } catch {}
+  return { status: r.status, body: json, raw };
+}

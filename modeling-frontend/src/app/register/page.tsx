@@ -1,7 +1,0 @@
-"use client";
-import { useState } from "react";
-import axios from "../api/axios-instance";
-export default function RegisterPage(){
-  const [email,setEmail]=useState(""); const [password,setPassword]=useState(""); const [role,setRole]=useState<"model"|"client">("model"); const [name,setName]=useState(""); const [msg,setMsg]=useState<string>("");
-  const submit=async(e:React.FormEvent)=>{ e.preventDefault(); setMsg("در حال ثبت..."); try{ const res=await axios.post("/v1/auth/register",{email,password,role,name}); if(res.data?.ok&&res.data?.token){ localStorage.setItem("access_token",res.data.token); setMsg("ثبت‌نام موفق!"); } else setMsg("ناموفق: "+JSON.stringify(res.data)); }catch(e:any){ setMsg(e?.response?.data?.message||e.message||"خطا"); } };
-  return (<div style={{maxWidth:480,margin:"2rem auto"}}><h1>ثبت‌نام</h1><form onSubmit={submit} style={{display:"grid",gap:"0.75rem"}}><input placeholder="نام" value={name} onChange={e=>setName(e.target.value)}/><input placeholder="ایمیل" value={email} onChange={e=>setEmail(e.target.value)} type="email" required/><input placeholder="رمز عبور" value={password} onChange={e=>setPassword(e.target.value)} type="password" required/><select value={role} onChange={e=>setRole(e.target.value as any)}><option value="model">Model</option><option value="client">Client</option></select><button type="submit">ثبت‌نام</button></form><p style={{marginTop:"1rem"}}>{msg}</p></div>); }

@@ -91,3 +91,6 @@ export function makeCrudRouter(Model) {
 
   return r;
 }
+
+
+export default router;

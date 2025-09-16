@@ -45,3 +45,4 @@ export default function BrandSwitch() {
     </div>
   );
 }
+

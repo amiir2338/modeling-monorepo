@@ -1,0 +1,97 @@
+{
+  "info": {
+    "name": "Modeling API Collection",
+    "_postman_id": "modeling-collection-0001",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "{{API_BASE_URL}}",
+      "type": "default"
+    }
+  ],
+  "item": [
+    {
+      "name": "Auth - Login (Client)",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/auth/login",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "auth",
+            "login"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"email\": \"{{CLIENT_EMAIL}}\", \"password\": \"{{CLIENT_PASSWORD}}\"}"
+        }
+      }
+    },
+    {
+      "name": "Jobs - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/jobs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "jobs"
+          ]
+        }
+      }
+    },
+    {
+      "name": "Jobs - Create",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{baseUrl}}/jobs",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "jobs"
+          ]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\"title\": \"E2E Postman\", \"description\": \"Created by Newman\", \"city\": \"Tehran\", \"budget\": \"500\", \"clientId\": \"<PUT_CLIENT_ID>\"}"
+        }
+      }
+    },
+    {
+      "name": "Messages - List",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "{{baseUrl}}/messages",
+          "host": [
+            "{{baseUrl}}"
+          ],
+          "path": [
+            "messages"
+          ]
+        }
+      }
+    }
+  ]
+}

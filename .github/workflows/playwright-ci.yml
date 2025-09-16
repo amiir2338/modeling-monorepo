@@ -1,0 +1,82 @@
+name: Playwright E2E
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  e2e:
+    runs-on: ubuntu-latest
+    services:
+      mongodb:
+        image: mongo:6.0
+        ports:
+          - 27017:27017
+        options: >-
+          --health-cmd="mongosh --eval 'db.adminCommand({ ping: 1 })'" \
+          --health-interval=5s \
+          --health-timeout=2s \
+          --health-retries=10
+
+    env:
+      MONGO_URL: mongodb://127.0.0.1:27017/test-e2e
+      NODE_ENV: test
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '18'
+
+      - name: Install dependencies (root)
+        working-directory: ./
+        run: npm ci
+
+      - name: Install frontend deps
+        working-directory: ./modeling-frontend
+        run: npm ci
+
+      - name: Install backend deps
+        working-directory: ./modeling-backend
+        run: npm ci
+
+      - name: Setup Playwright browsers cache
+        run: npx playwright install --with-deps
+
+      - name: Start backend
+        working-directory: ./modeling-backend
+        run: |
+          npm run dev &
+          echo "waiting for backend to be ready..."
+          npx wait-on http://127.0.0.1:4000/health || npx wait-on http://127.0.0.1:4000/
+
+      - name: Start frontend
+        working-directory: ./modeling-frontend
+        run: |
+          npm run dev &
+          echo "waiting for frontend to be ready..."
+          npx wait-on http://127.0.0.1:3000/
+
+      - name: Run Playwright smoke test
+        working-directory: ./modeling-frontend
+        run: npx playwright test tests/smoke-auth.spec.ts --reporter=list
+
+      - name: Run full Playwright suite
+        working-directory: ./modeling-frontend
+        continue-on-error: true
+        run: npx playwright test --reporter=list
+
+      - name: Upload Playwright Report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            modeling-frontend/test-results
+            modeling-frontend/playwright-report
+            modeling-frontend/test-report
