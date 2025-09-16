@@ -1,7 +1,27 @@
-"use client";
-import { useState } from "react";
-import axios from "../api/axios-instance";
-export default function ResetPasswordPage(){
-  const [email,setEmail]=useState(""); const [newPassword,setNewPassword]=useState(""); const [msg,setMsg]=useState<string>("");
-  const submit=async(e:React.FormEvent)=>{ e.preventDefault(); setMsg("در حال ارسال..."); try{ const res=await axios.post("/v1/auth/reset-password",{email,newPassword}); setMsg(res.data?.ok?"رمز عبور تغییر کرد":"ناموفق: "+JSON.stringify(res.data)); }catch(e:any){ setMsg(e?.response?.data?.message||e.message||"خطا"); } };
-  return (<div style={{maxWidth:480,margin:"2rem auto"}}><h1>بازیابی رمز عبور</h1><form onSubmit={submit} style={{display:"grid",gap:"0.75rem"}}><input placeholder="ایمیل" value={email} onChange={e=>setEmail(e.target.value)} type="email" required/><input placeholder="رمز جدید" value={newPassword} onChange={e=>setNewPassword(e.target.value)} type="password" required/><button type="submit">تغییر رمز</button></form><p style={{marginTop:"1rem"}}>{msg}</p></div>); }
+'use client';
+import React, { useState } from 'react';
+
+export default function ResetPasswordPage() {
+  const [email, setEmail] = useState<string>('');
+
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    await fetch('/api/reset', { method: 'POST', body: JSON.stringify({ email }) });
+  }
+
+  return (
+    <main className="p-4 max-w-sm mx-auto">
+      <h1 className="font-bold text-lg mb-3">بازیابی رمز</h1>
+      <form onSubmit={onSubmit} className="space-y-3">
+        <input
+          className="border rounded px-3 py-2 w-full"
+          placeholder="Email"
+          value={email}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setEmail(e.target.value)}
+        />
+        <button className="px-4 py-2 rounded bg-[#7D6CB2] text-white">ارسال</button>
+      </form>
+    </main>
+  );
+}
+

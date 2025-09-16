@@ -1,4 +1,7 @@
 // src/services/messaging.service.js
+// 🟢 «خیلی ساده بگم»: این سرویس مسئول ساخت/یافتن تاپیک گفتگو (Thread)،
+ //   ارسال پیام (Message)، و مدیریت وضعیت خوانده/نخوانده است.
+
 import mongoose from 'mongoose';
 import Thread from '../models/thread.model.js';
 import Message from '../models/message.model.js';
@@ -8,7 +11,7 @@ import User from '../models/user.model.js';
 
 const { Types } = mongoose;
 
-/** طرفین گفتگو را از روی Application پیدا می‌کند (ownerUserId و modelUserId) */
+/** 🟢 طرفین گفتگو را از روی Application پیدا می‌کند (ownerUserId و modelUserId) */
 export async function resolveParticipantsByApplication(applicationId) {
   const app = await Application.findById(applicationId)
     .select('jobId modelUserId modelId')
@@ -18,7 +21,7 @@ export async function resolveParticipantsByApplication(applicationId) {
   const job = await Job.findById(app.jobId).select('clientId title').lean();
   if (!job) throw new Error('Job not found');
 
-  // نگاشت clientId پروفایل → userId مالک
+  // 🟢 نگاشت clientId پروفایل → userId مالک
   const owner = await User.findOne({ clientId: job.clientId }).select('_id').lean();
   if (!owner?._id) throw new Error('Job owner user not found');
 
@@ -38,7 +41,7 @@ export async function resolveParticipantsByApplication(applicationId) {
   };
 }
 
-/** Thread را از روی applicationId برمی‌گرداند یا می‌سازد */
+/** 🟢 Thread را از روی applicationId برمی‌گرداند یا می‌سازد */
 export async function getOrCreateThreadByApplication(applicationId) {
   const { participants } = await resolveParticipantsByApplication(applicationId);
 
@@ -55,7 +58,7 @@ export async function getOrCreateThreadByApplication(applicationId) {
   return thread.toObject();
 }
 
-/** اطمینان از اینکه user عضوی از Thread است */
+/** 🟢 اطمینان از اینکه user عضوی از Thread است */
 export function ensureUserInThread(thread, userId) {
   const ok = (thread?.participants || []).some((p) => String(p) === String(userId));
   if (!ok) {
@@ -65,13 +68,13 @@ export function ensureUserInThread(thread, userId) {
   }
 }
 
-/** طرف مقابل در Thread را برمی‌گرداند */
+/** 🟢 طرف مقابل در Thread را برمی‌گرداند */
 export function otherParticipantId(thread, userId) {
   const other = (thread.participants || []).find((p) => String(p) !== String(userId));
   return other ? new Types.ObjectId(other) : null;
 }
 
-/** ارسال پیام + آپدیت Thread (lastMessage, unreadBy) */
+/** 🟢 ارسال پیام + آپدیت Thread (lastMessage, unreadBy) */
 export async function sendMessage({ senderId, applicationId, threadId, text = '', attachments = [] }) {
   // Thread را پیدا/بساز
   let thread = threadId
@@ -94,7 +97,7 @@ export async function sendMessage({ senderId, applicationId, threadId, text = ''
     toUserId,          // هم‌ساز با مدل فعلی شما (alias recipientId هم کار می‌کند)
     text,
     attachments,
-    // readBy: sender به صورت خودکار در pre('save') مدل Message اضافه می‌شود
+    // نکته: اگر در مدل Message pre('save') برای readBy دارید، نیازی نیست اینجا اضافه کنیم
   });
 
   // آپدیت Thread
@@ -116,7 +119,7 @@ export async function sendMessage({ senderId, applicationId, threadId, text = ''
   return { message: msg, threadId: thread._id };
 }
 
-/** مارک‌کردن خوانده‌شدن یک پیام و پاک‌کردن user از unreadBy Thread */
+/** 🟢 مارک‌کردن خوانده‌شدن یک پیام و پاک‌کردن user از unreadBy Thread */
 export async function markMessageRead(messageId, userId) {
   const m = await Message.findById(messageId);
   if (!m) throw new Error('Message not found');
@@ -133,7 +136,7 @@ export async function markMessageRead(messageId, userId) {
   return { ok: true, data: updated };
 }
 
-/** مارک‌کردن خوانده‌شدن تمام پیام‌های یک Thread توسط user */
+/** 🟢 مارک‌کردن خوانده‌شدن تمام پیام‌های یک Thread توسط user */
 export async function markThreadRead(threadId, userId) {
   const thread = await Thread.findById(threadId);
   if (!thread) throw new Error('Thread not found');
@@ -148,7 +151,7 @@ export async function markThreadRead(threadId, userId) {
   return { ok: true };
 }
 
-/** لیست پیام‌های یک Thread (pagination) */
+/** 🟢 لیست پیام‌های یک Thread (pagination) */
 export async function listMessages({ threadId, applicationId, userId, page = 1, limit = 20 }) {
   let thread = null;
   if (threadId) thread = await Thread.findById(threadId).lean();
@@ -170,7 +173,7 @@ export async function listMessages({ threadId, applicationId, userId, page = 1, 
   return { data: items, page: _page, limit: _limit, total, thread };
 }
 
-/** لیست Threadهای کاربر (unread فلگ می‌خورد) */
+/** 🟢 لیست Threadهای کاربر (unread فلگ می‌خورد) */
 export async function listThreads({ userId, page = 1, limit = 20 }) {
   const _page = Math.max(1, Number(page));
   const _limit = Math.max(1, Number(limit));
@@ -190,7 +193,7 @@ export async function listThreads({ userId, page = 1, limit = 20 }) {
   return { data: withUnread, page: _page, limit: _limit, total };
 }
 
-/** شمارش Threadهای خوانده‌نشدهٔ کاربر */
+/** 🟢 شمارش Threadهای خوانده‌نشدهٔ کاربر */
 export async function unreadThreadCount(userId) {
   const cnt = await Thread.countDocuments({ participants: userId, unreadBy: userId });
   return cnt;

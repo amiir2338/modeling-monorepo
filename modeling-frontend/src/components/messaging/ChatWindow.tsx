@@ -1,87 +1,159 @@
+// src/components/messaging/ChatWindow.tsx
 "use client";
-import { useEffect, useMemo, useRef } from "react";
+
+import React, { useEffect, useRef, useState } from "react";
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
-import { fetchMessages, sendMessage } from "@/lib/api/messages";
-import { markThreadReadAll } from "@/lib/api/threads";
+import {
+  listMessages,
+  sendMessage,
+  type Paginated,
+  type MessageDTO,
+} from "@/lib/api/messages";
 import { getSocket } from "@/lib/socket";
 
-export default function ChatWindow({ threadId, token }: { threadId: string; token?: string }) {
+type Props = {
+  applicationId?: string;
+  threadId?: string;
+};
+
+// پاسخ لیست پیام‌ها + meId اختیاری اگر بک‌اند برگرداند
+type MessagesQuery = Paginated<MessageDTO> & { meId?: string };
+
+export default function ChatWindow({ applicationId, threadId }: Props) {
   const qc = useQueryClient();
-  const listRef = useRef<HTMLDivElement>(null);
+  const bottomRef = useRef<HTMLDivElement | null>(null);
+  const [text, setText] = useState<string>("");
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["messages", threadId],
-    queryFn: () => fetchMessages(threadId),
-    refetchInterval: 10_000, // fallback
+  // برداشت توکن از localStorage (کلیدهای رایج)
+  const token: string =
+    (typeof window !== "undefined" &&
+      (localStorage.getItem("token") ||
+        localStorage.getItem("authToken") ||
+        localStorage.getItem("access_token"))) ||
+    "";
+
+  // دریافت پیام‌ها
+  const { data, isLoading, isError, refetch } = useQuery<MessagesQuery>({
+    queryKey: ["messages", { applicationId, threadId }],
+    enabled: Boolean(applicationId || threadId),
+    queryFn: async () => {
+      const res = await listMessages({
+        applicationId,
+        threadId,
+        page: 1,
+        limit: 50,
+        token,
+      });
+      return res as MessagesQuery;
+    },
   });
 
-  const mutation = useMutation({
-    mutationFn: (text: string) => sendMessage({ threadId, text }),
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["messages", threadId] }),
+  // ارسال پیام
+  const sendMutation = useMutation({
+    mutationFn: async (): Promise<void> => {
+      const value = text.trim();
+      if (!value) return;
+      await sendMessage(
+        {
+          applicationId,
+          threadId,
+          text: value,
+        },
+        token
+      );
+    },
+    onSuccess: async () => {
+      setText("");
+      await qc.invalidateQueries({
+        queryKey: ["messages", { applicationId, threadId }],
+      });
+      scrollToBottom();
+    },
   });
 
-  // Socket realtime
+  function scrollToBottom(): void {
+    requestAnimationFrame(() => {
+      bottomRef.current?.scrollIntoView({ behavior: "smooth" });
+    });
+  }
+
+  // Socket: روی پیام جدید رفرش می‌کنیم (با گارد null)
   useEffect(() => {
-    const s = getSocket(token);
-    if (!s) return;
+    if (!token) return;
+    const socket = getSocket(token);
+    if (!socket) return;
 
-    const onNewMessage = (payload: any) => {
-      if (payload?.threadId === threadId) {
-        qc.invalidateQueries({ queryKey: ["messages", threadId] });
-      }
+    const handler = (payload: { threadId?: string } | undefined): void => {
+      if (payload?.threadId && threadId && payload.threadId !== threadId) return;
+      refetch();
     };
 
-    s.on("message:new", onNewMessage); // نام رویداد را با بک‌اند هماهنگ نگه‌دار
-    return () => { s.off("message:new", onNewMessage); };
-  }, [token, threadId, qc]);
-
-  // Scroll bottom
-  useEffect(() => {
-    listRef.current?.scrollTo({ top: listRef.current.scrollHeight, behavior: "smooth" });
-  }, [data]);
-
-  const items = useMemo(() => data?.items ?? data ?? [], [data]);
+    socket.on("message:new", handler);
+    return () => {
+      socket.off("message:new", handler);
+    };
+  }, [token, threadId, refetch]);
 
   useEffect(() => {
-    // مارک‌کردن به عنوان خوانده
-    markThreadReadAll(threadId).catch(() => {});
-  }, [threadId]);
+    scrollToBottom();
+  }, [data?.items?.length]);
 
-  if (isLoading) return <div>در حال بارگذاری پیام‌ها…</div>;
+  const meId: string | undefined = data?.meId;
 
   return (
-    <div className="flex flex-col h-[70vh] border rounded-xl overflow-hidden">
-      <div ref={listRef} className="flex-1 overflow-y-auto p-3 space-y-2 bg-gray-50">
-        {items.map((m: any) => (
-          <div key={m.id} className={`max-w-[75%] p-2 rounded-xl ${m.isMine ? "bg-black text-white ml-auto" : "bg-white border"}`}>
-            <div className="text-sm whitespace-pre-wrap">{m.text}</div>
-            <div className="text-[10px] opacity-60 mt-1">{new Date(m.createdAt).toLocaleString()}</div>
-          </div>
-        ))}
-        {items.length === 0 && <div className="text-center text-sm text-gray-500">پیامی وجود ندارد.</div>}
+    <div className="flex flex-col h-full border rounded-2xl overflow-hidden">
+      <div className="px-4 py-3 border-b bg-slate-50 dark:bg-slate-900 flex items-center justify-between">
+        <h3 className="font-semibold text-slate-800 dark:text-slate-100">پیام‌ها</h3>
       </div>
 
-      <div>
-        <MessageInput onSend={(text) => mutation.mutate(text)} />
+      <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-white dark:bg-slate-800">
+        {isLoading && <div className="text-slate-500">در حال بارگذاری…</div>}
+        {isError && <div className="text-red-600">خطا در دریافت پیام‌ها</div>}
+
+        {(data?.items ?? []).map((m) => {
+          const isMine: boolean = meId ? m.senderId === meId : (m as unknown as { isMine?: boolean }).isMine === true;
+          return (
+            <div
+              key={m._id}
+              className={`max-w-[75%] p-3 rounded-xl ${
+                isMine
+                  ? "ml-auto bg-indigo-600 text-white"
+                  : "mr-auto bg-slate-100 dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+              }`}
+            >
+              <div className="whitespace-pre-wrap break-words">{m.text}</div>
+              <div className="text-xs opacity-80 mt-1">
+                {new Date(m.createdAt).toLocaleString()}
+              </div>
+            </div>
+          );
+        })}
+
+        <div ref={bottomRef} />
       </div>
+
+      <form
+        className="p-3 border-t bg-slate-50 dark:bg-slate-900 flex gap-2"
+        onSubmit={(e: React.FormEvent<HTMLFormElement>) => {
+          e.preventDefault();
+          sendMutation.mutate();
+        }}
+      >
+        <input
+          value={text}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) => setText(e.target.value)}
+          placeholder="متن پیام…"
+          className="flex-1 rounded-lg border border-slate-300 dark:border-slate-700 bg-white dark:bg-slate-800 px-3 py-2 outline-none focus:ring-2 focus:ring-indigo-500"
+        />
+        <button
+          type="submit"
+          disabled={sendMutation.isPending || !text.trim()}
+          className="rounded-lg bg-indigo-600 hover:bg-indigo-700 disabled:opacity-60 text-white px-4 py-2"
+        >
+          ارسال
+        </button>
+      </form>
     </div>
   );
 }
 
-function MessageInput({ onSend }: { onSend: (t: string) => void }) {
-  const [value, setValue] = React.useState("");
-  return (
-    <div className="flex gap-2 p-2 border-t bg-white">
-      <input
-        className="flex-1 rounded-xl border px-3 py-2"
-        placeholder="پیام…"
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
-        onKeyDown={(e) => { if (e.key === "Enter" && value.trim()) { onSend(value.trim()); setValue(""); } }}
-      />
-      <button className="px-4 py-2 border rounded-xl" onClick={() => { if (value.trim()) { onSend(value.trim()); setValue(""); } }}>
-        ارسال
-      </button>
-    </div>
-  );
-}

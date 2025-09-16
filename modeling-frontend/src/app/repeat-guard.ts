@@ -1,4 +1,4 @@
-﻿// موقتی برای دیباگ: پیدا کردن repeat(count<0)
+// موقتی برای دیباگ: پیدا کردن repeat(count<0)
 const __origRepeat = String.prototype.repeat;
 
 String.prototype.repeat = function (count: number): string {
@@ -11,3 +11,4 @@ String.prototype.repeat = function (count: number): string {
 };
 
 console.log('[repeat-guard] loaded');
+

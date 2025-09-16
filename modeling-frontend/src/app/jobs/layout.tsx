@@ -13,3 +13,4 @@ export default function JobsLayout({ children }: { children: React.ReactNode }) 
 export const viewport = {
   themeColor: '#7D6CB2',
 }
+

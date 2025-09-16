@@ -4,7 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import type { AxiosError } from 'axios';
-import { axiosInstance } from '../../../api/axios-instance';
+import http from '@/lib/api/http';
 
 type JobStatus = 'draft' | 'pending_review' | 'approved' | 'rejected';
 
@@ -22,14 +22,12 @@ type Job = {
 
 type Me = { id: string; role: 'client' | 'admin' | 'user' | string };
 
-/** decode + extract برای فهمیدن یوزر */
+/** 🟢 ELI5: از توکن (اگر وجود داشت) آیدی/نقش را در می‌آوریم تا در کلاینت گارد ساده بزنیم */
 function decodeJwt(token: string | null): Record<string, unknown> | null {
   if (!token) return null;
   try {
     const [, payload] = token.split('.');
     const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     return JSON.parse(decodeURIComponent(escape(json))) as Record<string, unknown>;
   } catch { return null; }
 }
@@ -56,7 +54,7 @@ function extractMeFromToken(token: string | null): Me | null {
   return { id: String(id), role: (role ?? 'user') as Me['role'] };
 }
 
-/** type guards + نرمالایزر پاسخ‌های مختلف سرور */
+/** 🟢 ELI5: هر شکلی سرور Job را برگرداند، این نرمالایزر «خودش» پیدایش می‌کند */
 function isObject(x: unknown): x is Record<string, unknown> {
   return typeof x === 'object' && x !== null;
 }
@@ -83,31 +81,31 @@ export default function EditJobPage() {
   const params = useParams<{ id: string }>();
   const jobId = params?.id ?? '';
 
-  // یوزر
+  // 🟢 یوزر ساده از توکن لوکال (اگه اصلاً داشتی؛ برای گارد UI)
   const token = useMemo(() => (typeof window !== 'undefined' ? localStorage.getItem('access_token') : null), []);
   const me = useMemo(() => extractMeFromToken(token), [token]);
 
-  // فرم
+  // 🟢 فرم
   const [title, setTitle] = useState('');
-  const [budget, setBudget] = useState<string>(''); // ELI5: ورودی عددی را رشته نگه می‌داریم تا راحت فرمت کنیم
+  const [budget, setBudget] = useState<string>(''); // ورودی عددی را رشته نگه می‌داریم تا راحت فرمت کنیم
   const [city, setCity] = useState('');
   const [date, setDate] = useState('');
   const [description, setDescription] = useState('');
   const [termsAccepted, setTermsAccepted] = useState(false);
 
-  // وضعیت‌ها
+  // 🟢 وضعیت‌ها
   const [status, setStatus] = useState<JobStatus>('draft');
   const [expiryIso, setExpiryIso] = useState<string | null>(null);
   const [countdown, setCountdown] = useState<string>('');
 
-  // UI
+  // 🟢 UI
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [submitting, setSubmitting] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const [msg, setMsg] = useState<string | null>(null);
 
-  /** دریافت آگهی برای پر کردن فرم */
+  /** 🟢 واکشی آگهی و پرکردن فرم */
   useEffect(() => {
     if (!jobId) return;
     let cancelled = false;
@@ -115,12 +113,11 @@ export default function EditJobPage() {
       setLoading(true);
       setErr(null);
       try {
-        const res = await axiosInstance.get(`/api/v1/jobs/${encodeURIComponent(jobId)}`);
+        const res = await http.get(`/api/v1/jobs/${encodeURIComponent(jobId)}`, { withCredentials: true });
         const j = normalizeJobFromResponse(res.data);
         if (!j) throw new Error('پاسخ سرور نامعتبر است');
         if (cancelled) return;
 
-        // ELI5: فرم را با اطلاعات فعلی پر می‌کنیم
         setTitle(j.title ?? '');
         setDescription(j.description ?? '');
         setBudget(typeof j.budget === 'number' ? String(j.budget) : '');
@@ -139,7 +136,7 @@ export default function EditJobPage() {
     return () => { cancelled = true; };
   }, [jobId]);
 
-  /** شمارش معکوس نمایش انقضای درفت (اگر بک‌اند چنین چیزی بده) */
+  /** 🟢 نمایش شمارش معکوس انقضای درفت (اگر بک‌اند داد) */
   useEffect(() => {
     if (!expiryIso) return;
     const tick = () => {
@@ -157,7 +154,7 @@ export default function EditJobPage() {
     return () => clearInterval(id);
   }, [expiryIso]);
 
-  /** آیا فرم آمادهٔ ارسال است؟ (ساده و قابل‌فهم) */
+  /** 🟢 فرم آمادهٔ ارسال است؟ */
   const canSubmit =
     title.trim().length > 0 &&
     description.trim().length > 0 &&
@@ -168,12 +165,12 @@ export default function EditJobPage() {
 
   // ---------- API helpers ----------
   async function apiUpdateDraft(id: string, payload: Record<string, unknown>) {
-    const res = await axiosInstance.patch(`/api/v1/jobs/${encodeURIComponent(id)}`, payload);
+    const res = await http.patch(`/api/v1/jobs/${encodeURIComponent(id)}`, payload, { withCredentials: true });
     return res.data as unknown;
   }
 
   async function apiSubmit(id: string, payload: Record<string, unknown>) {
-    // چند مسیر رایج را امتحان می‌کنیم
+    // بعضی پروژه‌ها مسیر متفاوت دارند؛ سه مسیر رایج را تست می‌کنیم
     const paths = [
       `/api/v1/jobs/${encodeURIComponent(id)}/submit`,
       `/api/v1/jobs/submit/${encodeURIComponent(id)}`,
@@ -182,21 +179,20 @@ export default function EditJobPage() {
     const tried: string[] = [];
     for (const p of paths) {
       try {
-        const res = await axiosInstance.post(p, payload);
+        const res = await http.post(p, payload, { withCredentials: true });
         return { data: res.data as unknown, usedPath: p };
       } catch (e) {
         const ax = e as AxiosError;
         tried.push(p);
-        if (ax.response?.status === 404) continue;
+        if (ax.response?.status === 404) continue; // اگر 404 بود، مسیر بعدی را امتحان کن
         throw e;
       }
     }
     console.error('Submit endpoint not found. Tried:', tried);
-    throw new Error('آدرس ارسال برای بررسی یافت نشد (404). مسیرهای تست‌شده را در کنسول ببینید.');
+    throw new Error('آدرس «ارسال برای بررسی» یافت نشد (404). مسیرهای تست‌شده را در کنسول ببینید.');
   }
 
   // ---------- Actions ----------
-  /** ذخیره پیش‌نویس با payload تمیز */
   async function saveDraft() {
     if (!me) { setErr('ابتدا وارد شوید.'); return; }
     setSaving(true); setErr(null); setMsg(null);
@@ -226,7 +222,6 @@ export default function EditJobPage() {
     }
   }
 
-  /** ارسال برای بررسی */
   async function submitForReview() {
     if (!me) { setErr('ابتدا وارد شوید.'); return; }
     if (!canSubmit) { setErr('برای ارسال، فیلدها را کامل و قوانین را تایید کنید.'); return; }
@@ -243,7 +238,6 @@ export default function EditJobPage() {
       setStatus(updated.status ?? 'pending_review');
       setExpiryIso(null);
 
-      // ریدایرکت بعد از 1 ثانیه
       setTimeout(() => router.push(`/jobs/${jobId}`), 1000);
     } catch (e) {
       const ax = e as AxiosError<{ message?: string }>;
@@ -280,9 +274,9 @@ export default function EditJobPage() {
             )}
           </div>
 
-          {/* فرم ساده: اینجا برای شفافیت از inputهای خام استفاده کردیم تا وابسته به JobForm نشه */}
+          {/* فرم ساده (بدون وابستگی به JobForm) */}
           <form onSubmit={(e) => e.preventDefault()} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm space-y-4">
-            {/* موضوع */}
+            {/* عنوان */}
             <div>
               <label className="mb-1 block text-sm text-slate-700">
                 موضوع <span className="text-rose-500">*</span>

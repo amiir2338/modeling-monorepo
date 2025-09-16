@@ -1,0 +1,1768 @@
+{
+  "config": {
+    "configFile": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\playwright.config.ts",
+    "rootDir": "C:/Users/amir/Desktop/db model/testing-pack/tests",
+    "forbidOnly": false,
+    "fullyParallel": true,
+    "globalSetup": null,
+    "globalTeardown": null,
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 8
+    },
+    "preserveOutput": "always",
+    "reporter": [
+      [
+        "list",
+        null
+      ],
+      [
+        "html",
+        {
+          "open": "never",
+          "outputFolder": "playwright-report"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "artifacts/pw-report.json"
+        }
+      ],
+      [
+        "junit",
+        {
+          "outputFile": "artifacts/junit.xml"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "quiet": false,
+    "projects": [
+      {
+        "outputDir": "C:/Users/amir/Desktop/db model/testing-pack/artifacts/test-output",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 8
+        },
+        "id": "chromium",
+        "name": "chromium",
+        "testDir": "C:/Users/amir/Desktop/db model/testing-pack/tests",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.@(spec|test).?(c|m)[jt]s?(x)"
+        ],
+        "timeout": 30000
+      }
+    ],
+    "shard": null,
+    "updateSnapshots": "missing",
+    "updateSourceMethod": "patch",
+    "version": "1.55.0",
+    "workers": 8,
+    "webServer": null
+  },
+  "suites": [
+    {
+      "title": "00_smoke.spec.ts",
+      "file": "00_smoke.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "GET / returns < 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 0,
+                  "parallelIndex": 0,
+                  "status": "passed",
+                  "duration": 941,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:02.328Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd325458d7ac26878b54-553bd0e8e43202ea86c1",
+          "file": "00_smoke.spec.ts",
+          "line": 21,
+          "column": 7
+        },
+        {
+          "title": "GET /auth/login returns < 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "passed",
+                  "duration": 1106,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:02.365Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd325458d7ac26878b54-879a2869d224e63256d4",
+          "file": "00_smoke.spec.ts",
+          "line": 21,
+          "column": 7
+        },
+        {
+          "title": "GET /auth/register returns < 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "passed",
+                  "duration": 1120,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:02.359Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd325458d7ac26878b54-38dddcc16faa19a1d4bf",
+          "file": "00_smoke.spec.ts",
+          "line": 21,
+          "column": 7
+        },
+        {
+          "title": "GET /jobs returns < 400",
+          "ok": true,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "passed",
+                  "duration": 937,
+                  "errors": [],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:02.339Z",
+                  "annotations": [],
+                  "attachments": []
+                }
+              ],
+              "status": "expected"
+            }
+          ],
+          "id": "dd325458d7ac26878b54-6109289ce4993786535d",
+          "file": "00_smoke.spec.ts",
+          "line": 21,
+          "column": 7
+        }
+      ]
+    },
+    {
+      "title": "01_auth.spec.ts",
+      "file": "01_auth.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Auth",
+          "file": "01_auth.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Client can login via UI and see dashboard",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 9654,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:02.423Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fed5df2ed7e04d0868c-1e9ccfdfdadb88db1b1b",
+              "file": "01_auth.spec.ts",
+              "line": 5,
+              "column": 7
+            },
+            {
+              "title": "Reject wrong creds",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 2432,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:02.419Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "7fed5df2ed7e04d0868c-0abaee2b5a391ed4e5f8",
+              "file": "01_auth.spec.ts",
+              "line": 11,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "02_jobs.spec.ts",
+      "file": "02_jobs.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Jobs (client)",
+          "file": "02_jobs.spec.ts",
+          "line": 128,
+          "column": 6,
+          "specs": [
+            {
+              "title": "List jobs",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 14610,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:02.455Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "e2f2cee30a8ceec35127-c2dee7fe650b5961ed13",
+              "file": "02_jobs.spec.ts",
+              "line": 131,
+              "column": 7
+            },
+            {
+              "title": "Create new job",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 7,
+                      "parallelIndex": 7,
+                      "status": "failed",
+                      "duration": 27148,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/Playwright Test Job/i).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Playwright Test Job/i).first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/Playwright Test Job/i).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Playwright Test Job/i).first()\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts:180:66",
+                        "location": {
+                          "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts",
+                          "column": 66,
+                          "line": 180
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 178 |\u001b[39m\n \u001b[90m 179 |\u001b[39m     \u001b[36mawait\u001b[39m ensureOnJobsList(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 180 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[35m/Playwright Test Job/i\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 181 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 182 |\u001b[39m\n \u001b[90m 183 |\u001b[39m   test(\u001b[32m'Edit and then view my job'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts",
+                            "column": 66,
+                            "line": 180
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/Playwright Test Job/i).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/Playwright Test Job/i).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 178 |\u001b[39m\n \u001b[90m 179 |\u001b[39m     \u001b[36mawait\u001b[39m ensureOnJobsList(page)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 180 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[35m/Playwright Test Job/i\u001b[39m)\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m     |\u001b[39m                                                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 181 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 182 |\u001b[39m\n \u001b[90m 183 |\u001b[39m   test(\u001b[32m'Edit and then view my job'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts:180:66\u001b[22m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                            "column": 73,
+                            "line": 33
+                          },
+                          "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 5\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 400 (Bad Request)\",\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 401 (Unauthorized)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:02.406Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Create-new-job-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "app-guard-errors",
+                          "contentType": "text/plain",
+                          "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDA0IChOb3QgRm91bmQpCkNPTlNPTEU6ZXJyb3I6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwMCAoQmFkIFJlcXVlc3QpCkNPTlNPTEU6ZXJyb3I6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwMSAoVW5hdXRob3JpemVkKQ=="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Create-new-job-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Create-new-job-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts",
+                        "column": 66,
+                        "line": 180
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e2f2cee30a8ceec35127-c1149286162ad1c953f9",
+              "file": "02_jobs.spec.ts",
+              "line": 135,
+              "column": 7
+            },
+            {
+              "title": "Edit and then view my job",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "timedOut",
+                      "duration": 30906,
+                      "error": {
+                        "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m",
+                        "stack": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                      },
+                      "errors": [
+                        {
+                          "message": "\u001b[31mTest timeout of 30000ms exceeded.\u001b[39m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                            "column": 73,
+                            "line": 33
+                          },
+                          "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 5\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 401 (Unauthorized)\",\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 400 (Bad Request)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts",
+                            "column": 34,
+                            "line": 46
+                          },
+                          "message": "Error: locator.count: Target page, context or browser has been closed\n\n\u001b[0m \u001b[90m 44 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m clickFirst(page\u001b[33m,\u001b[39m qs\u001b[33m:\u001b[39m \u001b[33mArray\u001b[39m\u001b[33m<\u001b[39m() \u001b[33m=>\u001b[39m \u001b[36mimport\u001b[39m(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m.\u001b[39m\u001b[33mLocator\u001b[39m\u001b[33m>\u001b[39m) {\n \u001b[90m 45 |\u001b[39m   \u001b[36mfor\u001b[39m (\u001b[36mconst\u001b[39m q \u001b[36mof\u001b[39m qs) {\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 46 |\u001b[39m     \u001b[36mconst\u001b[39m el \u001b[33m=\u001b[39m q()\u001b[33m;\u001b[39m \u001b[36mif\u001b[39m (\u001b[36mawait\u001b[39m el\u001b[33m.\u001b[39mcount()) { \u001b[36mawait\u001b[39m el\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mclick()\u001b[33m;\u001b[39m \u001b[36mreturn\u001b[39m \u001b[36mtrue\u001b[39m\u001b[33m;\u001b[39m }\n \u001b[90m    |\u001b[39m                                  \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 47 |\u001b[39m   } \u001b[36mreturn\u001b[39m \u001b[36mfalse\u001b[39m\u001b[33m;\u001b[39m\n \u001b[90m 48 |\u001b[39m }\n \u001b[90m 49 |\u001b[39m \u001b[36masync\u001b[39m \u001b[36mfunction\u001b[39m fillFirst(page\u001b[33m,\u001b[39m qs\u001b[33m:\u001b[39m \u001b[33mArray\u001b[39m\u001b[33m<\u001b[39m() \u001b[33m=>\u001b[39m \u001b[36mimport\u001b[39m(\u001b[32m'@playwright/test'\u001b[39m)\u001b[33m.\u001b[39m\u001b[33mLocator\u001b[39m\u001b[33m>\u001b[39m\u001b[33m,\u001b[39m v\u001b[33m:\u001b[39m string) {\u001b[0m\n\u001b[2m    at clickFirst (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts:46:34)\u001b[22m\n\u001b[2m    at ensureJobExists (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts:119:16)\u001b[22m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\02_jobs.spec.ts:184:5\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:03.330Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Edit-and-then-view-my-job-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "app-guard-errors",
+                          "contentType": "text/plain",
+                          "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQpCkNPTlNPTEU6ZXJyb3I6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwNCAoTm90IEZvdW5kKQpDT05TT0xFOmVycm9yOiBGYWlsZWQgdG8gbG9hZCByZXNvdXJjZTogdGhlIHNlcnZlciByZXNwb25kZWQgd2l0aCBhIHN0YXR1cyBvZiA0MDAgKEJhZCBSZXF1ZXN0KQ=="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Edit-and-then-view-my-job-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\02_jobs-Jobs-client-Edit-and-then-view-my-job-chromium\\error-context.md"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "e2f2cee30a8ceec35127-8d576ba78d83932a1d77",
+              "file": "02_jobs.spec.ts",
+              "line": 183,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "03_profile.spec.ts",
+      "file": "03_profile.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Model can open and update profile basics",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 3,
+                  "parallelIndex": 3,
+                  "status": "failed",
+                  "duration": 23750,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\03_profile.spec.ts:10:33",
+                    "location": {
+                      "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\03_profile.spec.ts",
+                      "column": 33,
+                      "line": 10
+                    },
+                    "snippet": "\u001b[0m \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m   \u001b[36mconst\u001b[39m display \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[name=\"displayName\"], [data-testid=\"displayName\"]'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m   \u001b[36mawait\u001b[39m expect(display\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m display\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mfill(\u001b[32m'E2E Model'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[36mconst\u001b[39m saveBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/save|update|ذخیره|به‌روزرسانی/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\03_profile.spec.ts",
+                        "column": 33,
+                        "line": 10
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[name=\"displayName\"], [data-testid=\"displayName\"]').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m  8 |\u001b[39m\n \u001b[90m  9 |\u001b[39m   \u001b[36mconst\u001b[39m display \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[name=\"displayName\"], [data-testid=\"displayName\"]'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 10 |\u001b[39m   \u001b[36mawait\u001b[39m expect(display\u001b[33m.\u001b[39mfirst())\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                 \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m display\u001b[33m.\u001b[39mfirst()\u001b[33m.\u001b[39mfill(\u001b[32m'E2E Model'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 12 |\u001b[39m\n \u001b[90m 13 |\u001b[39m   \u001b[36mconst\u001b[39m saveBtn \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'button'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/save|update|ذخیره|به‌روزرسانی/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\03_profile.spec.ts:10:33\u001b[22m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                        "column": 73,
+                        "line": 33
+                      },
+                      "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 401 (Unauthorized)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:03.326Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\03_profile-Model-can-open-and-update-profile-basics-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "app-guard-errors",
+                      "contentType": "text/plain",
+                      "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQp"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\03_profile-Model-can-open-and-update-profile-basics-chromium\\video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\03_profile-Model-can-open-and-update-profile-basics-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\03_profile.spec.ts",
+                    "column": 33,
+                    "line": 10
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "74c6dd13b03057d50ed9-7e5eae5782bbaf98b89f",
+          "file": "03_profile.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "04_messaging.spec.ts",
+      "file": "04_messaging.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Client can open messages and see list",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 1,
+                  "parallelIndex": 1,
+                  "status": "failed",
+                  "duration": 22023,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\04_messaging.spec.ts:11:22",
+                    "location": {
+                      "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\04_messaging.spec.ts",
+                      "column": 22,
+                      "line": 11
+                    },
+                    "snippet": "\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[90m// بسته به UI: یک لیست/مکالمه/چت آیتم وجود دارد\u001b[39m\n \u001b[90m 10 |\u001b[39m   \u001b[36mconst\u001b[39m list \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m expect(list)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m6000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\04_messaging.spec.ts",
+                        "column": 22,
+                        "line": 11
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for locator('[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[90m// بسته به UI: یک لیست/مکالمه/چت آیتم وجود دارد\u001b[39m\n \u001b[90m 10 |\u001b[39m   \u001b[36mconst\u001b[39m list \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'[data-testid=\"message-item\"], [role=\"listitem\"], .chat-item'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m expect(list)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m6000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                      \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\04_messaging.spec.ts:11:22\u001b[22m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                        "column": 73,
+                        "line": 33
+                      },
+                      "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:03.530Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\04_messaging-Client-can-open-messages-and-see-list-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "app-guard-errors",
+                      "contentType": "text/plain",
+                      "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDA0IChOb3QgRm91bmQp"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\04_messaging-Client-can-open-messages-and-see-list-chromium\\video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\04_messaging-Client-can-open-messages-and-see-list-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\04_messaging.spec.ts",
+                    "column": 22,
+                    "line": 11
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "5e6d1243fabb37c2c691-9abf894f5cd0301644ea",
+          "file": "04_messaging.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "05_admin.spec.ts",
+      "file": "05_admin.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [
+        {
+          "title": "Admin dashboard accessible for admin only",
+          "ok": false,
+          "tags": [],
+          "tests": [
+            {
+              "timeout": 30000,
+              "annotations": [],
+              "expectedStatus": "passed",
+              "projectId": "chromium",
+              "projectName": "chromium",
+              "results": [
+                {
+                  "workerIndex": 2,
+                  "parallelIndex": 2,
+                  "status": "failed",
+                  "duration": 22075,
+                  "error": {
+                    "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('heading', { name: /admin|مدیریت/i }).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /admin|مدیریت/i }).first()\u001b[22m\n",
+                    "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('heading', { name: /admin|مدیریت/i }).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /admin|مدیریت/i }).first()\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\05_admin.spec.ts:11:19",
+                    "location": {
+                      "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\05_admin.spec.ts",
+                      "column": 19,
+                      "line": 11
+                    },
+                    "snippet": "\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[90m// یک نشانگر قطعی در داشبورد ادمین\u001b[39m\n \u001b[90m 10 |\u001b[39m   \u001b[36mconst\u001b[39m h \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/admin|مدیریت/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m expect(h)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m6000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m"
+                  },
+                  "errors": [
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\05_admin.spec.ts",
+                        "column": 19,
+                        "line": 11
+                      },
+                      "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByRole('heading', { name: /admin|مدیریت/i }).first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  6000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 6000ms\u001b[22m\n\u001b[2m  - waiting for getByRole('heading', { name: /admin|مدیریت/i }).first()\u001b[22m\n\n\n\u001b[0m \u001b[90m  9 |\u001b[39m   \u001b[90m// یک نشانگر قطعی در داشبورد ادمین\u001b[39m\n \u001b[90m 10 |\u001b[39m   \u001b[36mconst\u001b[39m h \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mgetByRole(\u001b[32m'heading'\u001b[39m\u001b[33m,\u001b[39m { name\u001b[33m:\u001b[39m \u001b[35m/admin|مدیریت/i\u001b[39m })\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 11 |\u001b[39m   \u001b[36mawait\u001b[39m expect(h)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m6000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                   \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 12 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 13 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\05_admin.spec.ts:11:19\u001b[22m"
+                    },
+                    {
+                      "location": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                        "column": 73,
+                        "line": 33
+                      },
+                      "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 3\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 404 (Not Found)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                    }
+                  ],
+                  "stdout": [],
+                  "stderr": [],
+                  "retry": 0,
+                  "startTime": "2025-09-03T14:53:03.539Z",
+                  "annotations": [],
+                  "attachments": [
+                    {
+                      "name": "screenshot",
+                      "contentType": "image/png",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\05_admin-Admin-dashboard-accessible-for-admin-only-chromium\\test-failed-1.png"
+                    },
+                    {
+                      "name": "app-guard-errors",
+                      "contentType": "text/plain",
+                      "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDA0IChOb3QgRm91bmQp"
+                    },
+                    {
+                      "name": "video",
+                      "contentType": "video/webm",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\05_admin-Admin-dashboard-accessible-for-admin-only-chromium\\video.webm"
+                    },
+                    {
+                      "name": "error-context",
+                      "contentType": "text/markdown",
+                      "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\05_admin-Admin-dashboard-accessible-for-admin-only-chromium\\error-context.md"
+                    }
+                  ],
+                  "errorLocation": {
+                    "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\05_admin.spec.ts",
+                    "column": 19,
+                    "line": 11
+                  }
+                }
+              ],
+              "status": "unexpected"
+            }
+          ],
+          "id": "67d5f226119bf33b29d1-3115fbd996ddc57d7113",
+          "file": "05_admin.spec.ts",
+          "line": 4,
+          "column": 5
+        }
+      ]
+    },
+    {
+      "title": "06_permissions.spec.ts",
+      "file": "06_permissions.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Permissions / redirects",
+          "file": "06_permissions.spec.ts",
+          "line": 22,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Anonymous → protected route should redirect to login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 5,
+                      "parallelIndex": 5,
+                      "status": "failed",
+                      "duration": 11470,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/dashboard\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/dashboard\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/dashboard\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/dashboard\"\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts:26:24",
+                        "location": {
+                          "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                          "column": 24,
+                          "line": 26
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 24 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39mbaseURL\u001b[33m,\u001b[39m \u001b[32m'baseURL is not configured'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 25 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(authTargets[\u001b[35m0\u001b[39m]\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 26 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(entryPattern)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 27 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 28 |\u001b[39m\n \u001b[90m 29 |\u001b[39m   test(\u001b[32m'Anonymous → admin route should redirect to login'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page\u001b[33m,\u001b[39m baseURL }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                            "column": 24,
+                            "line": 26
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/dashboard\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/dashboard\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 24 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39mbaseURL\u001b[33m,\u001b[39m \u001b[32m'baseURL is not configured'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 25 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(authTargets[\u001b[35m0\u001b[39m]\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 26 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(entryPattern)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 27 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 28 |\u001b[39m\n \u001b[90m 29 |\u001b[39m   test(\u001b[32m'Anonymous → admin route should redirect to login'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page\u001b[33m,\u001b[39m baseURL }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts:26:24\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:05.107Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-e149e-te-should-redirect-to-login-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-e149e-te-should-redirect-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-e149e-te-should-redirect-to-login-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                        "column": 24,
+                        "line": 26
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "c6b801d2e4198f752d96-c5a92d7f8917249f3d01",
+              "file": "06_permissions.spec.ts",
+              "line": 23,
+              "column": 7
+            },
+            {
+              "title": "Anonymous → admin route should redirect to login",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 4,
+                      "parallelIndex": 4,
+                      "status": "failed",
+                      "duration": 9713,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/admin\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/admin\"\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/admin\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/admin\"\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts:32:24",
+                        "location": {
+                          "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                          "column": 24,
+                          "line": 32
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 30 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39mbaseURL\u001b[33m,\u001b[39m \u001b[32m'baseURL is not configured'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(adminTargets[\u001b[35m0\u001b[39m]\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(entryPattern)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m\n \u001b[90m 35 |\u001b[39m   test(\u001b[32m'Client logged-in → can access protected route (no redirect to login)'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                            "column": 24,
+                            "line": 32
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mpage\u001b[39m\u001b[2m).\u001b[22mtoHaveURL\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m)\u001b[22m failed\n\nExpected pattern: \u001b[32m/\\/auth\\/(login|register)|\\/(login|signin|register)/i\u001b[39m\nReceived string:  \u001b[31m\"http://localhost:3000/admin\"\u001b[39m\nTimeout: 5000ms\n\nCall log:\n\u001b[2m  - Expect \"toHaveURL\" with timeout 5000ms\u001b[22m\n\u001b[2m    8 × unexpected value \"http://localhost:3000/admin\"\u001b[22m\n\n\n\u001b[0m \u001b[90m 30 |\u001b[39m     test\u001b[33m.\u001b[39mskip(\u001b[33m!\u001b[39mbaseURL\u001b[33m,\u001b[39m \u001b[32m'baseURL is not configured'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m 31 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(adminTargets[\u001b[35m0\u001b[39m]\u001b[33m,\u001b[39m { waitUntil\u001b[33m:\u001b[39m \u001b[32m'domcontentloaded'\u001b[39m })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 32 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page)\u001b[33m.\u001b[39mtoHaveURL(entryPattern)\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                        \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 33 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 34 |\u001b[39m\n \u001b[90m 35 |\u001b[39m   test(\u001b[32m'Client logged-in → can access protected route (no redirect to login)'\u001b[39m\u001b[33m,\u001b[39m \u001b[36masync\u001b[39m ({ page }) \u001b[33m=>\u001b[39m {\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts:32:24\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:12.348Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-dff61-te-should-redirect-to-login-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-dff61-te-should-redirect-to-login-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\06_permissions-Permissions-dff61-te-should-redirect-to-login-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\06_permissions.spec.ts",
+                        "column": 24,
+                        "line": 32
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "c6b801d2e4198f752d96-2d2ffdeb89193e93fcd2",
+              "file": "06_permissions.spec.ts",
+              "line": 29,
+              "column": 7
+            },
+            {
+              "title": "Client logged-in → can access protected route (no redirect to login)",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 6,
+                      "parallelIndex": 6,
+                      "status": "passed",
+                      "duration": 10860,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:17.370Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c6b801d2e4198f752d96-456294fbdb55a83fd048",
+              "file": "06_permissions.spec.ts",
+              "line": 35,
+              "column": 7
+            },
+            {
+              "title": "Public non-entry: / should not redirect to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 8,
+                      "parallelIndex": 5,
+                      "status": "passed",
+                      "duration": 3182,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:22.703Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c6b801d2e4198f752d96-df7df68d64970ba50e2c",
+              "file": "06_permissions.spec.ts",
+              "line": 43,
+              "column": 9
+            },
+            {
+              "title": "Public non-entry: /jobs should not redirect to login",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 9,
+                      "parallelIndex": 4,
+                      "status": "passed",
+                      "duration": 1374,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:28.211Z",
+                      "annotations": [],
+                      "attachments": []
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "c6b801d2e4198f752d96-ba17cb45f4bf374448a0",
+              "file": "06_permissions.spec.ts",
+              "line": 43,
+              "column": 9
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "07_uploads.spec.ts",
+      "file": "07_uploads.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Media uploads",
+          "file": "07_uploads.spec.ts",
+          "line": 20,
+          "column": 6,
+          "specs": [
+            {
+              "title": "Model uploads a portfolio image",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 10,
+                      "parallelIndex": 2,
+                      "status": "failed",
+                      "duration": 16210,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[type=\"file\"], input[type=file]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"file\"], input[type=file]').first()\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[type=\"file\"], input[type=file]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"file\"], input[type=file]').first()\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\07_uploads.spec.ts:51:28",
+                        "location": {
+                          "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\07_uploads.spec.ts",
+                          "column": 28,
+                          "line": 51
+                        },
+                        "snippet": "\u001b[0m \u001b[90m 49 |\u001b[39m       }\n \u001b[90m 50 |\u001b[39m       \u001b[36mconst\u001b[39m input2 \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"file\"], input[type=file]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 51 |\u001b[39m       \u001b[36mawait\u001b[39m expect(input2)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 52 |\u001b[39m       \u001b[36mawait\u001b[39m input2\u001b[33m.\u001b[39msetInputFiles(filePath\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000\u001b[33m,\u001b[39m force\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 53 |\u001b[39m     }\n \u001b[90m 54 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\07_uploads.spec.ts",
+                            "column": 28,
+                            "line": 51
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  locator('input[type=\"file\"], input[type=file]').first()\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for locator('input[type=\"file\"], input[type=file]').first()\u001b[22m\n\n\n\u001b[0m \u001b[90m 49 |\u001b[39m       }\n \u001b[90m 50 |\u001b[39m       \u001b[36mconst\u001b[39m input2 \u001b[33m=\u001b[39m page\u001b[33m.\u001b[39mlocator(\u001b[32m'input[type=\"file\"], input[type=file]'\u001b[39m)\u001b[33m.\u001b[39mfirst()\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 51 |\u001b[39m       \u001b[36mawait\u001b[39m expect(input2)\u001b[33m.\u001b[39mtoBeVisible({ timeout\u001b[33m:\u001b[39m \u001b[35m5000\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                            \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 52 |\u001b[39m       \u001b[36mawait\u001b[39m input2\u001b[33m.\u001b[39msetInputFiles(filePath\u001b[33m,\u001b[39m { timeout\u001b[33m:\u001b[39m \u001b[35m10\u001b[39m_000\u001b[33m,\u001b[39m force\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 53 |\u001b[39m     }\n \u001b[90m 54 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\07_uploads.spec.ts:51:28\u001b[22m"
+                        },
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts",
+                            "column": 73,
+                            "line": 33
+                          },
+                          "message": "Error: App emitted errors (console/pageerror/HTTP 5xx)\n\n\u001b[2mexpect(\u001b[22m\u001b[31mreceived\u001b[39m\u001b[2m).\u001b[22mtoEqual\u001b[2m(\u001b[22m\u001b[32mexpected\u001b[39m\u001b[2m) // deep equality\u001b[22m\n\n\u001b[32m- Expected  - 1\u001b[39m\n\u001b[31m+ Received  + 4\u001b[39m\n\n\u001b[32m- Array []\u001b[39m\n\u001b[31m+ Array [\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 401 (Unauthorized)\",\u001b[39m\n\u001b[31m+   \"CONSOLE:error: Failed to load resource: the server responded with a status of 401 (Unauthorized)\",\u001b[39m\n\u001b[31m+ ]\u001b[39m\n\n\u001b[90m   at \u001b[39msetup\\fixtures.ts:33\n\n\u001b[0m \u001b[90m 31 |\u001b[39m         contentType\u001b[33m:\u001b[39m \u001b[32m'text/plain'\u001b[39m\n \u001b[90m 32 |\u001b[39m       })\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m 33 |\u001b[39m       expect(errors\u001b[33m,\u001b[39m \u001b[32m'App emitted errors (console/pageerror/HTTP 5xx)'\u001b[39m)\u001b[33m.\u001b[39mtoEqual([])\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                                         \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m 34 |\u001b[39m     }\n \u001b[90m 35 |\u001b[39m   }\u001b[33m,\u001b[39m { auto\u001b[33m:\u001b[39m \u001b[36mtrue\u001b[39m }]\u001b[33m,\u001b[39m\n \u001b[90m 36 |\u001b[39m })\u001b[33m;\u001b[39m\u001b[0m\n\u001b[2m    at Object.exports.test._test.test.extend.appGuard.auto (C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\setup\\fixtures.ts:33:73)\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:29.216Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\07_uploads-Media-uploads-Model-uploads-a-portfolio-image-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "app-guard-errors",
+                          "contentType": "text/plain",
+                          "body": "Q09OU09MRTplcnJvcjogRmFpbGVkIHRvIGxvYWQgcmVzb3VyY2U6IHRoZSBzZXJ2ZXIgcmVzcG9uZGVkIHdpdGggYSBzdGF0dXMgb2YgNDAxIChVbmF1dGhvcml6ZWQpCkNPTlNPTEU6ZXJyb3I6IEZhaWxlZCB0byBsb2FkIHJlc291cmNlOiB0aGUgc2VydmVyIHJlc3BvbmRlZCB3aXRoIGEgc3RhdHVzIG9mIDQwMSAoVW5hdXRob3JpemVkKQ=="
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\07_uploads-Media-uploads-Model-uploads-a-portfolio-image-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\07_uploads-Media-uploads-Model-uploads-a-portfolio-image-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\07_uploads.spec.ts",
+                        "column": 28,
+                        "line": 51
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "5b7ec9d003654b63df1b-05b7723cb45d88a9ac50",
+              "file": "07_uploads.spec.ts",
+              "line": 21,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "08_notifications.spec.ts",
+      "file": "08_notifications.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Notifications",
+          "file": "08_notifications.spec.ts",
+          "line": 4,
+          "column": 6,
+          "specs": [
+            {
+              "title": "User sees notifications list",
+              "ok": false,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 30000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "chromium",
+                  "projectName": "chromium",
+                  "results": [
+                    {
+                      "workerIndex": 11,
+                      "parallelIndex": 1,
+                      "status": "failed",
+                      "duration": 14989,
+                      "error": {
+                        "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/notifications|اعلان/i)\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/notifications|اعلان/i)\u001b[22m\n",
+                        "stack": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/notifications|اعلان/i)\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/notifications|اعلان/i)\u001b[22m\n\n    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\08_notifications.spec.ts:8:58",
+                        "location": {
+                          "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\08_notifications.spec.ts",
+                          "column": 58,
+                          "line": 8
+                        },
+                        "snippet": "\u001b[0m \u001b[90m  6 |\u001b[39m     \u001b[36mawait\u001b[39m loginUI(page\u001b[33m,\u001b[39m \u001b[32m'client'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/notifications'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[35m/notifications|اعلان/i\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 10 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 11 |\u001b[39m\u001b[0m"
+                      },
+                      "errors": [
+                        {
+                          "location": {
+                            "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\08_notifications.spec.ts",
+                            "column": 58,
+                            "line": 8
+                          },
+                          "message": "Error: \u001b[2mexpect(\u001b[22m\u001b[31mlocator\u001b[39m\u001b[2m).\u001b[22mtoBeVisible\u001b[2m()\u001b[22m failed\n\nLocator:  getByText(/notifications|اعلان/i)\nExpected: visible\nReceived: <element(s) not found>\nTimeout:  5000ms\n\nCall log:\n\u001b[2m  - Expect \"toBeVisible\" with timeout 5000ms\u001b[22m\n\u001b[2m  - waiting for getByText(/notifications|اعلان/i)\u001b[22m\n\n\n\u001b[0m \u001b[90m  6 |\u001b[39m     \u001b[36mawait\u001b[39m loginUI(page\u001b[33m,\u001b[39m \u001b[32m'client'\u001b[39m)\u001b[33m;\u001b[39m\n \u001b[90m  7 |\u001b[39m     \u001b[36mawait\u001b[39m page\u001b[33m.\u001b[39mgoto(\u001b[32m'/notifications'\u001b[39m)\u001b[33m;\u001b[39m\n\u001b[31m\u001b[1m>\u001b[22m\u001b[39m\u001b[90m  8 |\u001b[39m     \u001b[36mawait\u001b[39m expect(page\u001b[33m.\u001b[39mgetByText(\u001b[35m/notifications|اعلان/i\u001b[39m))\u001b[33m.\u001b[39mtoBeVisible()\u001b[33m;\u001b[39m\n \u001b[90m    |\u001b[39m                                                          \u001b[31m\u001b[1m^\u001b[22m\u001b[39m\n \u001b[90m  9 |\u001b[39m   })\u001b[33m;\u001b[39m\n \u001b[90m 10 |\u001b[39m })\u001b[33m;\u001b[39m\n \u001b[90m 11 |\u001b[39m\u001b[0m\n\u001b[2m    at C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\08_notifications.spec.ts:8:58\u001b[22m"
+                        }
+                      ],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2025-09-03T14:53:29.161Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\08_notifications-Notifications-User-sees-notifications-list-chromium\\test-failed-1.png"
+                        },
+                        {
+                          "name": "video",
+                          "contentType": "video/webm",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\08_notifications-Notifications-User-sees-notifications-list-chromium\\video.webm"
+                        },
+                        {
+                          "name": "error-context",
+                          "contentType": "text/markdown",
+                          "path": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\artifacts\\test-output\\08_notifications-Notifications-User-sees-notifications-list-chromium\\error-context.md"
+                        }
+                      ],
+                      "errorLocation": {
+                        "file": "C:\\Users\\amir\\Desktop\\db model\\testing-pack\\tests\\08_notifications.spec.ts",
+                        "column": 58,
+                        "line": 8
+                      }
+                    }
+                  ],
+                  "status": "unexpected"
+                }
+              ],
+              "id": "2a0cdd72fcea069b171f-02e8fdd46ac24c0ed911",
+              "file": "08_notifications.spec.ts",
+              "line": 5,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "title": "09_regression_routes.spec.ts",
+      "file": "09_regression_routes.spec.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Regression – route rendering",
+          "file": "09_regression_routes.spec.ts",
+          "line": 28,
+          "column": 6,
+          "specs": [],
+          "suites": [
+            {
+              "title": "Public routes (non-auth entry)",
+              "file": "09_regression_routes.spec.ts",
+              "line": 29,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "Public (non-entry): / renders without redirect to login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 1497,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:27.050Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-09c153f66ae33c7b86a4",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 31,
+                  "column": 11
+                },
+                {
+                  "title": "Public (non-entry): /jobs renders without redirect to login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 12,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 2806,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:30.173Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-465a70db0db80f56692e",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 31,
+                  "column": 11
+                }
+              ]
+            },
+            {
+              "title": "Auth entry pages (login/register)",
+              "file": "09_regression_routes.spec.ts",
+              "line": 41,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "Entry page: /auth/login is reachable",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "passed",
+                          "duration": 1119,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:28.295Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-73730cd1784fa02ba421",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 43,
+                  "column": 11
+                },
+                {
+                  "title": "Entry page: /auth/register is reachable",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 1548,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:28.595Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-e83e72f526cb165c3f44",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 43,
+                  "column": 11
+                }
+              ]
+            },
+            {
+              "title": "Auth routes (client)",
+              "file": "09_regression_routes.spec.ts",
+              "line": 54,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "Auth: /dashboard renders after login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "passed",
+                          "duration": 12977,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:29.473Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-e64496df758a8e79cf96",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 56,
+                  "column": 11
+                },
+                {
+                  "title": "Auth: /jobs/new renders after login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 4,
+                          "status": "passed",
+                          "duration": 14865,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:29.997Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-535310a30b6873fa6ab9",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 56,
+                  "column": 11
+                },
+                {
+                  "title": "Auth: /profile renders after login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 13,
+                          "parallelIndex": 7,
+                          "status": "passed",
+                          "duration": 14575,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:33.123Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-cfa459ef80347802e0c8",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 56,
+                  "column": 11
+                },
+                {
+                  "title": "Auth: /messages renders after login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 14613,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:30.211Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-ccdf272c345d22b4042d",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 56,
+                  "column": 11
+                },
+                {
+                  "title": "Auth: /notifications renders after login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 12,
+                          "parallelIndex": 3,
+                          "status": "passed",
+                          "duration": 15535,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:33.329Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-5c8496e8b8baecfbb42a",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 56,
+                  "column": 11
+                }
+              ]
+            },
+            {
+              "title": "Admin routes",
+              "file": "09_regression_routes.spec.ts",
+              "line": 65,
+              "column": 8,
+              "specs": [
+                {
+                  "title": "Admin: /admin renders after admin login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 14,
+                          "parallelIndex": 0,
+                          "status": "passed",
+                          "duration": 11487,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:38.195Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-9b5fdff67ad40c940526",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 67,
+                  "column": 11
+                },
+                {
+                  "title": "Admin: /admin/users renders after admin login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 6,
+                          "parallelIndex": 6,
+                          "status": "passed",
+                          "duration": 7754,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:42.512Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-6ebea97772640807ae33",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 67,
+                  "column": 11
+                },
+                {
+                  "title": "Admin: /admin/jobs renders after admin login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 8,
+                          "parallelIndex": 5,
+                          "status": "passed",
+                          "duration": 6420,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:44.893Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-b1cb6f2a640dfb2bf6c7",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 67,
+                  "column": 11
+                },
+                {
+                  "title": "Admin: /admin/clients renders after admin login",
+                  "ok": true,
+                  "tags": [],
+                  "tests": [
+                    {
+                      "timeout": 30000,
+                      "annotations": [],
+                      "expectedStatus": "passed",
+                      "projectId": "chromium",
+                      "projectName": "chromium",
+                      "results": [
+                        {
+                          "workerIndex": 9,
+                          "parallelIndex": 4,
+                          "status": "passed",
+                          "duration": 6472,
+                          "errors": [],
+                          "stdout": [],
+                          "stderr": [],
+                          "retry": 0,
+                          "startTime": "2025-09-03T14:53:44.969Z",
+                          "annotations": [],
+                          "attachments": []
+                        }
+                      ],
+                      "status": "expected"
+                    }
+                  ],
+                  "id": "d160bae4ee9e15f5dd79-bf30b22a66941b8104eb",
+                  "file": "09_regression_routes.spec.ts",
+                  "line": 67,
+                  "column": 11
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2025-09-03T14:53:01.174Z",
+    "duration": 50377.325,
+    "expected": 23,
+    "skipped": 0,
+    "unexpected": 9,
+    "flaky": 0
+  }
+}

@@ -1,49 +1,89 @@
 // e2e/helpers.ts
-export const API_BASE = process.env.API_BASE || 'http://localhost:4000/api';
-export const FRONT_BASE = process.env.FRONT_BASE || 'http://localhost:3000';
+type HeadersMap = Record<string, string>;
 
-function headersWithToken(token){
-  const h={ 'Content-Type':'application/json' };
-  if(token){
+function headersWithToken(token?: string): HeadersMap {
+  const h: HeadersMap = { 'Content-Type': 'application/json' };
+  if (token) {
     h['Authorization'] = `Bearer ${token}`;
+    // برای سازگاری بیشتر:
     h['authorization'] = `Bearer ${token}`;
     h['x-access-token'] = token;
   }
   return h;
 }
 
-export async function http(method,url,body,token){
-  const headers=headersWithToken(token);
-  const full = `${API_BASE}${url}`;
-  let res,text='';
-  try{
-    res=await fetch(full,{method,headers,body: body?JSON.stringify(body):undefined});
-    try{text=await res.text();}catch{}
-    let parsed=null; try{parsed=text?JSON.parse(text):null;}catch{}
-    return {status:res.status, body:parsed??{}, raw:text};
-  }catch(e){return {status:0, body:{ok:false,error:String(e)}, raw:''};}
+// Prefer IPv4 loopback by default to avoid intermittent IPv6 (::1) connect issues
+const RAW_BASE = (process.env.API_BASE || 'http://127.0.0.1:4000').replace(/\/+$/g, '');
+
+function apiUrl(path: string) {
+  const p = path.startsWith('/') ? path : `/${path}`;
+  // If caller already passed an /api path, just append it to the raw base.
+  if (p.startsWith('/api')) return RAW_BASE + p;
+  // Otherwise build a normalized /api + path composition.
+  return RAW_BASE + '/api' + p;
 }
 
-export const get=(u,t)=>http('GET',u,undefined,t);
-export const post=(u,b,t)=>http('POST',u,b,t);
-export const patch=(u,b,t)=>http('PATCH',u,b,t);
-
-export function randEmail(prefix){const ts=Date.now();const r=Math.random().toString(36).slice(2,8);return `${prefix}.${ts}.${r}@e2e.test`;}
-
-export function extractToken(b){return b?.token||b?.data?.token;}
-export function extractId(o){return o?._id||o?.id;}
-export function firstIdFrom(b){return extractId(b?.job)||extractId(b?.data?.job)||extractId(b?.data)||extractId(b);}
-
-export function decodeJwtPayload(token){
- try{
-  const base64Url=token.split('.')[1];
-  const base64=base64Url.replace(/-/g,'+').replace(/_/g,'/').padEnd(Math.ceil(base64Url.length/4)*4,'=');
-  const json=Buffer.from(base64,'base64').toString('utf-8');
-  return JSON.parse(json);
- }catch{return null;}
+export async function http(
+  method: 'GET' | 'POST' | 'PATCH' | 'DELETE',
+  url: string,
+  body?: unknown,
+  token?: string
+): Promise<{ status: number; body: unknown; raw: string }> {
+  const full = apiUrl(url);
+  // Debug: log the outgoing request url and method
+  logStep('http-request', { method, url: full, hasToken: !!token });
+  try {
+    const res = await fetch(full, {
+      method,
+      headers: headersWithToken(token),
+      body: body !== undefined ? JSON.stringify(body) : undefined,
+    });
+    const raw = await res.text();
+    let parsed: unknown;
+    try { parsed = JSON.parse(raw); } catch { parsed = { ok: false, error: raw }; }
+    return { status: res.status, body: parsed, raw };
+  } catch (e:any) {
+    logStep('http-error', { method, url: full, message: String(e?.message || e) });
+    return { status: 0, body: { ok: false, error: String(e?.message || e) }, raw: '' };
+  }
 }
 
-export function logStep(tag,info){
- const stamp=new Date().toISOString();
- console.log(`[${stamp}] [${tag}]`, typeof info==='string'?info:JSON.stringify(info));
+export const get = (u: string, t?: string) => http('GET', u, undefined, t);
+export const post = (u: string, b?: unknown, t?: string) => http('POST', u, b, t);
+export const patch = (u: string, b?: unknown, t?: string) => http('PATCH', u, b, t);
+
+export function randEmail(prefix: string): string {
+  const ts = Date.now();
+  const r = Math.random().toString(36).slice(2, 8);
+  return `${prefix}.${ts}.${r}@e2e.test`;
 }
+
+export function extractToken(b: any): string | undefined {
+  return b?.token || b?.data?.token;
+}
+
+export function extractId(o: any): string | undefined {
+  return o?._id || o?.id;
+}
+
+export function firstIdFrom(b: any): string | undefined {
+  return (
+    extractId((b as any)?.job) ||
+    extractId((b as any)?.data?.job) ||
+    extractId((b as any)?.data) ||
+    extractId(b)
+  );
+}
+
+export function decodeJwtPayload(token: string): unknown {
+  const [, payload] = token.split('.');
+  return JSON.parse(Buffer.from(payload, 'base64').toString('utf8'));
+}
+
+export function logStep(tag: string, info: unknown): void {
+  const stamp = new Date().toISOString();
+  const safe = typeof info === 'string' ? info : JSON.stringify(info);
+  // eslint-disable-next-line no-console
+  console.log(`[${stamp}] [${tag}] ${safe}`);
+}
+

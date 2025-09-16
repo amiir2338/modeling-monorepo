@@ -7,11 +7,30 @@ import { authRequired } from '../middlewares/auth.middleware.js';
 const router = express.Router();
 const isObjectId = (v) => mongoose.Types.ObjectId.isValid(String(v));
 
+function logRouteError(tag, err, req) {
+  console.error(`[notifications.route:${tag}]`, {
+    method: req.method,
+    url: req.originalUrl || req.url,
+    user: req.user ? {
+      _id: req.user._id,
+      role: req.user.role,
+      clientId: req.user.clientId,
+      email: req.user.email,
+    } : null,
+    params: req.params,
+    query: req.query,
+    body: req.body ? { ...req.body } : null,
+    error: { message: err?.message, stack: err?.stack },
+  });
+}
+
 /**
- * GET /v1/notifications
- * لیست نوتیف‌های کاربر جاری
+ * GET /api/v1/notifications
+ * لیست نوتیف‌های کاربر جاری (جدیدترین اول)
+ * query: ?page=1&limit=20
+ * خروجی: { ok, data:[...], page, limit, total }
  */
-router.get('/v1/notifications', authRequired, async (req, res) => {
+router.get('/notifications', authRequired, async (req, res) => {
   try {
     const page = Math.max(1, Number(req.query.page || 1));
     const limit = Math.min(100, Math.max(1, Number(req.query.limit || 20)));
@@ -28,64 +47,80 @@ router.get('/v1/notifications', authRequired, async (req, res) => {
 
     return res.json({ ok: true, data: items, page, limit, total });
   } catch (err) {
-    console.error('[notifications:list] error:', err);
+    logRouteError('LIST', err, req);
     return res.status(500).json({ ok: false, message: 'Server error' });
   }
 });
 
 /**
- * GET /v1/notifications/unread-count
- * شمارش نوتیف‌های خوانده‌نشده
+ * GET /api/v1/notifications/unread-count
+ * خروجی: { ok:true, count:number }
  */
-router.get('/v1/notifications/unread-count', authRequired, async (req, res) => {
+router.get('/notifications/unread-count', authRequired, async (req, res) => {
   try {
-    const count = await Notification.countDocuments({ userId: req.user._id, read: false });
+    const count = await Notification.countDocuments({
+      userId: req.user._id,
+      read: false,
+    });
     return res.json({ ok: true, count });
   } catch (err) {
-    console.error('[notifications:unread-count] error:', err);
+    logRouteError('UNREAD_COUNT', err, req);
     return res.status(500).json({ ok: false, message: 'Server error' });
   }
 });
 
 /**
- * PATCH /v1/notifications/:id/read
- * مارک‌کردن یک نوتیف به عنوان خوانده‌شده
+ * PATCH /api/v1/notifications/:id/read
+ * مارک‌کردن یک نوتیف به عنوان خوانده‌شده (پیش‌فرض true)
+ * body: { read?: boolean }
+ * خروجی: { ok:true, data:{ notification } }
  */
-router.patch('/v1/notifications/:id/read', authRequired, async (req, res) => {
+router.patch('/notifications/:id/read', authRequired, async (req, res) => {
   try {
     const { id } = req.params;
-    if (!isObjectId(id)) return res.status(400).json({ ok: false, message: 'Invalid id' });
+    if (!isObjectId(id)) {
+      return res.status(400).json({ ok: false, message: 'Invalid id' });
+    }
 
-    const n = await Notification.findOneAndUpdate(
-      { _id: id, userId: req.user._id },
-      { $set: { read: true } },
-      { new: true, lean: true }
-    );
-    if (!n) return res.status(404).json({ ok: false, message: 'Notification not found' });
+    const notif = await Notification.findOne({ _id: id, userId: req.user._id });
+    if (!notif) {
+      return res.status(404).json({ ok: false, message: 'Notification not found' });
+    }
 
-    return res.json({ ok: true, data: n });
+    const shouldRead =
+      req.body && typeof req.body.read === 'boolean' ? !!req.body.read : true;
+
+    notif.read = shouldRead;
+    await notif.save();
+
+    return res.json({ ok: true, data: { notification: notif } });
   } catch (err) {
-    console.error('[notifications:mark-read] error:', err);
+    logRouteError('MARK_READ', err, req);
     return res.status(500).json({ ok: false, message: 'Server error' });
   }
 });
 
 /**
- * DELETE /v1/notifications/:id
+ * DELETE /api/v1/notifications/:id
  * حذف یک نوتیف کاربر
+ * خروجی: { ok:true }
  */
-router.delete('/v1/notifications/:id', authRequired, async (req, res) => {
+router.delete('/notifications/:id', authRequired, async (req, res) => {
   try {
     const { id } = req.params;
-    if (!isObjectId(id)) return res.status(400).json({ ok: false, message: 'Invalid id' });
+    if (!isObjectId(id)) {
+      return res.status(400).json({ ok: false, message: 'Invalid id' });
+    }
 
     const n = await Notification.findOne({ _id: id, userId: req.user._id });
-    if (!n) return res.status(404).json({ ok: false, message: 'Notification not found' });
+    if (!n) {
+      return res.status(404).json({ ok: false, message: 'Notification not found' });
+    }
 
     await n.deleteOne();
     return res.json({ ok: true });
   } catch (err) {
-    console.error('[notifications:delete] error:', err);
+    logRouteError('DELETE', err, req);
     return res.status(500).json({ ok: false, message: 'Server error' });
   }
 });

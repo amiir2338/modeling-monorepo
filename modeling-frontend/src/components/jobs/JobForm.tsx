@@ -28,6 +28,7 @@ type Props = {
   onSaveDraft?: () => void;
   onSubmitForReview?: () => void;
   onUpdateAndResend?: () => void;
+  onUpload?: (url: string) => void; // optional callback when upload completes
 };
 
 /* ELI5: بج وضعیت — این نسخه هم با کلاس‌های Tailwind کار می‌کند هم با CSS اختصاصی (job-card.css) */
@@ -57,6 +58,8 @@ function StatusBadge({ status }: { status: JobStatus }) {
     </span>
   );
 }
+
+import UploadPreview from "../UploadPreview";
 
 export default function JobForm(props: Props) {
   const {
@@ -134,6 +137,10 @@ export default function JobForm(props: Props) {
 
       {/* بدنه کارت */}
       <div className="job-card__body p-5 sm:p-6">
+        {/* Upload preview (optional) */}
+        <div className="mb-4">
+          <UploadPreview onUploaded={(url) => props.onUpload && props.onUpload(url)} />
+        </div>
         {/* عنوان */}
         <div className="job-field flex flex-col gap-1.5 mb-4">
           <label className="job-label text-sm text-slate-800">
@@ -268,3 +275,4 @@ export default function JobForm(props: Props) {
     </section>
   );
 }
+

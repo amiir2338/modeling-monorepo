@@ -1,9 +1,12 @@
 // src/services/notification.service.js
+// 🟢 خیلی ساده بگم: این سرویس یک ردیف «اعلان» برای یک کاربر می‌سازد.
+// 🟢 اعلان‌ها هم می‌تونن بابت پیام جدید باشن، هم بابت تغییر وضعیت اپلیکیشنِ یک شغل، و...
+
 import Notification from '../models/notification.model.js';
 import Job from '../models/job.model.js';
 import User from '../models/user.model.js';
 
-/** Feature flag: اگر نخواهی نوتیف فعال باشد: NOTIFICATIONS_ENABLED=0 */
+/** Feature flag: اگر نوتیف نخواهی، NOTIFICATIONS_ENABLED=0 یا false بگذار */
 function notifEnabled() {
   const v = process.env.NOTIFICATIONS_ENABLED;
   return v === undefined || v === null || v === '' || v === '1' || v === 'true';
@@ -20,7 +23,7 @@ export async function notify(userId, type, data = {}) {
   try {
     if (!userId || !type) return null;
 
-    // مطمئن شو data همیشه یک Object است (نه آرایه/مقدار ساده)
+    // مطمئن شو data همیشه Object باشه (نه آرایه/مقدار ساده)
     const payload =
       data && typeof data === 'object' && !Array.isArray(data) ? data : { value: data };
 
@@ -51,18 +54,14 @@ async function findOwnerUserIdByClientId(clientId) {
 
 /**
  * بعد از Apply شدن یک اپلیکیشن — نوتیف به **کاربرِ** مالک Job
- * می‌تواند job یا jobId یا فقط application داشته باشد (تابع کمبود را جبران می‌کند)
- * @param {Object} p
- * @param {Object} [p.job]
- * @param {string|import('mongoose').Types.ObjectId} [p.jobId]
- * @param {Object} p.application
+ * ورودی می‌تونه job یا jobId یا فقط application داشته باشه.
  */
 export async function onJobApplied({ job, jobId, application }) {
   if (!notifEnabled()) return null;
   try {
     let _job = job || null;
 
-    // اگر job نداریم یا clientId خالی است، سعی کن از DB بیاری
+    // اگر job نداریم یا clientId خالیه، از DB بیارش
     if (!_job?.clientId) {
       const idToLoad = jobId || application?.jobId;
       if (idToLoad) {
@@ -79,7 +78,7 @@ export async function onJobApplied({ job, jobId, application }) {
       return null;
     }
 
-    // clientId → ownerUserId (User._id)
+    // clientId (پروفایل) → ownerUserId (کاربر مالک شغل)
     const ownerUserId = await findOwnerUserIdByClientId(_job.clientId);
     if (!ownerUserId) return null;
 
@@ -96,11 +95,7 @@ export async function onJobApplied({ job, jobId, application }) {
 }
 
 /**
- * بعد از به‌روزرسانی وضعیت اپلیکیشن — نوتیف به Model
- * @param {Object} p
- * @param {Object} p.application - باید modelUserId یا modelId داشته باشد
- * @param {String} p.newStatus
- * @param {String} [p.reason]
+ * بعد از به‌روزرسانی وضعیت اپلیکیشن — نوتیف به Model (کاربر مدل)
  */
 export async function onApplicationUpdated({ application, newStatus, reason }) {
   if (!notifEnabled()) return null;

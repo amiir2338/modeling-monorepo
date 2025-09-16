@@ -20,4 +20,4 @@ r.get('/env', (req, res) => {
   });
 });
 
-export default r;
+export default router;

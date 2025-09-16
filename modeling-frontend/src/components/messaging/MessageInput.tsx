@@ -22,3 +22,4 @@ export default function MessageInput({ onSend }: { onSend: (text: string) => voi
     </div>
   );
 }
+

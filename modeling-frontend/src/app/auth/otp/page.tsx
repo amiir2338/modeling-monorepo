@@ -20,6 +20,12 @@ export default function OtpPage() {
   const [timer, setTimer] = useState<number>(60);
   const [loading, setLoading] = useState<boolean>(false);
 
+  // اگر phone موجود نیست، برگرد به صفحه درخواست کد
+  useEffect(() => {
+    if (!phone) router.replace('/auth/request-otp');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phone]);
+
   // تایمر 60 ثانیه‌ای
   useEffect(() => {
     if (timer <= 0) return;
@@ -38,6 +44,16 @@ export default function OtpPage() {
     next[idx] = val;
     setCells(next);
     if (val && idx < 5) inputsRef.current[idx + 1]?.focus();
+  };
+
+  const onKeyDown = (e: React.KeyboardEvent<HTMLInputElement>, idx: number) => {
+    // پاک کردن و برگشت به ورودی قبلی
+    if (e.key === 'Backspace' && !cells[idx] && idx > 0) {
+      inputsRef.current[idx - 1]?.focus();
+    }
+    // حرکت بین سلول‌ها با کلیدهای جهت‌دار
+    if (e.key === 'ArrowLeft' && idx > 0) inputsRef.current[idx - 1]?.focus();
+    if (e.key === 'ArrowRight' && idx < 5) inputsRef.current[idx + 1]?.focus();
   };
 
   const onPaste = (e: React.ClipboardEvent<HTMLInputElement>) => {
@@ -97,10 +113,13 @@ export default function OtpPage() {
               }}
               value={v}
               onChange={(e) => onChangeCell(e.target.value, i)}
+              onKeyDown={(e) => onKeyDown(e, i)}
               onPaste={onPaste}
               className="w-10 h-12 border rounded-lg text-center text-xl outline-none focus:border-[#7D6CB2] focus:ring-2 focus:ring-[#7D6CB233]"
               maxLength={1}
               inputMode="numeric"
+              aria-label={`digit-${i + 1}`}
+              autoComplete="one-time-code"
             />
           ))}
         </div>
@@ -108,7 +127,7 @@ export default function OtpPage() {
         <button
           onClick={onVerify}
           disabled={loading}
-          className="mt-6 w-full h-12 rounded-xl bg-[#7D6CB2] text-white font-bold active:scale-[0.98] transition"
+          className="mt-6 w-full h-12 rounded-xl bg-[#7D6CB2] text-white font-bold active:scale-[0.98] transition disabled:opacity-60"
         >
           {loading ? 'در حال تایید…' : 'تایید'}
         </button>
@@ -126,3 +145,4 @@ export default function OtpPage() {
     </main>
   );
 }
+
